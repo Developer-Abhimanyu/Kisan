@@ -1,4 +1,4 @@
-package com.agentic.quartet.kisan.ui.theme
+package com.agentic.quartet.kisan.presentation.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

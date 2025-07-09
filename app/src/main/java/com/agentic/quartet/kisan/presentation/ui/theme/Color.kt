@@ -1,4 +1,4 @@
-package com.agentic.quartet.kisan.ui.theme
+package com.agentic.quartet.kisan.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
