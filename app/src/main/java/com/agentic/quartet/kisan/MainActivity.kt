@@ -3,47 +3,26 @@ package com.agentic.quartet.kisan
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.agentic.quartet.kisan.presentation.ui.theme.KisanTheme
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.navigation.compose.rememberNavController
+import com.agentic.quartet.kisan.presentation.navigation.AppNavGraph
+import com.agentic.quartet.kisan.presentation.ui.theme.KisanTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
-            KisanTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            App()
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
+fun App() {
+    val navController = rememberNavController()
     KisanTheme {
-        Greeting("Android")
+        AppNavGraph(navController = navController)
     }
 }
