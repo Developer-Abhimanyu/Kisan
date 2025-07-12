@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,13 +27,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.presentation.navigation.Screen
 
 @Composable
 fun HomeScreen(
     onNavigateToDiseaseDetection: () -> Unit,
     onNavigateToMarketPrices: () -> Unit,
     onNavigateToGovtSchemes: () -> Unit,
-    onVoiceAgentClick: () -> Unit
+    onVoiceAgentClick: () -> Unit,
+    onCropCalendarClick: () -> Unit,
+    onIrrigationTipsClick: () -> Unit,
+    onFertilizerGuideClick: () -> Unit
 ) {
     val context = LocalContext.current
     val weatherCardOffset = remember { Animatable(-200f) }
@@ -106,30 +109,30 @@ fun HomeScreen(
             item {
                 HomeFeatureButton("Voice Agent", R.drawable.ic_mic, onVoiceAgentClick)
             }
-            /*item {
-                HomeFeatureButton("Soil Scanner", R.drawable.ic_soil) {
+            item {
+                HomeFeatureButton("Soil Scanner", R.drawable.ic_mic) {
                     // TODO: Add navigation
                 }
             }
             item {
-                HomeFeatureButton("Crop Calendar", R.drawable.ic_calendar) {
-                    // TODO: Add navigation
+                HomeFeatureButton("Crop Calendar", R.drawable.ic_mic) {
+                    onCropCalendarClick()
                 }
             }
             item {
-                HomeFeatureButton("Irrigation Tips", R.drawable.ic_water) {
-                    // TODO: Add navigation
+                HomeFeatureButton("Irrigation Tips", R.drawable.ic_mic) {
+                    onIrrigationTipsClick()
                 }
             }
             item {
-                HomeFeatureButton("Fertilizer Guide", R.drawable.ic_fertilizer) {
-                    // TODO: Add navigation
+                HomeFeatureButton("Fertilizer Guide", R.drawable.ic_mic) {
+                    onFertilizerGuideClick()
                 }
-            }*/
+            }
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "🌱 Tip: Tap a tool above to start your smart farming journey!",
+            text = "Tip: Tap a tool above to start your smart farming journey!",
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center
