@@ -23,7 +23,7 @@ import com.agentic.quartet.kisan.utils.SpeechRecognizerHelper
 import kotlinx.coroutines.launch
 
 @Composable
-fun MarketPriceScreen(viewModel: MarketPriceViewModel = hiltViewModel(), onNavigateToGovtSchemes: () -> Unit) {
+fun MarketPriceScreen(viewModel: MarketPriceViewModel = hiltViewModel(), onNavigateToGovtSchemes: () -> Unit, onNavigateToDiseaseDetection: () -> Unit) {
     var commodity by remember { mutableStateOf("") }
     var marketData by remember { mutableStateOf("") }
     var advice by remember { mutableStateOf("") }
@@ -144,6 +144,14 @@ fun MarketPriceScreen(viewModel: MarketPriceViewModel = hiltViewModel(), onNavig
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("🏛️ Govt Scheme Navigator")
+            }
+
+            Button(
+                onClick = { onNavigateToDiseaseDetection() },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text("🩺 Disease Detection (Image)")
             }
         }
     }

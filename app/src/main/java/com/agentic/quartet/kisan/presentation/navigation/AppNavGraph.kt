@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.agentic.quartet.kisan.presentation.screens.AuthScreen
+import com.agentic.quartet.kisan.presentation.screens.DiseaseDetectionScreen
 import com.agentic.quartet.kisan.presentation.screens.GovtSchemeNavigatorScreen
 import com.agentic.quartet.kisan.presentation.screens.MarketPriceScreen
 
@@ -12,6 +13,7 @@ sealed class Screen(val route: String) {
     object Auth : Screen("auth")
     object MarketPrice : Screen("market_price")
     object GovtSchemeNavigator : Screen("govt_scheme_navigator")
+    object DiseaseDetection : Screen("disease_detection")
 }
 
 @Composable
@@ -31,12 +33,19 @@ fun AppNavGraph(navController: NavHostController) {
             MarketPriceScreen(
                 onNavigateToGovtSchemes = {
                     navController.navigate(Screen.GovtSchemeNavigator.route)
+                },
+                onNavigateToDiseaseDetection = {
+                    navController.navigate(Screen.DiseaseDetection.route)
                 }
             )
         }
 
         composable(Screen.GovtSchemeNavigator.route) {
             GovtSchemeNavigatorScreen(navController)
+        }
+
+        composable(Screen.DiseaseDetection.route) {
+            DiseaseDetectionScreen(navController)
         }
     }
 }
