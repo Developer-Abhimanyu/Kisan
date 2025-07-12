@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.agentic.quartet.kisan.presentation.screens.AuthScreen
 import com.agentic.quartet.kisan.presentation.screens.DiseaseDetectionScreen
 import com.agentic.quartet.kisan.presentation.screens.GovtSchemeNavigatorScreen
+import com.agentic.quartet.kisan.presentation.screens.HomeScreen
 import com.agentic.quartet.kisan.presentation.screens.MarketPriceScreen
 import com.agentic.quartet.kisan.presentation.screens.OnboardingScreen
 
@@ -16,6 +17,7 @@ sealed class Screen(val route: String) {
     object GovtSchemeNavigator : Screen("govt_scheme_navigator")
     object DiseaseDetection : Screen("disease_detection")
     object OnboardingScreen : Screen("onboarding_screen")
+    object HomeScreen : Screen("home_screen")
 }
 
 @Composable
@@ -52,8 +54,25 @@ fun AppNavGraph(navController: NavHostController) {
 
         composable(Screen.OnboardingScreen.route) {
             OnboardingScreen(onGetStartedClick = {
-                navController.navigate(Screen.MarketPrice.route)
+                navController.navigate(Screen.HomeScreen.route)
             })
+        }
+
+        composable(Screen.HomeScreen.route) {
+            HomeScreen(
+                onNavigateToDiseaseDetection = {
+                    navController.navigate(Screen.DiseaseDetection.route)
+                },
+                onNavigateToMarketPrices = {
+                    navController.navigate(Screen.MarketPrice.route)
+                },
+                onNavigateToGovtSchemes = {
+                    navController.navigate(Screen.GovtSchemeNavigator.route)
+                },
+                onVoiceAgentClick = {
+                    navController.navigate(Screen.MarketPrice.route)
+                }
+            )
         }
     }
 }
