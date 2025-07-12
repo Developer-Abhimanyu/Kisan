@@ -8,17 +8,19 @@ import com.agentic.quartet.kisan.presentation.screens.AuthScreen
 import com.agentic.quartet.kisan.presentation.screens.DiseaseDetectionScreen
 import com.agentic.quartet.kisan.presentation.screens.GovtSchemeNavigatorScreen
 import com.agentic.quartet.kisan.presentation.screens.MarketPriceScreen
+import com.agentic.quartet.kisan.presentation.screens.OnboardingScreen
 
 sealed class Screen(val route: String) {
     object Auth : Screen("auth")
     object MarketPrice : Screen("market_price")
     object GovtSchemeNavigator : Screen("govt_scheme_navigator")
     object DiseaseDetection : Screen("disease_detection")
+    object OnboardingScreen : Screen("onboarding_screen")
 }
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screen.MarketPrice.route) {
+    NavHost(navController = navController, startDestination = Screen.OnboardingScreen.route) {
         composable(Screen.Auth.route) {
             AuthScreen(
                 onSignedIn = {
@@ -46,6 +48,12 @@ fun AppNavGraph(navController: NavHostController) {
 
         composable(Screen.DiseaseDetection.route) {
             DiseaseDetectionScreen(navController)
+        }
+
+        composable(Screen.OnboardingScreen.route) {
+            OnboardingScreen(onGetStartedClick = {
+                navController.navigate(Screen.MarketPrice.route)
+            })
         }
     }
 }
