@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.agentic.quartet.kisan.R
-import com.agentic.quartet.kisan.presentation.navigation.Screen
 
 @Composable
 fun HomeScreen(
@@ -35,6 +34,7 @@ fun HomeScreen(
     onNavigateToMarketPrices: () -> Unit,
     onNavigateToGovtSchemes: () -> Unit,
     onVoiceAgentClick: () -> Unit,
+    onSoilDetectorClick: () -> Unit,
     onCropCalendarClick: () -> Unit,
     onIrrigationTipsClick: () -> Unit,
     onFertilizerGuideClick: () -> Unit
@@ -111,7 +111,7 @@ fun HomeScreen(
             }
             item {
                 HomeFeatureButton("Soil Scanner", R.drawable.ic_mic) {
-                    // TODO: Add navigation
+                    onSoilDetectorClick()
                 }
             }
             item {

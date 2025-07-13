@@ -11,11 +11,12 @@ import com.agentic.quartet.kisan.presentation.screens.CropCalendarScreen
 import com.agentic.quartet.kisan.presentation.screens.CropDetailScreen
 import com.agentic.quartet.kisan.presentation.screens.DiseaseDetectionScreen
 import com.agentic.quartet.kisan.presentation.screens.FertilizerGuideScreen
-import com.agentic.quartet.kisan.presentation.screens.GovtSchemeNavigatorScreen
+import com.agentic.quartet.kisan.presentation.screens.GovtSchemesScreen
 import com.agentic.quartet.kisan.presentation.screens.HomeScreen
 import com.agentic.quartet.kisan.presentation.screens.IrrigationTipsScreen
 import com.agentic.quartet.kisan.presentation.screens.MarketPriceScreen
 import com.agentic.quartet.kisan.presentation.screens.OnboardingScreen
+import com.agentic.quartet.kisan.presentation.screens.SoilDetectorScreen
 
 sealed class Screen(val route: String) {
     object Auth : Screen("auth")
@@ -28,8 +29,10 @@ sealed class Screen(val route: String) {
     object CropDetail : Screen("crop_detail/{monthIndex}") {
         fun createRoute(monthIndex: Int) = "crop_detail/$monthIndex"
     }
+
     object FertilizerGuide : Screen("fertilizer_guide")
     object IrrigationTips : Screen("irrigation_tips")
+    object SoilDetector : Screen("soil_detector")
 }
 
 @Composable
@@ -43,25 +46,6 @@ fun AppNavGraph(navController: NavHostController) {
                     }
                 }
             )
-        }
-
-        composable(Screen.MarketPrice.route) {
-            MarketPriceScreen(
-                onNavigateToGovtSchemes = {
-                    navController.navigate(Screen.GovtSchemeNavigator.route)
-                },
-                onNavigateToDiseaseDetection = {
-                    navController.navigate(Screen.DiseaseDetection.route)
-                }
-            )
-        }
-
-        composable(Screen.GovtSchemeNavigator.route) {
-            GovtSchemeNavigatorScreen(navController)
-        }
-
-        composable(Screen.DiseaseDetection.route) {
-            DiseaseDetectionScreen(navController)
         }
 
         composable(Screen.OnboardingScreen.route) {
@@ -84,6 +68,9 @@ fun AppNavGraph(navController: NavHostController) {
                 onVoiceAgentClick = {
                     navController.navigate(Screen.MarketPrice.route)
                 },
+                onSoilDetectorClick = {
+                    navController.navigate(Screen.SoilDetector.route)
+                },
                 onCropCalendarClick = {
                     navController.navigate(Screen.CropCalendar.route)
                 },
@@ -94,6 +81,26 @@ fun AppNavGraph(navController: NavHostController) {
                     navController.navigate(Screen.FertilizerGuide.route)
                 }
             )
+        }
+
+        composable(Screen.DiseaseDetection.route) {
+            DiseaseDetectionScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.MarketPrice.route) {
+            MarketPriceScreen()
+        }
+
+        composable(Screen.GovtSchemeNavigator.route) {
+            GovtSchemesScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.SoilDetector.route) {
+            SoilDetectorScreen(onBack = { navController.popBackStack() })
         }
 
         composable(Screen.CropCalendar.route) {
@@ -110,12 +117,12 @@ fun AppNavGraph(navController: NavHostController) {
             CropDetailScreen(monthIndex = idx, onBack = { navController.popBackStack() })
         }
 
-        composable(Screen.FertilizerGuide.route) {
-            FertilizerGuideScreen(onBack = { navController.popBackStack() })
-        }
-
         composable(Screen.IrrigationTips.route) {
             IrrigationTipsScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(Screen.FertilizerGuide.route) {
+            FertilizerGuideScreen(onBack = { navController.popBackStack() })
         }
     }
 }
