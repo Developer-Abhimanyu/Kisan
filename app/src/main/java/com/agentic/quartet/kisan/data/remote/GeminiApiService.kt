@@ -21,7 +21,7 @@ class GeminiApiService(private val apiKey: String) {
         val response: HttpResponse = client.post(
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=$apiKey"
         ) {
-            contentType(io.ktor.http.ContentType.Application.Json)
+            contentType(ContentType.Application.Json)
             setBody(
                 mapOf(
                     "contents" to listOf(

@@ -17,6 +17,7 @@ import com.agentic.quartet.kisan.presentation.screens.IrrigationTipsScreen
 import com.agentic.quartet.kisan.presentation.screens.MarketPriceScreen
 import com.agentic.quartet.kisan.presentation.screens.OnboardingScreen
 import com.agentic.quartet.kisan.presentation.screens.SoilDetectorScreen
+import com.agentic.quartet.kisan.presentation.screens.VoiceAgentScreen
 
 sealed class Screen(val route: String) {
     object Auth : Screen("auth")
@@ -33,6 +34,7 @@ sealed class Screen(val route: String) {
     object FertilizerGuide : Screen("fertilizer_guide")
     object IrrigationTips : Screen("irrigation_tips")
     object SoilDetector : Screen("soil_detector")
+    object VoiceAgent : Screen("voice_agent")
 }
 
 @Composable
@@ -66,7 +68,7 @@ fun AppNavGraph(navController: NavHostController) {
                     navController.navigate(Screen.GovtSchemeNavigator.route)
                 },
                 onVoiceAgentClick = {
-                    navController.navigate(Screen.MarketPrice.route)
+                    navController.navigate(Screen.VoiceAgent.route)
                 },
                 onSoilDetectorClick = {
                     navController.navigate(Screen.SoilDetector.route)
@@ -123,6 +125,10 @@ fun AppNavGraph(navController: NavHostController) {
 
         composable(Screen.FertilizerGuide.route) {
             FertilizerGuideScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(Screen.VoiceAgent.route) {
+            VoiceAgentScreen(onBack = { navController.popBackStack() })
         }
     }
 }
