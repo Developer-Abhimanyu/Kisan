@@ -36,15 +36,15 @@ import com.agentic.quartet.kisan.utils.SpeechRecognizerHelper
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color as AndroidColor
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.agentic.quartet.kisan.data.remote.GeminiApiService
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun VoiceAgentScreen(onBack: () -> Unit) {
     val context = LocalContext.current
@@ -57,16 +57,14 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
     val history = remember { mutableStateListOf<Pair<String, String>>() }
     var latestPdfFile by remember { mutableStateOf<File?>(null) }
 
-    val geminiApi = remember { GeminiApiService(apiKey = "AIzaSyBqs-vJieMml-dXi9O0hA_NVFlsGGbfoNU") }
+    val geminiApi = remember { GeminiApiService(apiKey = "") }
 
     val tts = remember {
         TextToSpeech(context) { status ->
             if (status != TextToSpeech.SUCCESS) {
                 Toast.makeText(context, "TTS init failed", Toast.LENGTH_SHORT).show()
             }
-        }.apply {
-            language = Locale.US
-        }
+        }.apply { language = Locale.US }
     }
 
     val speechHelper = remember {
@@ -79,19 +77,12 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                 aiResponse = ""
                 scope.launch {
                     delay(100)
-                    try {
-                        val response = geminiApi.getPriceAdvice(result)
-                        aiResponse = response
-                        history.add(userQuery to response)
-                        if (history.size > 5) history.removeAt(history.lastIndex)
-                    } catch (e: Exception) {
-                        aiResponse = "⚠️ Failed to get response. Check internet or API key."
-                        e.printStackTrace()
-                    } finally {
-                        delay(3000)
-                        isListening = false
-                        isProcessing = false
-                    }
+                    aiResponse = geminiApi.getPriceAdvice(result)
+                    history.add(0, userQuery to aiResponse)
+                    if (history.size > 5) history.removeLast()
+                    delay(3000)
+                    isListening = false
+                    isProcessing = false
                 }
             },
             onError = {
@@ -120,6 +111,12 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
         }
     )
 
+    fun requestStoragePermission() {
+        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+            storagePermissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+        }
+    }
+
     val infiniteTransition = rememberInfiniteTransition()
     val micPulse by infiniteTransition.animateFloat(
         initialValue = 1f,
@@ -130,22 +127,6 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
         )
     )
 
-    fun requestStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                storagePermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
-            }
-        } else {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
-        }
-    }
-
     AppBackground {
         Column(
             modifier = Modifier
@@ -153,29 +134,16 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Voice Agent",
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF4CAF50)
-                )
-            )
-
+            Text("Voice Agent", style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50)))
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Ask anything about your crops, market, soil, irrigation and more!", style = MaterialTheme.typography.bodyMedium.copy(color = Color.White), textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Ask anything about your crops, market, soil, irrigation and more!",
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
 
             Box(
                 modifier = Modifier
                     .size(120.dp * if (isListening) micPulse else 1f)
                     .clickable(enabled = !isProcessing) {
-                        micPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                        micPermissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -186,29 +154,17 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                     shadowElevation = 8.dp,
                     modifier = Modifier.size(100.dp)
                 ) {
-                    Icon(
-                        painterResource(R.drawable.ic_mic),
-                        contentDescription = "Mic",
-                        tint = Color.White,
-                        modifier = Modifier.padding(24.dp)
-                    )
+                    Icon(painterResource(R.drawable.ic_mic), contentDescription = "Mic", tint = Color.White, modifier = Modifier.padding(24.dp))
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (isListening) {
-                Text("Listening...", color = Color.White, fontWeight = FontWeight.Medium)
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            AnimatedVisibility(visible = isProcessing, enter = fadeIn(), exit = fadeOut()) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator(color = Color.White)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text("Processing your query...", color = Color.White, fontSize = 14.sp)
-                }
+            if (isListening) Text("Listening...", color = Color.White, fontWeight = FontWeight.Medium)
+            if (isProcessing) {
+                Spacer(modifier = Modifier.height(16.dp))
+                CircularProgressIndicator(color = Color.White)
+                Text("Processing your query...", color = Color.White)
             }
 
             AnimatedVisibility(
@@ -218,49 +174,34 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                 Card(
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFC8E6C9)),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text("🤖 Gemini Response", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(aiResponse, color = Color(0xFF2E7D32))
                         Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = { tts.speak(aiResponse, TextToSpeech.QUEUE_FLUSH, null, null) },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32))
-                        ) {
+                        Button(onClick = { tts.speak(aiResponse, TextToSpeech.QUEUE_FLUSH, null, null) }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32))) {
                             Text("🔊 Play Response", color = Color.White)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
-                        Button(
-                            onClick = {
-                                requestStoragePermission()
-                                latestPdfFile = exportAsPdf(context, aiResponse)
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))
-                        ) {
+                        Button(onClick = {
+                            requestStoragePermission()
+                            latestPdfFile = exportAsPdf(context, aiResponse)
+                        }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))) {
                             Text("⬇️ Download as PDF", color = Color.White)
                         }
                         latestPdfFile?.let { file ->
                             Spacer(modifier = Modifier.height(8.dp))
-                            Button(
-                                onClick = {
-                                    val uri = FileProvider.getUriForFile(
-                                        context,
-                                        "${context.packageName}.provider",
-                                        file
-                                    )
-                                    val intent = Intent(Intent.ACTION_SEND).apply {
-                                        type = "application/pdf"
-                                        putExtra(Intent.EXTRA_STREAM, uri)
-                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                    }
-                                    context.startActivity(Intent.createChooser(intent, "Share PDF"))
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
-                            ) {
+                            Button(onClick = {
+                                val uri = FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+                                val intent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "application/pdf"
+                                    putExtra(Intent.EXTRA_STREAM, uri)
+                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                }
+                                context.startActivity(Intent.createChooser(intent, "Share PDF"))
+                            }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))) {
                                 Text("📤 Share PDF", color = Color.White)
                             }
                         }
@@ -274,9 +215,7 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                 history.take(5).forEach { (q, r) ->
                     Card(
                         shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                         colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
@@ -287,13 +226,9 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                text = "Tip: You can say things like:\n\"What crop is best for July?\"\n\"How to treat leaf rust in wheat?\"",
-                style = MaterialTheme.typography.bodySmall.copy(color = Color.White),
-                textAlign = TextAlign.Center
-            )
+            Text("Tip: Try asking: \"How to treat leaf rust in wheat?\"", color = Color.White, textAlign = TextAlign.Center)
         }
     }
 }
@@ -305,7 +240,7 @@ fun exportAsPdf(context: Context, content: String): File {
     val canvas = page.canvas
     val paint = android.graphics.Paint().apply {
         textSize = 14f
-        color = AndroidColor.BLACK
+        color = android.graphics.Color.BLACK
     }
     canvas.drawText("Gemini AI Response:", 10f, 25f, paint)
     canvas.drawText(content, 10f, 60f, paint)
