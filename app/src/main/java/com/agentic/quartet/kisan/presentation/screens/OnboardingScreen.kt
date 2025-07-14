@@ -5,8 +5,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,7 +37,10 @@ import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
 
 @Composable
-fun OnboardingScreen(onGetStartedClick: () -> Unit) {
+fun OnboardingScreen(
+    onSignUpClick: () -> Unit,
+    onSignInClick: () -> Unit
+) {
 
     Box(
         modifier = Modifier
@@ -103,18 +108,29 @@ fun OnboardingScreen(onGetStartedClick: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button(
-                    onClick = onGetStartedClick,
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
+                        .height(56.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Text(
-                        text = "GET STARTED",
-                        style = MaterialTheme.typography.titleMedium.copy(color = Color.White)
-                    )
+                    Button(
+                        onClick = onSignUpClick,
+                        shape = RoundedCornerShape(50),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Sign Up", color = Color.White)
+                    }
+
+                    Button(
+                        onClick = onSignInClick,
+                        shape = RoundedCornerShape(50),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Sign In", color = Color.White)
+                    }
                 }
 
                 AnimatedVisibility(

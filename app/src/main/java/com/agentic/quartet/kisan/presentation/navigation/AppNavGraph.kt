@@ -1,6 +1,9 @@
 package com.agentic.quartet.kisan.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,9 +18,11 @@ import com.agentic.quartet.kisan.presentation.screens.HomeScreen
 import com.agentic.quartet.kisan.presentation.screens.IrrigationTipsScreen
 import com.agentic.quartet.kisan.presentation.screens.MarketPriceScreen
 import com.agentic.quartet.kisan.presentation.screens.OnboardingScreen
+import com.agentic.quartet.kisan.presentation.screens.SignInScreen
 import com.agentic.quartet.kisan.presentation.screens.SignUpScreen
 import com.agentic.quartet.kisan.presentation.screens.SoilDetectorScreen
 import com.agentic.quartet.kisan.presentation.screens.VoiceAgentScreen
+import com.agentic.quartet.kisan.utils.UserPreferences
 
 sealed class Screen(val route: String) {
     object MarketPrice : Screen("market_price")
@@ -25,6 +30,7 @@ sealed class Screen(val route: String) {
     object DiseaseDetection : Screen("disease_detection")
     object OnboardingScreen : Screen("onboarding_screen")
     object SignUp : Screen("signup_screen")
+    object SignIn : Screen("sign_in")
     object HomeScreen : Screen("home_screen")
     object CropCalendar : Screen("crop_calendar")
     object CropDetail : Screen("crop_detail/{monthIndex}") {
@@ -38,97 +44,134 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun AppNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screen.OnboardingScreen.route) {
-        composable(Screen.OnboardingScreen.route) {
-            OnboardingScreen(onGetStartedClick = {
-                navController.navigate(Screen.HomeScreen.route)
-            })
+fun AppNavGraph(
+    navController: NavHostController,
+    userPreferences: UserPreferences
+) {
+
+    val isSignedInState = remember { mutableStateOf<Boolean?>(null) }
+
+    LaunchedEffect(Unit) {
+        isSignedInState.value = userPreferences.isSignedIn()
+    }
+
+    isSignedInState.value?.let { isSignedIn ->
+        val startDestination = if (isSignedIn) {
+            Screen.HomeScreen.route
+        } else {
+            Screen.OnboardingScreen.route
         }
 
-        composable(Screen.SignUp.route) {
-            SignUpScreen(
-                onSignUpComplete = {
-                    navController.navigate(Screen.HomeScreen.route) {
-                        popUpTo(Screen.OnboardingScreen.route) { inclusive = true }
+        NavHost(navController = navController, startDestination = startDestination) {
+            composable(Screen.OnboardingScreen.route) {
+                OnboardingScreen(
+                    onSignUpClick = {
+                        navController.navigate(Screen.SignUp.route) {
+                            popUpTo(Screen.OnboardingScreen.route) { inclusive = true }
+                        }
+                    },
+                    onSignInClick = {
+                        navController.navigate(Screen.SignIn.route) {
+                            popUpTo(Screen.OnboardingScreen.route) { inclusive = true }
+                        }
                     }
-                }
-            )
-        }
+                )
+            }
 
-        composable(Screen.HomeScreen.route) {
-            HomeScreen(
-                onNavigateToDiseaseDetection = {
-                    navController.navigate(Screen.DiseaseDetection.route)
-                },
-                onNavigateToMarketPrices = {
-                    navController.navigate(Screen.MarketPrice.route)
-                },
-                onNavigateToGovtSchemes = {
-                    navController.navigate(Screen.GovtSchemeNavigator.route)
-                },
-                onVoiceAgentClick = {
-                    navController.navigate(Screen.VoiceAgent.route)
-                },
-                onSoilDetectorClick = {
-                    navController.navigate(Screen.SoilDetector.route)
-                },
-                onCropCalendarClick = {
-                    navController.navigate(Screen.CropCalendar.route)
-                },
-                onIrrigationTipsClick = {
-                    navController.navigate(Screen.IrrigationTips.route)
-                },
-                onFertilizerGuideClick = {
-                    navController.navigate(Screen.FertilizerGuide.route)
-                }
-            )
-        }
+            composable(Screen.SignUp.route) {
+                SignUpScreen(
+                    onSignUpComplete = {
+                        navController.navigate(Screen.HomeScreen.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
 
-        composable(Screen.DiseaseDetection.route) {
-            DiseaseDetectionScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
+            composable(Screen.SignIn.route) {
+                SignInScreen(
+                    onSignInSuccess = {
+                        navController.navigate(Screen.HomeScreen.route) {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
+            }
 
-        composable(Screen.MarketPrice.route) {
-            MarketPriceScreen()
-        }
+            composable(Screen.HomeScreen.route) {
+                HomeScreen(
+                    onNavigateToDiseaseDetection = {
+                        navController.navigate(Screen.DiseaseDetection.route)
+                    },
+                    onNavigateToMarketPrices = {
+                        navController.navigate(Screen.MarketPrice.route)
+                    },
+                    onNavigateToGovtSchemes = {
+                        navController.navigate(Screen.GovtSchemeNavigator.route)
+                    },
+                    onVoiceAgentClick = {
+                        navController.navigate(Screen.VoiceAgent.route)
+                    },
+                    onSoilDetectorClick = {
+                        navController.navigate(Screen.SoilDetector.route)
+                    },
+                    onCropCalendarClick = {
+                        navController.navigate(Screen.CropCalendar.route)
+                    },
+                    onIrrigationTipsClick = {
+                        navController.navigate(Screen.IrrigationTips.route)
+                    },
+                    onFertilizerGuideClick = {
+                        navController.navigate(Screen.FertilizerGuide.route)
+                    }
+                )
+            }
 
-        composable(Screen.GovtSchemeNavigator.route) {
-            GovtSchemesScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
+            composable(Screen.DiseaseDetection.route) {
+                DiseaseDetectionScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
 
-        composable(Screen.SoilDetector.route) {
-            SoilDetectorScreen(onBack = { navController.popBackStack() })
-        }
+            composable(Screen.MarketPrice.route) {
+                MarketPriceScreen()
+            }
 
-        composable(Screen.CropCalendar.route) {
-            CropCalendarScreen(onMonthClick = { idx ->
-                navController.navigate(Screen.CropDetail.createRoute(idx))
-            })
-        }
+            composable(Screen.GovtSchemeNavigator.route) {
+                GovtSchemesScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
 
-        composable(
-            route = Screen.CropDetail.route,
-            arguments = listOf(navArgument("monthIndex") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val idx = backStackEntry.arguments!!.getInt("monthIndex")
-            CropDetailScreen(monthIndex = idx, onBack = { navController.popBackStack() })
-        }
+            composable(Screen.SoilDetector.route) {
+                SoilDetectorScreen(onBack = { navController.popBackStack() })
+            }
 
-        composable(Screen.IrrigationTips.route) {
-            IrrigationTipsScreen(onBack = { navController.popBackStack() })
-        }
+            composable(Screen.CropCalendar.route) {
+                CropCalendarScreen(onMonthClick = { idx ->
+                    navController.navigate(Screen.CropDetail.createRoute(idx))
+                })
+            }
 
-        composable(Screen.FertilizerGuide.route) {
-            FertilizerGuideScreen(onBack = { navController.popBackStack() })
-        }
+            composable(
+                route = Screen.CropDetail.route,
+                arguments = listOf(navArgument("monthIndex") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val idx = backStackEntry.arguments!!.getInt("monthIndex")
+                CropDetailScreen(monthIndex = idx, onBack = { navController.popBackStack() })
+            }
 
-        composable(Screen.VoiceAgent.route) {
-            VoiceAgentScreen(onBack = { navController.popBackStack() })
+            composable(Screen.IrrigationTips.route) {
+                IrrigationTipsScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable(Screen.FertilizerGuide.route) {
+                FertilizerGuideScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable(Screen.VoiceAgent.route) {
+                VoiceAgentScreen(onBack = { navController.popBackStack() })
+            }
         }
     }
 }

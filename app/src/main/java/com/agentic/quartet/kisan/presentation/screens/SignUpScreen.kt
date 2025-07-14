@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Check
 import com.agentic.quartet.kisan.data.model.FarmerProfile
 import com.agentic.quartet.kisan.presentation.AppBackground
 import com.agentic.quartet.kisan.utils.ProfileManager
+import com.agentic.quartet.kisan.utils.UserPreferences
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
@@ -53,7 +54,7 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "👤 Create Your Farmer Profile",
+                text = "Create Your Farmer Profile",
                 style = MaterialTheme.typography.headlineSmall.copy(
                     color = Color(0xFF4CAF50),
                     fontWeight = FontWeight.Bold
@@ -180,7 +181,10 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                             farmingSource = selectedFarmingSource
                         )
                         ProfileManager.saveProfile(context, profile)
-                        onSignUpComplete()
+                        scope.launch {
+                            UserPreferences(context).setSignedIn(true)
+                            onSignUpComplete()
+                        }
                     }
                 },
                 modifier = Modifier
