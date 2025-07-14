@@ -6,7 +6,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.agentic.quartet.kisan.presentation.screens.AuthScreen
 import com.agentic.quartet.kisan.presentation.screens.CropCalendarScreen
 import com.agentic.quartet.kisan.presentation.screens.CropDetailScreen
 import com.agentic.quartet.kisan.presentation.screens.DiseaseDetectionScreen
@@ -16,15 +15,16 @@ import com.agentic.quartet.kisan.presentation.screens.HomeScreen
 import com.agentic.quartet.kisan.presentation.screens.IrrigationTipsScreen
 import com.agentic.quartet.kisan.presentation.screens.MarketPriceScreen
 import com.agentic.quartet.kisan.presentation.screens.OnboardingScreen
+import com.agentic.quartet.kisan.presentation.screens.SignUpScreen
 import com.agentic.quartet.kisan.presentation.screens.SoilDetectorScreen
 import com.agentic.quartet.kisan.presentation.screens.VoiceAgentScreen
 
 sealed class Screen(val route: String) {
-    object Auth : Screen("auth")
     object MarketPrice : Screen("market_price")
     object GovtSchemeNavigator : Screen("govt_scheme_navigator")
     object DiseaseDetection : Screen("disease_detection")
     object OnboardingScreen : Screen("onboarding_screen")
+    object SignUp : Screen("signup_screen")
     object HomeScreen : Screen("home_screen")
     object CropCalendar : Screen("crop_calendar")
     object CropDetail : Screen("crop_detail/{monthIndex}") {
@@ -40,20 +40,20 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavGraph(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.OnboardingScreen.route) {
-        composable(Screen.Auth.route) {
-            AuthScreen(
-                onSignedIn = {
-                    navController.navigate(Screen.MarketPrice.route) {
-                        popUpTo(Screen.Auth.route) { inclusive = true }
-                    }
-                }
-            )
-        }
-
         composable(Screen.OnboardingScreen.route) {
             OnboardingScreen(onGetStartedClick = {
                 navController.navigate(Screen.HomeScreen.route)
             })
+        }
+
+        composable(Screen.SignUp.route) {
+            SignUpScreen(
+                onSignUpComplete = {
+                    navController.navigate(Screen.HomeScreen.route) {
+                        popUpTo(Screen.OnboardingScreen.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(Screen.HomeScreen.route) {
