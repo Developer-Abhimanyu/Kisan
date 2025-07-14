@@ -96,7 +96,7 @@ fun HomeScreen(
             item {
                 HomeFeatureButton(
                     "Disease Detection",
-                    R.drawable.ic_leaf,
+                    R.drawable.ic_disease_detection,
                     onNavigateToDiseaseDetection
                 )
             }
@@ -110,22 +110,22 @@ fun HomeScreen(
                 HomeFeatureButton("Voice Agent", R.drawable.ic_mic, onVoiceAgentClick)
             }
             item {
-                HomeFeatureButton("Soil Scanner", R.drawable.ic_mic) {
+                HomeFeatureButton("Soil Scanner", R.drawable.ic_soil_scanner) {
                     onSoilDetectorClick()
                 }
             }
             item {
-                HomeFeatureButton("Crop Calendar", R.drawable.ic_mic) {
+                HomeFeatureButton("Crop Calendar", R.drawable.ic_crop_calendar) {
                     onCropCalendarClick()
                 }
             }
             item {
-                HomeFeatureButton("Irrigation Tips", R.drawable.ic_mic) {
+                HomeFeatureButton("Irrigation Tips", R.drawable.ic_irrigation_tips) {
                     onIrrigationTipsClick()
                 }
             }
             item {
-                HomeFeatureButton("Fertilizer Guide", R.drawable.ic_mic) {
+                HomeFeatureButton("Fertilizer Guide", R.drawable.ic_fertilizer_guide) {
                     onFertilizerGuideClick()
                 }
             }
