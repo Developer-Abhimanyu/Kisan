@@ -1,31 +1,22 @@
 package com.agentic.quartet.kisan.presentation.screens
 
+import android.app.Activity
+import android.os.Build
+import android.os.LocaleList
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -36,61 +27,101 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.utils.LanguagePreferenceManager
+import com.agentic.quartet.kisan.utils.LocaleHelper.setAppLocale
+import kotlinx.coroutines.launch
+import java.util.*
 
 @Composable
 fun OnboardingScreen(
     onSignUpClick: () -> Unit,
-    onSignInClick: () -> Unit
+    onSignInClick: () -> Unit,
+    selectedLangCode: String,
+    onLanguageChange: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val languagePref = remember { LanguagePreferenceManager(context) }
+
+    val languages = mapOf("en" to "English", "kn" to "ಕನ್ನಡ", "hi" to "हिंदी")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedLangCode by remember { mutableStateOf("en") }
+
+    LaunchedEffect(Unit) {
+        val savedLang = languagePref.getSavedLanguage() // safe call inside coroutine
+        if (savedLang != null) {
+            selectedLangCode = savedLang
+            setAppLocale(savedLang, context)
+        }
+    }
+
+    fun updateLocale(localeCode: String) {
+        val locale = Locale(localeCode)
+        Locale.setDefault(locale)
+        val resources = context.resources
+        val config = resources.configuration
+        config.setLocales(LocaleList(locale))
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        (context as? Activity)?.recreate()
+    }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp, vertical = 40.dp)
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_icon),
                     contentDescription = null,
                     modifier = Modifier.size(48.dp)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
-
-                Text(
-                    buildAnnotatedString {
-                        withStyle(
-                            SpanStyle(
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF4CAF50)
+                Box {
+                    TextButton(onClick = { expanded = true }) {
+                        Text(languages[selectedLangCode] ?: "Language", color = Color(0xFF4CAF50))
+                    }
+                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        languages.forEach { (code, name) ->
+                            DropdownMenuItem(
+                                text = { Text(name) },
+                                onClick = {
+                                    expanded = false
+                                    selectedLangCode = code
+                                    scope.launch {
+                                        languagePref.saveLanguage(code)
+                                        updateLocale(code)
+                                    }
+                                }
                             )
-                        ) {
-                            append(stringResource(R.string.the_new_era))
-                        }
-                        withStyle(
-                            SpanStyle(
-                                fontSize = 22.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF4CAF50)
-                            )
-                        ) {
-                            append(stringResource(R.string.agriculture))
                         }
                     }
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = stringResource(R.string.growing_resources_thriving_futures),
-                    style = MaterialTheme.typography.bodyLarge.copy(color = Color(0xFF4CAF50)),
-                    lineHeight = 28.sp
-                )
+                }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                buildAnnotatedString {
+                    withStyle(SpanStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50))) {
+                        append(stringResource(R.string.the_new_era))
+                    }
+                    withStyle(SpanStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50))) {
+                        append("\n")
+                        append(stringResource(R.string.agriculture))
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.growing_resources_thriving_futures),
+                style = MaterialTheme.typography.bodyLarge.copy(color = Color(0xFF4CAF50)),
+                lineHeight = 28.sp
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 

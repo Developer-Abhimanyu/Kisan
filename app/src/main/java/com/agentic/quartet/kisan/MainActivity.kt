@@ -1,11 +1,10 @@
 package com.agentic.quartet.kisan
 
+import android.app.Application
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.navigation.compose.rememberNavController
-import com.agentic.quartet.kisan.presentation.navigation.AppNavGraph
 import com.agentic.quartet.kisan.presentation.ui.theme.KisanTheme
 import com.agentic.quartet.kisan.utils.UserPreferences
 
@@ -16,9 +15,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         userPreferences = UserPreferences(this)
         setContent {
-            val navController = rememberNavController()
             KisanTheme {
-                AppNavGraph(navController, userPreferences)
+                KisanAppRoot()
             }
         }
     }

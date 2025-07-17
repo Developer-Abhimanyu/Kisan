@@ -46,7 +46,9 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    userPreferences: UserPreferences
+    userPreferences: UserPreferences,
+    selectedLangCode: String,
+    onLanguageChange: (String) -> Unit
 ) {
 
     val isSignedInState = remember { mutableStateOf<Boolean?>(null) }
@@ -70,7 +72,9 @@ fun AppNavGraph(
                     },
                     onSignInClick = {
                         navController.navigate(Screen.SignIn.route)
-                    }
+                    },
+                    selectedLangCode = selectedLangCode,
+                    onLanguageChange = onLanguageChange
                 )
             }
 
