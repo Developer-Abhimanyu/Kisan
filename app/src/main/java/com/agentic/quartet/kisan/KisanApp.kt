@@ -1,6 +1,7 @@
 package com.agentic.quartet.kisan
 
 import android.app.Application
+import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,6 +14,7 @@ import com.agentic.quartet.kisan.utils.LocaleHelper
 import com.agentic.quartet.kisan.utils.UserPreferences
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @HiltAndroidApp
 class KisanApp : Application()
@@ -21,14 +23,13 @@ class KisanApp : Application()
 fun KisanAppRoot() {
     val context = LocalContext.current
     val languagePref = remember { LanguagePreferenceManager(context) }
-
     val navController = rememberNavController()
     val userPreferences = remember { UserPreferences(context) }
 
     var selectedLangCode by remember { mutableStateOf("en") }
     val scope = rememberCoroutineScope()
 
-    // Fetch saved language and apply on app launch
+    // Fetch saved language once app launches
     LaunchedEffect(Unit) {
         val savedLang = languagePref.getSavedLanguage()
         if (!savedLang.isNullOrBlank()) {
@@ -37,7 +38,7 @@ fun KisanAppRoot() {
         }
     }
 
-    // Reactively update locale on language code change
+    // When language changes in runtime
     SideEffect {
         LocaleHelper.setAppLocale(selectedLangCode, context)
     }
