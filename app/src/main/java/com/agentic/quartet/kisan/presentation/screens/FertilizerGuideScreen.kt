@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -106,7 +107,7 @@ fun FertilizerGuideScreen(onBack: () -> Unit) {
             .padding(16.dp)
     ) {
         Text(
-            text = "Fertilizer Guide",
+            text = stringResource(R.string.fertilizer_guide),
             style = MaterialTheme.typography.headlineSmall.copy(
                 color = Color(0xFF4CAF50),
                 fontWeight = FontWeight.Bold
@@ -117,7 +118,7 @@ fun FertilizerGuideScreen(onBack: () -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Select Crop", style = MaterialTheme.typography.titleMedium, color = Color(0xFF2E7D32))
+        Text(text = stringResource(R.string.select_crop), style = MaterialTheme.typography.titleMedium, color = Color(0xFF2E7D32))
         Spacer(modifier = Modifier.height(8.dp))
 
         AnimatedVisibility(visible = true, enter = fadeIn(animationSpec = tween(600))) {
@@ -147,7 +148,7 @@ fun FertilizerGuideScreen(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Tip: Fertilizer efficiency is highest when soil is moist.",
+            text = stringResource(R.string.tip_fertilizer),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center
@@ -179,7 +180,7 @@ fun CropDropdown(
             value = selected,
             onValueChange = {},
             readOnly = true,
-            label = { Text("Crop", color = Color(0xFF2E7D32)) },
+            label = { Text(stringResource(R.string.crop), color = Color(0xFF2E7D32)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
                 .fillMaxWidth()

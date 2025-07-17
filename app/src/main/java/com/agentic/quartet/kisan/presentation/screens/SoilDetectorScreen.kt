@@ -14,9 +14,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
+import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,6 +29,7 @@ fun SoilDetectorScreen(onBack: () -> Unit) {
     var isLoading by remember { mutableStateOf(false) }
     var resultVisible by remember { mutableStateOf(false) }
 
+    //TODO need to add to strings
     val soilData = remember {
         mutableStateOf(
             SoilData(
@@ -47,7 +50,7 @@ fun SoilDetectorScreen(onBack: () -> Unit) {
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
-                    text = "Soil Health Detector",
+                    text = stringResource(R.string.soil_health_detector),
                     style = MaterialTheme.typography.headlineSmall.copy(
                         color = Color(0xFF4CAF50),
                         fontWeight = FontWeight.Bold
@@ -76,13 +79,13 @@ fun SoilDetectorScreen(onBack: () -> Unit) {
                 ) {
                     Icon(Icons.Default.Refresh, contentDescription = null, tint = Color.White)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Scan Soil Health", color = Color.White)
+                    Text(stringResource(R.string.scan_soil_health), color = Color.White)
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 if (isLoading) {
-                    Text("Scanning...", color = Color.White)
+                    Text(stringResource(R.string.scanning), color = Color.White)
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
 
@@ -91,17 +94,17 @@ fun SoilDetectorScreen(onBack: () -> Unit) {
                     enter = fadeIn(animationSpec = tween(500)) + slideInVertically(initialOffsetY = { it / 2 })
                 ) {
                     Column {
-                        ResultCard(title = "🌊 Moisture", value = soilData.value.moisture)
-                        ResultCard(title = "⚖️ pH Level", value = soilData.value.ph)
-                        ResultCard(title = "🧪 Fertility", value = soilData.value.fertility)
-                        ResultCard(title = "💡 Suggestion", value = soilData.value.suggestion)
+                        ResultCard(title = "🌊 ${stringResource(R.string.humidity)}", value = soilData.value.moisture)
+                        ResultCard(title = "⚖️ ${stringResource(R.string.ph_evel)}", value = soilData.value.ph)
+                        ResultCard(title = "🧪 ${stringResource(R.string.fertility)}", value = soilData.value.fertility)
+                        ResultCard(title = "💡 ${stringResource(R.string.suggestion)}", value = soilData.value.suggestion)
                     }
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Tip: Soil health improves with crop rotation and organic matter.",
+                    text = stringResource(R.string.soil_health_improves_with_crop_rotation_and_organic_matter),
                     style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center

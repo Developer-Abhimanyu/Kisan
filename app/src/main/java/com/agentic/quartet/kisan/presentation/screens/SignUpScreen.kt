@@ -16,8 +16,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.ui.res.stringResource
+import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.data.model.FarmerProfile
 import com.agentic.quartet.kisan.presentation.AppBackground
 import com.agentic.quartet.kisan.utils.ProfileManager
@@ -37,7 +40,7 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    val farmingSources = listOf("Terrace", "Plotted plants", "Agriculture land")
+    val farmingSources = listOf(stringResource(R.string.terrace), stringResource(R.string.plotted_plants), stringResource(R.string.agriculture_land))
     var selectedFarmingSource by remember { mutableStateOf(farmingSources[0]) }
     var expanded by remember { mutableStateOf(false) }
 
@@ -54,7 +57,7 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Create Your Farmer Profile",
+                text = stringResource(R.string.create_your_farmer_rofile),
                 style = MaterialTheme.typography.headlineSmall.copy(
                     color = Color(0xFF4CAF50),
                     fontWeight = FontWeight.Bold
@@ -68,48 +71,125 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Name") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text(stringResource(R.string.name)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF4CAF50),
+                    unfocusedBorderColor = Color(0xFF81C784),
+                    cursorColor = Color(0xFF4CAF50),
+                    focusedLabelColor = Color(0xFF4CAF50),
+                    unfocusedLabelColor = Color(0xFF81C784),
+                    focusedPlaceholderColor = Color(0xFF66BB6A),
+                    unfocusedPlaceholderColor = Color(0xFF81C784),
+                    focusedTextColor = Color(0xFF4CAF50),
+                    unfocusedTextColor = Color(0xFF4CAF50)
+                )
             )
             OutlinedTextField(
                 value = phone,
                 onValueChange = { phone = it },
-                label = { Text("Phone Number") },
+                label = { Text(stringResource(R.string.phone_number)) },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF4CAF50),
+                    unfocusedBorderColor = Color(0xFF81C784),
+                    cursorColor = Color(0xFF4CAF50),
+                    focusedLabelColor = Color(0xFF4CAF50),
+                    unfocusedLabelColor = Color(0xFF81C784),
+                    focusedPlaceholderColor = Color(0xFF66BB6A),
+                    unfocusedPlaceholderColor = Color(0xFF81C784),
+                    focusedTextColor = Color(0xFF4CAF50),
+                    unfocusedTextColor = Color(0xFF4CAF50)
+                )
             )
             OutlinedTextField(
                 value = city,
                 onValueChange = { city = it },
-                label = { Text("City") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text(stringResource(R.string.city)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF4CAF50),
+                    unfocusedBorderColor = Color(0xFF81C784),
+                    cursorColor = Color(0xFF4CAF50),
+                    focusedLabelColor = Color(0xFF4CAF50),
+                    unfocusedLabelColor = Color(0xFF81C784),
+                    focusedPlaceholderColor = Color(0xFF66BB6A),
+                    unfocusedPlaceholderColor = Color(0xFF81C784),
+                    focusedTextColor = Color(0xFF4CAF50),
+                    unfocusedTextColor = Color(0xFF4CAF50)
+                )
             )
             OutlinedTextField(
                 value = state,
                 onValueChange = { state = it },
-                label = { Text("State") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text(stringResource(R.string.state)) },
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF4CAF50),
+                    unfocusedBorderColor = Color(0xFF81C784),
+                    cursorColor = Color(0xFF4CAF50),
+                    focusedLabelColor = Color(0xFF4CAF50),
+                    unfocusedLabelColor = Color(0xFF81C784),
+                    focusedPlaceholderColor = Color(0xFF66BB6A),
+                    unfocusedPlaceholderColor = Color(0xFF81C784),
+                    focusedTextColor = Color(0xFF4CAF50),
+                    unfocusedTextColor = Color(0xFF4CAF50)
+                )
             )
             OutlinedTextField(
                 value = pinCode,
                 onValueChange = { pinCode = it },
-                label = { Text("Pincode") },
+                label = { Text(stringResource(R.string.pincode)) },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF4CAF50),
+                    unfocusedBorderColor = Color(0xFF81C784),
+                    cursorColor = Color(0xFF4CAF50),
+                    focusedLabelColor = Color(0xFF4CAF50),
+                    unfocusedLabelColor = Color(0xFF81C784),
+                    focusedPlaceholderColor = Color(0xFF66BB6A),
+                    unfocusedPlaceholderColor = Color(0xFF81C784),
+                    focusedTextColor = Color(0xFF4CAF50),
+                    unfocusedTextColor = Color(0xFF4CAF50)
+                )
             )
             OutlinedTextField(
                 value = password,
                 onValueChange = { password = it },
-                label = { Text("Password") },
+                label = { Text(stringResource(R.string.password)) },
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF4CAF50),
+                    unfocusedBorderColor = Color(0xFF81C784),
+                    cursorColor = Color(0xFF4CAF50),
+                    focusedLabelColor = Color(0xFF4CAF50),
+                    unfocusedLabelColor = Color(0xFF81C784),
+                    focusedPlaceholderColor = Color(0xFF66BB6A),
+                    unfocusedPlaceholderColor = Color(0xFF81C784),
+                    focusedTextColor = Color(0xFF4CAF50),
+                    unfocusedTextColor = Color(0xFF4CAF50)
+                )
             )
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text("Confirm Password") },
+                label = { Text(stringResource(R.string.confirm_password)) },
                 modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF4CAF50),
+                    unfocusedBorderColor = Color(0xFF81C784),
+                    cursorColor = Color(0xFF4CAF50),
+                    focusedLabelColor = Color(0xFF4CAF50),
+                    unfocusedLabelColor = Color(0xFF81C784),
+                    focusedPlaceholderColor = Color(0xFF66BB6A),
+                    unfocusedPlaceholderColor = Color(0xFF81C784),
+                    focusedTextColor = Color(0xFF4CAF50),
+                    unfocusedTextColor = Color(0xFF4CAF50)
+                )
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -122,19 +202,31 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     value = selectedFarmingSource,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Source of Farming") },
+                    label = { Text(stringResource(R.string.source_of_farming)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                     modifier = Modifier
                         .menuAnchor()
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF4CAF50),
+                        unfocusedBorderColor = Color(0xFF81C784),
+                        cursorColor = Color(0xFF4CAF50),
+                        focusedLabelColor = Color(0xFF4CAF50),
+                        unfocusedLabelColor = Color(0xFF81C784),
+                        focusedPlaceholderColor = Color(0xFF66BB6A),
+                        unfocusedPlaceholderColor = Color(0xFF81C784),
+                        focusedTextColor = Color(0xFF4CAF50),
+                        unfocusedTextColor = Color(0xFF4CAF50)
+                    )
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(color = Color(0xFF4CAF50))
                 ) {
                     farmingSources.forEach { option ->
                         DropdownMenuItem(
-                            text = { Text(option) },
+                            text = { Text(option, color = Color.White) },
                             onClick = {
                                 selectedFarmingSource = option
                                 expanded = false
@@ -156,11 +248,11 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
-
+            val error = stringResource(R.string.please_fill_all_fields_correctly)
             Button(
                 onClick = {
                     if (name.isBlank() || phone.length != 10 || city.isBlank() || state.isBlank() || pinCode.length != 6 || password.length < 6 || password != confirmPassword) {
-                        errorMessage = "Please fill all fields correctly."
+                        errorMessage = error
                         return@Button
                     }
 
@@ -200,12 +292,12 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     transitionSpec = {
                         fadeIn(animationSpec = tween(300)) with fadeOut(animationSpec = tween(300))
                     },
-                    label = "submit-animation"
+                    label = stringResource(R.string.submit_animation)
                 ) { success ->
                     if (success) {
                         Icon(
                             imageVector = Icons.Default.Check,
-                            contentDescription = "Success",
+                            contentDescription = stringResource(R.string.success),
                             tint = Color.White
                         )
                     } else if (isSubmitting) {
@@ -215,14 +307,14 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text("Submit", color = Color.White)
+                        Text(stringResource(R.string.submit), color = Color.White)
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(32.dp))
             Text(
-                text = "Tip: Providing correct profile helps personalize your farming guidance.",
+                text = stringResource(R.string.providing_correct_profile_helps_personalize_your_farming_guidance),
                 style = MaterialTheme.typography.bodySmall.copy(color = Color.White),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()

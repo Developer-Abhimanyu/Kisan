@@ -16,6 +16,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +26,7 @@ import com.agentic.quartet.kisan.R
 fun IrrigationTipsScreen(onBack: () -> Unit) {
     val scrollState = rememberScrollState()
 
+    // TODO need to add in strings
     val tips = listOf(
         "Irrigate early morning or evening to reduce evaporation.",
         "Use drip irrigation to conserve water in dry areas.",
@@ -65,7 +67,7 @@ fun IrrigationTipsScreen(onBack: () -> Unit) {
             .padding(16.dp)
     ) {
         Text(
-            text = "Irrigation Tips",
+            text = stringResource(R.string.irrigation_tips),
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF4CAF50)

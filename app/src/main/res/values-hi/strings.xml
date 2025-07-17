@@ -1,0 +1,125 @@
+<resources>
+    <string name="app_name">किसान</string>
+
+    <string name="january">जनवरी</string>
+    <string name="february">फ़रवरी</string>
+    <string name="march">मार्च</string>
+    <string name="april">अप्रैल</string>
+    <string name="may">मई</string>
+    <string name="june">जून</string>
+    <string name="july">जुलाई</string>
+    <string name="august">अगस्त</string>
+    <string name="september">सितम्बर</string>
+    <string name="october">अक्टूबर</string>
+    <string name="november">नवंबर</string>
+    <string name="december">दिसंबर</string>
+
+    <string name="terrace">छत</string>
+    <string name="plotted_plants">कमरों के पौधों</string>
+    <string name="agriculture_land">कृषि भूमि</string>
+
+    <string name="crop_calendar">फसल कैलेंडर</string>
+    <string name="sowing_millet">बुवाई: बाजरा</string>
+    <string name="water_moderate">जल: मध्यम</string>
+    <string name="tap_on_a_month_to_explore_seasonal_crop_guidance">मौसमी फसल मार्गदर्शन जानने के लिए किसी महीने पर टैप करें।</string>
+    <string name="crop_image">छवि सुधारें</string>
+    <string name="crop_activities">फसल गतिविधियाँ</string>
+    <string name="smart_farming_tips">स्मार्ट खेती युक्तियाँ</string>
+    <string name="share">शेयर करना</string>
+    <string name="saved_to_documents">दस्तावेज़ों में सहेजा गया</string>
+    <string name="download_pdf">पीडीएफ डाउनलोड करें</string>
+    <string name="share_via">के माध्यम से साझा करें</string>
+
+    <string name="detected_leaf_spot_disease">पता चला: पत्ती धब्बा रोग</string>
+    <string name="suggestions">सुझाव: हर 10 दिन में मैन्कोजेब आधारित कवकनाशी का प्रयोग करें।</string>
+    <string name="healthy_crop">स्वस्थ फसल! कोई रोग नहीं दिखा।</string>
+    <string name="crop_disease_detection">फसल रोग का पता लगाना</string>
+    <string name="gallery">गैलरी</string>
+    <string name="use_camera">कैमरे का प्रयोग करें</string>
+    <string name="analyzing_image">छवि का विश्लेषण किया जा रहा है...</string>
+    <string name="diagnosis_result">निदान परिणाम</string>
+    <string name="tip_for_disease">सुझाव: बेहतर पहचान के लिए प्रभावित पत्तियों की उच्च गुणवत्ता वाली, अच्छी रोशनी वाली छवियों का उपयोग करें।</string>
+
+    <string name="gemini_advice">Gemini सलाह</string>
+
+    <string name="fertilizer_guide">उर्वरक गाइड</string>
+    <string name="select_crop">फसल का चयन करें</string>
+    <string name="crop">काटना</string>
+    <string name="tip_fertilizer">सुझाव: उर्वरक की प्रभावशीलता तब सर्वाधिक होती है जब मिट्टी नम हो।</string>
+
+    <string name="government_schemes">सरकारी योजनाएं</string>
+    <string name="learn_more">और अधिक जानें</string>
+    <string name="visit_krishi_kendra">पंजीकरण और पूर्ण विवरण के लिए अपने निकटतम कृषि विज्ञान केंद्र (केवीके) या योजना की वेबसाइट पर जाएं।</string>
+
+    <string name="smart_farming_tools">स्मार्ट खेती उपकरण</string>
+    <string name="disease_detection">रोग का पता लगाना</string>
+    <string name="market_prices">बाज़ार कीमतें</string>
+    <string name="govt_schemes">सरकारी योजनाएँ</string>
+    <string name="soil_scanner">मृदा स्कैनर</string>
+    <string name="irrigation_tips">सिंचाई युक्तियाँ</string>
+    <string name="chatbot">चैटबॉट</string>
+    <string name="tip_home">टिप: अपनी स्मार्ट खेती की यात्रा शुरू करने के लिए ऊपर दिए गए टूल पर टैप करें!</string>
+
+    <string name="market_price_assistant">बाज़ार मूल्य सहायक</string>
+    <string name="enter_commodity_name">वस्तु का नाम दर्ज करें</string>
+    <string name="crop_market_trend">फसल बाज़ार का रुझान</string>
+    <string name="get_ai_price_advice">AI मूल्य सलाह प्राप्त करें</string>
+    <string name="ai_insight">AI अंतर्दृष्टि</string>
+    <string name="ai_insight_tip">सुझाव: अपनी फसलों के लिए सर्वोत्तम बिक्री समय तय करने के लिए इस डेटा का उपयोग करें।</string>
+
+    <string name="the_new_era">का नया युग \n</string>
+    <string name="agriculture">कृषि</string>
+    <string name="sign_up">साइन अप करें</string>
+    <string name="growing_resources_thriving_futures">बढ़ते संसाधन, समृद्ध भविष्य</string>
+    <string name="ai_powered_insights_for_modern_agriculture">आधुनिक कृषि के लिए एआई-संचालित अंतर्दृष्टि।</string>
+
+    <string name="sign_in">दाखिल करना</string>
+    <string name="username">उपयोगकर्ता नाम</string>
+    <string name="please_enter_your_username">कृपया अपना उपयोक्तानाम दर्ज करें</string>
+    <string name="please_enter_your_password">अपना पासवर्ड दर्ज करें</string>
+    <string name="signed_in_successfully">सफलतापूर्वक साइन इन किया गया!</string>
+
+    <string name="create_your_farmer_rofile">अपना किसान प्रोफ़ाइल बनाएँ</string>
+    <string name="name">नाम</string>
+    <string name="phone_number">फ़ोन नंबर</string>
+    <string name="city">शहर</string>
+    <string name="state">राज्य</string>
+    <string name="pincode">पिनकोड</string>
+    <string name="password">पासवर्ड</string>
+    <string name="confirm_password">पासवर्ड की पुष्टि कीजिये</string>
+    <string name="source_of_farming">खेती का स्रोत</string>
+    <string name="please_fill_all_fields_correctly">कृपया सभी फ़ील्ड सही ढंग से भरें.</string>
+    <string name="submit_animation">सबमिट-एनीमेशन</string>
+    <string name="success">सफलता</string>
+    <string name="submit">जमा करना</string>
+    <string name="providing_correct_profile_helps_personalize_your_farming_guidance">टिप: सही प्रोफ़ाइल प्रदान करने से आपके कृषि मार्गदर्शन को व्यक्तिगत बनाने में मदद मिलती है।</string>
+
+    <string name="soil_health_detector">मृदा स्वास्थ्य डिटेक्टर</string>
+    <string name="scan_soil_health">मृदा स्वास्थ्य स्कैन करें</string>
+    <string name="scanning">स्कैन किया जा रहा है...</string>
+    <string name="moisture">नमी</string>
+    <string name="ph_evel">पीएच स्तर</string>
+    <string name="fertility">उपजाऊपन</string>
+    <string name="suggestion">सुझाव</string>
+    <string name="soil_health_improves_with_crop_rotation_and_organic_matter">सुझाव: फसल चक्र और जैविक पदार्थ से मृदा स्वास्थ्य में सुधार होता है।</string>
+
+    <string name="humidity">नमी</string>
+    <string name="weather_icon">मौसम चिह्न</string>
+    <string name="tts_init_failed">TTS प्रारंभ विफल</string>
+    <string name="mic_permission_denied">माइक की अनुमति अस्वीकृत</string>
+    <string name="stoarge_permission_denied">भंडारण की अनुमति अस्वीकृत</string>
+    <string name="voice_agent">आवाज एजेंट</string>
+    <string name="mic">एमआईसी</string>
+    <string name="listening">सुनना...</string>
+    <string name="processing_your_query">आपकी क्वेरी संसाधित की जा रही है...</string>
+    <string name="gemini_response">Gemini प्रतिक्रिया</string>
+    <string name="play_response">प्रतिक्रिया चलाएँ</string>
+    <string name="download_as_pdf">पीडीएफ के रूप में डाउनलोड करें</string>
+    <string name="share_pdf">पीडीएफ साझा करें</string>
+    <string name="last_queries">अंतिम 5 प्रश्न</string>
+    <string name="tip_try_asking">सुझाव: पूछने का प्रयास करें:</string>
+    <string name="how_to_treat_leaf_rust_in_wheat">गेहूं में पत्ती जंग का उपचार कैसे करें?</string>
+    <string name="gemini_ai_response">जेमिनी एआई प्रतिक्रिया:</string>
+    <string name="pdf_saved_to">पीडीएफ को सहेजा गया</string>
+    <string name="ask_anything_about_your_crops_market_soil_irrigation_and_more">अपनी फसलों, बाजार, मिट्टी, सिंचाई और अन्य के बारे में कुछ भी पूछें!</string>
+</resources>

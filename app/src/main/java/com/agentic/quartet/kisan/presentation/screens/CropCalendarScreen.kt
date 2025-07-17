@@ -16,9 +16,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.agentic.quartet.kisan.R
 import java.util.*
 
 @Composable
@@ -26,8 +28,8 @@ fun CropCalendarScreen(
     onMonthClick: (Int) -> Unit
 ) {
     val months = listOf(
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        stringResource(R.string.january), stringResource(R.string.february), stringResource(R.string.march), stringResource(R.string.april), stringResource(R.string.may), stringResource(R.string.june),
+        stringResource(R.string.july), stringResource(R.string.august), stringResource(R.string.september), stringResource(R.string.october), stringResource(R.string.november), stringResource(R.string.december)
     )
 
     val currentMonth = Calendar.getInstance().get(Calendar.MONTH)
@@ -49,7 +51,7 @@ fun CropCalendarScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Crop Calendar",
+            text = stringResource(R.string.crop_calendar),
             style = MaterialTheme.typography.headlineSmall.copy(
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF4CAF50)
@@ -97,7 +99,7 @@ fun CropCalendarScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "🌾 Sowing: Millet\n💧 Water: Moderate",
+                            text = "🌾 ${stringResource(R.string.sowing_millet)}\n💧 ${stringResource(R.string.january)}",
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = if (isCurrent) Color.White else Color(0xFF2E7D32)
                             )
@@ -110,7 +112,7 @@ fun CropCalendarScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Tap on a month to explore seasonal crop guidance.",
+            text = stringResource(R.string.tap_on_a_month_to_explore_seasonal_crop_guidance),
             style = MaterialTheme.typography.bodyMedium.copy(
                 color = Color.White,
                 textAlign = TextAlign.Center

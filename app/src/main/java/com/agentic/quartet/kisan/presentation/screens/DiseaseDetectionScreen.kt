@@ -24,10 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -41,6 +43,9 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
 
     val scope = rememberCoroutineScope()
 
+    val detectedDisease = stringResource(R.string.detected_leaf_spot_disease)
+    val detectedDiseaseSuggestions = stringResource(R.string.suggestions)
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -51,11 +56,13 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
             scope.launch {
                 delay(2000)
                 diagnosisResult =
-                    "🦠 Detected: Leaf Spot Disease\n💊 Suggestion: Use Mancozeb-based fungicide every 10 days."
+                    "🦠 $detectedDisease\n💊 $detectedDiseaseSuggestions"
                 isLoading = false
             }
         }
     }
+
+    val healthyCrop = stringResource(R.string.healthy_crop)
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview()
@@ -66,7 +73,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
             isLoading = true
             scope.launch {
                 delay(2000)
-                diagnosisResult = "🌿 Healthy crop! No visible disease detected."
+                diagnosisResult = "🌿 $healthyCrop}"
                 isLoading = false
             }
         }
@@ -80,7 +87,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState())
         ) {
             Text(
-                text = "Crop Disease Detection",
+                text = stringResource(R.string.crop_disease_detection),
                 style = MaterialTheme.typography.headlineSmall.copy(
                     color = Color(0xFF4CAF50),
                     fontWeight = FontWeight.Bold
@@ -101,7 +108,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
                 ) {
                     Icon(Icons.Default.Home, contentDescription = null, tint = Color.White)
                     Spacer(Modifier.width(8.dp))
-                    Text("Gallery", color = Color.White)
+                    Text(stringResource(R.string.gallery), color = Color.White)
                 }
 
                 Button(
@@ -111,7 +118,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
                 ) {
                     Icon(Icons.Default.AddCircle, contentDescription = null, tint = Color.White)
                     Spacer(Modifier.width(8.dp))
-                    Text("Use Camera", color = Color.White)
+                    Text(stringResource(R.string.use_camera), color = Color.White)
                 }
             }
 
@@ -135,7 +142,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
 
             if (isLoading) {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text("Analyzing image...", color = Color.Gray)
+                Text(stringResource(R.string.analyzing_image), color = Color.Gray)
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
 
@@ -153,7 +160,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                "🩺 Diagnosis Result",
+                                "🩺 ${stringResource(R.string.diagnosis_result)}",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
                                 color = Color(0xFF2E7D32)
@@ -173,7 +180,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Tip: Use high-quality, well-lit images of affected leaves for better detection.",
+                text = stringResource(R.string.tip_for_disease),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center

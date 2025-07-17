@@ -1,0 +1,124 @@
+<resources>
+    <string name="app_name">ಕಿಸಾನ್</string>
+
+    <string name="january">ಜನವರಿ</string>
+    <string name="february">ಫೆಬ್ರವರಿ</string>
+    <string name="march">ಮಾರ್ಚ್</string>
+    <string name="april">ಏಪ್ರಿಲ್</string>
+    <string name="may">ಮೇ</string>
+    <string name="june">ಜೂನ್</string>
+    <string name="july">ಜುಲೈ</string>
+    <string name="august">ಆಗಸ್ಟ್</string>
+    <string name="september">ಸೆಪ್ಟೆಂಬರ್</string>
+    <string name="october">ಅಕ್ಟೋಬರ್</string>
+    <string name="november">ನವೆಂಬರ್</string>
+    <string name="december">ಡಿಸೆಂಬರ್</string>
+
+    <string name="terrace">ಟೆರೇಸ್</string>
+    <string name="plotted_plants">ಮಡಕೆ ಸಸ್ಯಗಳು</string>
+    <string name="agriculture_land">ಕೃಷಿ ಭೂಮಿ</string>
+
+    <string name="crop_calendar">ಕ್ರಾಪ್ ಕ್ಯಾಲೆಂಡರ್</string>
+    <string name="sowing_millet">ಬಿತ್ತನೆ: ರಾಗಿ</string>
+    <string name="water_moderate">ನೀರು: ಮಧ್ಯಮ</string>
+    <string name="tap_on_a_month_to_explore_seasonal_crop_guidance">ಕಾಲೋಚಿತ ಬೆಳೆ ಮಾರ್ಗದರ್ಶನವನ್ನು ಅನ್ವೇಷಿಸಲು ಒಂದು ತಿಂಗಳ ಮೇಲೆ ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
+    <string name="crop_image">ಚಿತ್ರವನ್ನು ಕ್ರಾಪ್ ಮಾಡಿ</string>
+    <string name="crop_activities">ಬೆಳೆ ಚಟುವಟಿಕೆಗಳು</string>
+    <string name="smart_farming_tips">ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ಸಲಹೆಗಳು</string>
+    <string name="share">ಹಂಚಿಕೊಳ್ಳಿ</string>
+    <string name="saved_to_documents">ಡಾಕ್ಯುಮೆಂಟ್‌ಗಳಲ್ಲಿ ಉಳಿಸಲಾಗಿದೆ</string>
+    <string name="download_pdf">PDF ಅನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
+    <string name="share_via">ಮೂಲಕ ಹಂಚಿಕೊಳ್ಳಿ</string>
+
+    <string name="detected_leaf_spot_disease">ಪತ್ತೆ: ಎಲೆ ಚುಕ್ಕೆ ರೋಗ</string>
+    <string name="suggestions">ಸಲಹೆ: ಪ್ರತಿ 10 ದಿನಗಳಿಗೊಮ್ಮೆ ಮ್ಯಾಂಕೋಜೆಬ್ ಆಧಾರಿತ ಶಿಲೀಂಧ್ರನಾಶಕವನ್ನು ಬಳಸಿ.</string>
+    <string name="healthy_crop">ಆರೋಗ್ಯಕರ ಬೆಳೆ! ಯಾವುದೇ ಗೋಚರ ರೋಗ ಪತ್ತೆಯಾಗಿಲ್ಲ.</string>
+    <string name="crop_disease_detection">ಬೆಳೆ ರೋಗ ಪತ್ತೆ</string>
+    <string name="gallery">ಗ್ಯಾಲರಿ</string>
+    <string name="use_camera">ಕ್ಯಾಮೆರಾ ಬಳಸಿ</string>
+    <string name="analyzing_image">ಚಿತ್ರವನ್ನು ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...</string>
+    <string name="diagnosis_result">ರೋಗನಿರ್ಣಯದ ಫಲಿತಾಂಶ</string>
+    <string name="tip_for_disease">ಸಲಹೆ: ಉತ್ತಮ ಪತ್ತೆಗಾಗಿ ಪೀಡಿತ ಎಲೆಗಳ ಉತ್ತಮ ಗುಣಮಟ್ಟದ, ಚೆನ್ನಾಗಿ ಬೆಳಗಿದ ಚಿತ್ರಗಳನ್ನು ಬಳಸಿ.</string>
+
+    <string name="gemini_advice">ಜೆಮಿನಿ ಸಲಹೆ</string>
+    <string name="crop">ಬೆಳೆ</string>
+    <string name="tip_fertilizer">ಸಲಹೆ: ಮಣ್ಣು ತೇವವಾಗಿದ್ದಾಗ ರಸಗೊಬ್ಬರ ದಕ್ಷತೆಯು ಅತ್ಯಧಿಕವಾಗಿರುತ್ತದೆ.</string>
+
+    <string name="government_schemes">ಸರ್ಕಾರದ ಯೋಜನೆಗಳು</string>
+    <string name="learn_more">ಇನ್ನಷ್ಟು ತಿಳಿಯಿರಿ</string>
+    <string name="visit_krishi_kendra">ನೋಂದಣಿ ಮತ್ತು ಪೂರ್ಣ ವಿವರಗಳಿಗಾಗಿ ನಿಮ್ಮ ಹತ್ತಿರದ ಕೃಷಿ ವಿಜ್ಞಾನ ಕೇಂದ್ರ (ಕೆವಿಕೆ) ಅಥವಾ ಯೋಜನೆಯ ವೆಬ್‌ಸೈಟ್‌ಗೆ ಭೇಟಿ ನೀಡಿ.</string>
+
+    <string name="smart_farming_tools">ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ಪರಿಕರಗಳು</string>
+    <string name="disease_detection">ರೋಗ ಪತ್ತೆ</string>
+    <string name="market_prices">ಮಾರುಕಟ್ಟೆ ಬೆಲೆಗಳು</string>
+    <string name="govt_schemes">ಸರ್ಕಾರದ ಯೋಜನೆಗಳು</string>
+    <string name="soil_scanner">ಮಣ್ಣಿನ ಸ್ಕ್ಯಾನರ್</string>
+    <string name="irrigation_tips">ನೀರಾವರಿ ಸಲಹೆಗಳು</string>
+    <string name="fertilizer_guide">ರಸಗೊಬ್ಬರ ಮಾರ್ಗದರ್ಶಿ</string>
+    <string name="chatbot">ಚಾಟ್‌ಬಾಟ್</string>
+    <string name="tip_home">ಸಲಹೆ: ನಿಮ್ಮ ಸ್ಮಾರ್ಟ್ ಕೃಷಿ ಪ್ರಯಾಣವನ್ನು ಪ್ರಾರಂಭಿಸಲು ಮೇಲಿನ ಉಪಕರಣವನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ!</string>
+
+    <string name="market_price_assistant">ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಸಹಾಯಕ</string>
+    <string name="enter_commodity_name">ಸರಕು ಹೆಸರನ್ನು ನಮೂದಿಸಿ</string>
+    <string name="crop_market_trend">ಬೆಳೆ ಮಾರುಕಟ್ಟೆ ಪ್ರವೃತ್ತಿ</string>
+    <string name="get_ai_price_advice">AI ಬೆಲೆ ಸಲಹೆ ಪಡೆಯಿರಿ</string>
+    <string name="ai_insight">AI ಒಳನೋಟ</string>
+    <string name="select_crop">ಕ್ರಾಪ್ ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="ai_insight_tip">ಸಲಹೆ: ನಿಮ್ಮ ಬೆಳೆಗಳಿಗೆ ಉತ್ತಮ ಮಾರಾಟದ ಸಮಯವನ್ನು ನಿರ್ಧರಿಸಲು ಈ ಡೇಟಾವನ್ನು ಬಳಸಿ.</string>
+
+    <string name="the_new_era">ಹೊಸ ಯುಗದ \n</string>
+    <string name="agriculture">ಕೃಷಿ</string>
+    <string name="sign_up">ಸೈನ್ ಅಪ್ ಮಾಡಿ</string>
+    <string name="growing_resources_thriving_futures">ಬೆಳೆಯುತ್ತಿರುವ ಸಂಪನ್ಮೂಲಗಳು, ಅಭಿವೃದ್ಧಿ ಹೊಂದುತ್ತಿರುವ ಭವಿಷ್ಯಗಳು</string>
+    <string name="ai_powered_insights_for_modern_agriculture">ಆಧುನಿಕ ಕೃಷಿಗಾಗಿ AI-ಚಾಲಿತ ಒಳನೋಟಗಳು.</string>
+
+    <string name="sign_in">ಸೈನ್ ಇನ್ ಮಾಡಿ</string>
+    <string name="username">ಬಳಕೆದಾರ ಹೆಸರು</string>
+    <string name="please_enter_your_username">ದಯವಿಟ್ಟು ನಿಮ್ಮ ಬಳಕೆದಾರ ಹೆಸರನ್ನು ನಮೂದಿಸಿ</string>
+    <string name="please_enter_your_password">ದಯವಿಟ್ಟು ನಿಮ್ಮ ಗುಪ್ತಪದವನ್ನು ನಮೂದಿಸಿ</string>
+    <string name="signed_in_successfully">ಯಶಸ್ವಿಯಾಗಿ ಸೈನ್ ಇನ್ ಮಾಡಲಾಗಿದೆ!</string>
+
+    <string name="create_your_farmer_rofile">ನಿಮ್ಮ ರೈತ ಪ್ರೊಫೈಲ್ ರಚಿಸಿ</string>
+    <string name="name">ಹೆಸರು</string>
+    <string name="phone_number">ದೂರವಾಣಿ ಸಂಖ್ಯೆ</string>
+    <string name="city">ನಗರ</string>
+    <string name="state">ರಾಜ್ಯ</string>
+    <string name="pincode">ಪಿನ್‌ಕೋಡ್</string>
+    <string name="password">ಪಾಸ್ವರ್ಡ್</string>
+    <string name="confirm_password">ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ದೃಢೀಕರಿಸಿ</string>
+    <string name="source_of_farming">ಬೇಸಾಯದ ಮೂಲ</string>
+    <string name="please_fill_all_fields_correctly">ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಕ್ಷೇತ್ರಗಳನ್ನು ಸರಿಯಾಗಿ ಭರ್ತಿ ಮಾಡಿ.</string>
+    <string name="submit_animation">ಸಲ್ಲಿಸಿ-ಅನಿಮೇಷನ್</string>
+    <string name="success">ಯಶಸ್ಸು</string>
+    <string name="submit">ಸಲ್ಲಿಸಿ</string>
+    <string name="providing_correct_profile_helps_personalize_your_farming_guidance">ಸಲಹೆ: ಸರಿಯಾದ ಪ್ರೊಫೈಲ್ ಒದಗಿಸುವುದರಿಂದ ನಿಮ್ಮ ಕೃಷಿ ಮಾರ್ಗದರ್ಶನವನ್ನು ವೈಯಕ್ತೀಕರಿಸಲು ಸಹಾಯವಾಗುತ್ತದೆ.</string>
+
+    <string name="soil_health_detector">ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಪತ್ತೆಕಾರಕ</string>
+    <string name="scan_soil_health">ಮಣ್ಣಿನ ಆರೋಗ್ಯವನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ</string>
+    <string name="scanning">ಸ್ಕ್ಯಾನ್ ಮಾಡಲಾಗುತ್ತಿದೆ...</string>
+    <string name="moisture">ತೇವಾಂಶ</string>
+    <string name="ph_evel">pH ಮಟ್ಟ</string>
+    <string name="fertility">ಫಲವತ್ತತೆ</string>
+    <string name="suggestion">ಸಲಹೆ</string>
+    <string name="soil_health_improves_with_crop_rotation_and_organic_matter">ಸಲಹೆ: ಬೆಳೆ ಸರದಿ ಮತ್ತು ಸಾವಯವ ಪದಾರ್ಥಗಳಿಂದ ಮಣ್ಣಿನ ಆರೋಗ್ಯ ಸುಧಾರಿಸುತ್ತದೆ.</string>
+
+    <string name="humidity">ಆರ್ದ್ರತೆ</string>
+    <string name="weather_icon">ಹವಾಮಾನ ಐಕಾನ್</string>
+    <string name="tts_init_failed">ಟಿಟಿಎಸ್ ಇನಿಟ್ ವಿಫಲವಾಗಿದೆ</string>
+    <string name="mic_permission_denied">ಮೈಕ್ ಅನುಮತಿಯನ್ನು ನಿರಾಕರಿಸಲಾಗಿದೆ</string>
+    <string name="stoarge_permission_denied">ಶೇಖರಣಾ ಅನುಮತಿಯನ್ನು ನಿರಾಕರಿಸಲಾಗಿದೆ</string>
+    <string name="voice_agent">ಧ್ವನಿ ಏಜೆಂಟ್</string>
+    <string name="mic">ಮೈಕ್</string>
+    <string name="listening">ಕೇಳುತ್ತಿದೆ...</string>
+    <string name="processing_your_query">ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲಾಗುತ್ತಿದೆ...</string>
+    <string name="gemini_response">ಜೆಮಿನಿ ಪ್ರತಿಕ್ರಿಯೆ</string>
+    <string name="play_response">ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಪ್ಲೇ ಮಾಡಿ</string>
+    <string name="download_as_pdf">PDF ಆಗಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
+    <string name="share_pdf">PDF ಅನ್ನು ಹಂಚಿಕೊಳ್ಳಿ</string>
+    <string name="last_queries">ಕೊನೆಯ 5 ಪ್ರಶ್ನೆಗಳು</string>
+    <string name="tip_try_asking">ಸಲಹೆ: ಕೇಳಲು ಪ್ರಯತ್ನಿಸಿ:</string>
+    <string name="how_to_treat_leaf_rust_in_wheat">ಗೋಧಿಯಲ್ಲಿ ಎಲೆ ತುಕ್ಕು ಹಿಡಿಯುವುದನ್ನು ಹೇಗೆ ಚಿಕಿತ್ಸೆ ನೀಡಬೇಕು?</string>
+    <string name="gemini_ai_response">ಜೆಮಿನಿ AI ಪ್ರತಿಕ್ರಿಯೆ:</string>
+    <string name="pdf_saved_to">PDF ಗೆ ಉಳಿಸಲಾಗಿದೆ</string>
+    <string name="ask_anything_about_your_crops_market_soil_irrigation_and_more">ನಿಮ್ಮ ಬೆಳೆಗಳು, ಮಾರುಕಟ್ಟೆ, ಮಣ್ಣು, ನೀರಾವರಿ ಮತ್ತು ಇನ್ನೂ ಹೆಚ್ಚಿನವುಗಳ ಬಗ್ಗೆ ಏನನ್ನಾದರೂ ಕೇಳಿ!</string>
+</resources>

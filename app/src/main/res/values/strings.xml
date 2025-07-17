@@ -1,3 +1,125 @@
 <resources>
     <string name="app_name">Kisan</string>
+
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
+
+    <string name="terrace">Terrace</string>
+    <string name="plotted_plants">Plotted plants</string>
+    <string name="agriculture_land">Agriculture land</string>
+
+    <string name="sowing_millet">Sowing: Millet</string>
+    <string name="water_moderate">Water: Moderate</string>
+    <string name="tap_on_a_month_to_explore_seasonal_crop_guidance">Tap on a month to explore seasonal crop guidance.</string>
+    <string name="crop_image">Crop Image</string>
+    <string name="crop_activities">Crop Activities</string>
+    <string name="smart_farming_tips">Smart Farming Tips</string>
+    <string name="share">Share</string>
+    <string name="saved_to_documents">Saved to Documents</string>
+    <string name="download_pdf">Download PDF</string>
+    <string name="share_via">Share via</string>
+
+    <string name="detected_leaf_spot_disease">Detected: Leaf Spot Disease</string>
+    <string name="suggestions">Suggestion: Use Mancozeb-based fungicide every 10 days.</string>
+    <string name="healthy_crop">Healthy crop! No visible disease detected.</string>
+    <string name="crop_disease_detection">Crop Disease Detection</string>
+    <string name="gallery">Gallery</string>
+    <string name="use_camera">Use Camera</string>
+    <string name="analyzing_image">Analyzing image...</string>
+    <string name="diagnosis_result">Diagnosis Result</string>
+    <string name="tip_for_disease">Tip: Use high-quality, well-lit images of affected leaves for better detection.</string>
+
+    <string name="gemini_advice">Gemini Advice</string>
+
+    <string name="crop">Crop</string>
+    <string name="tip_fertilizer">Tip: Fertilizer efficiency is highest when soil is moist.</string>
+
+    <string name="government_schemes">Government Schemes</string>
+    <string name="learn_more">Learn More</string>
+    <string name="visit_krishi_kendra">Visit your nearest Krishi Vigyan Kendra (KVK) or website of the scheme for registration and full details.</string>
+
+    <string name="smart_farming_tools">Smart Farming Tools</string>
+    <string name="disease_detection">Disease Detection</string>
+    <string name="market_prices">Market Prices</string>
+    <string name="govt_schemes">Govt Schemes</string>
+    <string name="soil_scanner">Soil Scanner</string>
+    <string name="crop_calendar">Crop Calendar</string>
+    <string name="irrigation_tips">Irrigation Tips</string>
+    <string name="fertilizer_guide">Fertilizer Guide</string>
+    <string name="chatbot">Chatbot</string>
+    <string name="tip_home">Tip: Tap a tool above to start your smart farming journey!</string>
+
+    <string name="market_price_assistant">Market Price Assistant</string>
+    <string name="enter_commodity_name">Enter Commodity Name</string>
+    <string name="crop_market_trend">Crop Market Trend</string>
+    <string name="get_ai_price_advice">Get AI Price Advice</string>
+    <string name="ai_insight">AI Insight</string>
+    <string name="select_crop">Select Crop</string>
+    <string name="ai_insight_tip">Tip: Use this data to decide best selling time for your crops.</string>
+
+    <string name="the_new_era">THE NEW ERA OF \n</string>
+    <string name="agriculture">AGRICULTURE</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="growing_resources_thriving_futures">Growing Resources, Thriving Futures</string>
+    <string name="ai_powered_insights_for_modern_agriculture">AI-powered insights for modern agriculture.</string>
+
+    <string name="sign_in">Sign In</string>
+    <string name="username">Username</string>
+    <string name="please_enter_your_username">Please enter your username</string>
+    <string name="please_enter_your_password">Please enter your password</string>
+    <string name="signed_in_successfully">Signed in successfully!</string>
+
+    <string name="create_your_farmer_rofile">Create Your Farmer Profile</string>
+    <string name="name">Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="city">City</string>
+    <string name="state">State</string>
+    <string name="pincode">Pincode</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="source_of_farming">Source of Farming</string>
+    <string name="please_fill_all_fields_correctly">Please fill all fields correctly.</string>
+    <string name="submit_animation">submit-animation</string>
+    <string name="success">Success</string>
+    <string name="submit">Submit</string>
+    <string name="providing_correct_profile_helps_personalize_your_farming_guidance">Tip: Providing correct profile helps personalize your farming guidance.</string>
+
+    <string name="soil_health_detector">Soil Health Detector</string>
+    <string name="scan_soil_health">Scan Soil Health</string>
+    <string name="scanning">Scanning...</string>
+    <string name="moisture">Moisture</string>
+    <string name="ph_evel">pH Level</string>
+    <string name="fertility">Fertility</string>
+    <string name="suggestion">Suggestion</string>
+    <string name="soil_health_improves_with_crop_rotation_and_organic_matter">Tip: Soil health improves with crop rotation and organic matter.</string>
+
+    <string name="humidity">Humidity</string>
+    <string name="weather_icon">Weather Icon</string>
+    <string name="tts_init_failed">TTS init failed</string>
+    <string name="mic_permission_denied">Mic permission denied</string>
+    <string name="stoarge_permission_denied">Storage permission denied</string>
+    <string name="voice_agent">Voice Agent</string>
+    <string name="mic">Mic</string>
+    <string name="listening">Listening...</string>
+    <string name="processing_your_query">Processing your query...</string>
+    <string name="gemini_response">Gemini Response</string>
+    <string name="play_response">Play Response</string>
+    <string name="download_as_pdf">Download as PDF</string>
+    <string name="share_pdf">Share PDF</string>
+    <string name="last_queries">Last 5 Queries</string>
+    <string name="tip_try_asking">Tip: Try asking:</string>
+    <string name="how_to_treat_leaf_rust_in_wheat">How to treat leaf rust in wheat?</string>
+    <string name="gemini_ai_response">Gemini AI Response:</string>
+    <string name="pdf_saved_to">PDF saved to</string>
+    <string name="ask_anything_about_your_crops_market_soil_irrigation_and_more">Ask anything about your crops, market, soil, irrigation and more!</string>
 </resources>

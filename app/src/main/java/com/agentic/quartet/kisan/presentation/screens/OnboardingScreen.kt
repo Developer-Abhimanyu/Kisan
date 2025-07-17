@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -68,7 +69,7 @@ fun OnboardingScreen(
                                 color = Color(0xFF4CAF50)
                             )
                         ) {
-                            append("THE NEW ERA OF\n")
+                            append(stringResource(R.string.the_new_era))
                         }
                         withStyle(
                             SpanStyle(
@@ -77,7 +78,7 @@ fun OnboardingScreen(
                                 color = Color(0xFF4CAF50)
                             )
                         ) {
-                            append("AGRICULTURE")
+                            append(stringResource(R.string.agriculture))
                         }
                     }
                 )
@@ -85,7 +86,7 @@ fun OnboardingScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "Growing Resources, Thriving Futures",
+                    text = stringResource(R.string.growing_resources_thriving_futures),
                     style = MaterialTheme.typography.bodyLarge.copy(color = Color(0xFF4CAF50)),
                     lineHeight = 28.sp
                 )
@@ -120,7 +121,7 @@ fun OnboardingScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Sign Up", color = Color.White)
+                        Text(stringResource(R.string.sign_up), color = Color.White)
                     }
 
                     Button(
@@ -129,7 +130,7 @@ fun OnboardingScreen(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text("Sign In", color = Color.White)
+                        Text(stringResource(R.string.sign_in), color = Color.White)
                     }
                 }
 
@@ -146,7 +147,7 @@ fun OnboardingScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "🚜 AI-powered insights for modern agriculture.",
+                            text = stringResource(R.string.ai_powered_insights_for_modern_agriculture),
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 color = Color(0xFF2E7D32),
                                 fontWeight = FontWeight.Normal,

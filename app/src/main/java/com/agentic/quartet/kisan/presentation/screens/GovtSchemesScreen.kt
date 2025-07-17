@@ -18,6 +18,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -76,7 +77,7 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
             .padding(16.dp)
     ) {
         Text(
-            text = "Government Schemes",
+            text = stringResource(R.string.government_schemes),
             style = MaterialTheme.typography.headlineSmall.copy(
                 color = Color(0xFF4CAF50),
                 fontWeight = FontWeight.Bold
@@ -151,7 +152,7 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                                             )
                                         ),
                                     ) {
-                                        Text("Learn More", color = Color.White)
+                                        Text(stringResource(R.string.learn_more), color = Color.White)
                                     }
                                 }
                             }
@@ -164,7 +165,7 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Visit your nearest Krishi Vigyan Kendra (KVK) or website of the scheme for registration and full details.",
+            text = stringResource(R.string.visit_krishi_kendra),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
             modifier = Modifier.fillMaxWidth(),
             textAlign = TextAlign.Center

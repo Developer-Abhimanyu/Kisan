@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -43,19 +44,29 @@ fun CropDetailScreen(
     onBack: () -> Unit
 ) {
     val months = listOf(
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        stringResource(R.string.january),
+        stringResource(R.string.february),
+        stringResource(R.string.march),
+        stringResource(R.string.april),
+        stringResource(R.string.may),
+        stringResource(R.string.june),
+        stringResource(R.string.july),
+        stringResource(R.string.august),
+        stringResource(R.string.september),
+        stringResource(R.string.october),
+        stringResource(R.string.november),
+        stringResource(R.string.december)
     )
     val context = LocalContext.current
     val view = LocalView.current
     val month = months[monthIndex]
 
-   /* val cropImages = listOf(
-        R.drawable.crop_january, R.drawable.crop_february, R.drawable.crop_march,
-        R.drawable.crop_april, R.drawable.crop_may, R.drawable.crop_june,
-        R.drawable.crop_july, R.drawable.crop_august, R.drawable.crop_september,
-        R.drawable.crop_october, R.drawable.crop_november, R.drawable.crop_december
-    )*/
+    /* val cropImages = listOf(
+         R.drawable.crop_january, R.drawable.crop_february, R.drawable.crop_march,
+         R.drawable.crop_april, R.drawable.crop_may, R.drawable.crop_june,
+         R.drawable.crop_july, R.drawable.crop_august, R.drawable.crop_september,
+         R.drawable.crop_october, R.drawable.crop_november, R.drawable.crop_december
+     )*/
 
     val cropImages = listOf(
         R.drawable.ic_leaf, R.drawable.ic_leaf, R.drawable.ic_leaf,
@@ -64,13 +75,14 @@ fun CropDetailScreen(
         R.drawable.ic_leaf, R.drawable.ic_leaf, R.drawable.ic_leaf
     )
 
-   /* val activities = listOf(
-        Triple("Sowing", "Maize, Bajra, Groundnut", R.drawable.ic_leaf),
-        Triple("Irrigation", "Twice a week", R.drawable.ic_water),
-        Triple("Fertilizer", "NPK 50 kg/acre", R.drawable.ic_fertilizer),
-        Triple("Ploughing", "Before 10th", R.drawable.ic_tractor)
-    )*/
+    /* val activities = listOf(
+         Triple("Sowing", "Maize, Bajra, Groundnut", R.drawable.ic_leaf),
+         Triple("Irrigation", "Twice a week", R.drawable.ic_water),
+         Triple("Fertilizer", "NPK 50 kg/acre", R.drawable.ic_fertilizer),
+         Triple("Ploughing", "Before 10th", R.drawable.ic_tractor)
+     )*/
 
+    //TODO not added to strings as of now
     val activities = listOf(
         Triple("Sowing", "Maize, Bajra, Groundnut", R.drawable.ic_leaf),
         Triple("Irrigation", "Twice a week", R.drawable.ic_leaf),
@@ -78,6 +90,7 @@ fun CropDetailScreen(
         Triple("Ploughing", "Before 10th", R.drawable.ic_leaf)
     )
 
+    //TODO not added to strings as of now
     val tips = listOf(
         "Use compost or green manure to enrich soil.",
         "Prefer early morning irrigation to reduce evaporation.",
@@ -106,7 +119,7 @@ fun CropDetailScreen(
         ) {
             Image(
                 painter = painterResource(id = cropImages[monthIndex]),
-                contentDescription = "$month Crop Image",
+                contentDescription = "$month ${stringResource(R.string.crop_image)}",
                 modifier = Modifier.fillMaxSize()
             )
         }
@@ -114,7 +127,7 @@ fun CropDetailScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "$month Crop Activities",
+            text = "$month ${stringResource(R.string.crop_activities)}",
             style = MaterialTheme.typography.headlineSmall.copy(
                 color = Color(0xFF4CAF50),
                 fontWeight = FontWeight.Bold
@@ -141,7 +154,7 @@ fun CropDetailScreen(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Smart Farming Tips",
+                    text = stringResource(R.string.smart_farming_tips),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Medium,
                         color = Color(0xFF2E7D32)
@@ -151,7 +164,11 @@ fun CropDetailScreen(
                 if (tipsExpanded) {
                     Spacer(modifier = Modifier.height(12.dp))
                     tips.forEach {
-                        Text("• $it", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32))
+                        Text(
+                            "• $it",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color(0xFF2E7D32)
+                        )
                         Spacer(modifier = Modifier.height(6.dp))
                     }
                 }
@@ -165,36 +182,45 @@ fun CropDetailScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            val shareVia = stringResource(R.string.share_via)
             Button(
                 onClick = {
                     val bitmap = captureViewBitmap(view)
                     bitmap?.let {
                         val file = saveBitmapAsPdf(context, it, "${month}_crop_guide")
-                        sharePdf(context, file)
+                        sharePdf(context, file, shareVia)
                     }
                 },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
             ) {
-                Icon(Icons.Default.Share, contentDescription = "Share", tint = Color.White)
+                Icon(
+                    Icons.Default.Share,
+                    contentDescription = stringResource(R.string.share),
+                    tint = Color.White
+                )
                 Spacer(Modifier.width(8.dp))
-                Text("Share")
+                Text(stringResource(R.string.share))
             }
-
+            val std = stringResource(R.string.saved_to_documents)
             Button(
                 onClick = {
                     val bitmap = captureViewBitmap(view)
                     bitmap?.let {
                         saveBitmapAsPdf(context, it, "${month}_crop_guide")
-                        Toast.makeText(context, "Saved to Documents", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, std, Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
             ) {
-                Icon(Icons.Default.DateRange, contentDescription = "Download", tint = Color.White)
+                Icon(
+                    Icons.Default.DateRange,
+                    contentDescription = stringResource(R.string.download_pdf),
+                    tint = Color.White
+                )
                 Spacer(Modifier.width(8.dp))
-                Text("Download PDF")
+                Text(stringResource(R.string.download_pdf))
             }
         }
     }
@@ -218,7 +244,11 @@ fun ActivityCard(title: String, desc: String, icon: Painter) {
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(text = title, fontWeight = FontWeight.SemiBold, color = Color(0xFF2E7D32))
-                Text(text = desc, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32))
+                Text(
+                    text = desc,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF2E7D32)
+                )
             }
         }
     }
@@ -251,7 +281,7 @@ fun saveBitmapAsPdf(context: Context, bitmap: Bitmap, filename: String): File {
 }
 
 // Share the PDF using FileProvider
-fun sharePdf(context: Context, file: File) {
+fun sharePdf(context: Context, file: File, shareVia: String) {
     val uri = FileProvider.getUriForFile(
         context,
         "${context.packageName}.provider",
@@ -262,5 +292,5 @@ fun sharePdf(context: Context, file: File) {
         putExtra(Intent.EXTRA_STREAM, uri)
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
-    context.startActivity(Intent.createChooser(intent, "Share via"))
+    context.startActivity(Intent.createChooser(intent, shareVia))
 }

@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,7 +84,7 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Smart Farming Tools",
+            text = stringResource(R.string.smart_farming_tools),
             style = MaterialTheme.typography.titleMedium.copy(
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF4CAF50)
@@ -95,44 +101,62 @@ fun HomeScreen(
         ) {
             item {
                 HomeFeatureButton(
-                    "Disease Detection",
+                    stringResource(R.string.disease_detection),
                     R.drawable.ic_disease_detection,
                     onNavigateToDiseaseDetection
                 )
             }
             item {
-                HomeFeatureButton("Market Prices", R.drawable.ic_chart, onNavigateToMarketPrices)
+                HomeFeatureButton(stringResource(R.string.market_prices), R.drawable.ic_chart, onNavigateToMarketPrices)
             }
             item {
-                HomeFeatureButton("Govt Schemes", R.drawable.ic_gov, onNavigateToGovtSchemes)
+                HomeFeatureButton(stringResource(R.string.govt_schemes), R.drawable.ic_gov, onNavigateToGovtSchemes)
             }
             item {
-                HomeFeatureButton("Voice Agent", R.drawable.ic_mic, onVoiceAgentClick)
+                HomeFeatureButton(stringResource(R.string.voice_agent), R.drawable.ic_mic, onVoiceAgentClick)
             }
             item {
-                HomeFeatureButton("Soil Scanner", R.drawable.ic_soil_scanner) {
+                HomeFeatureButton(stringResource(R.string.soil_scanner), R.drawable.ic_soil_scanner) {
                     onSoilDetectorClick()
                 }
             }
             item {
-                HomeFeatureButton("Crop Calendar", R.drawable.ic_crop_calendar) {
+                HomeFeatureButton(stringResource(R.string.crop_calendar), R.drawable.ic_crop_calendar) {
                     onCropCalendarClick()
                 }
             }
             item {
-                HomeFeatureButton("Irrigation Tips", R.drawable.ic_irrigation_tips) {
+                HomeFeatureButton(stringResource(R.string.irrigation_tips), R.drawable.ic_irrigation_tips) {
                     onIrrigationTipsClick()
                 }
             }
             item {
-                HomeFeatureButton("Fertilizer Guide", R.drawable.ic_fertilizer_guide) {
+                HomeFeatureButton(stringResource(R.string.fertilizer_guide), R.drawable.ic_fertilizer_guide) {
                     onFertilizerGuideClick()
                 }
             }
         }
+        Box(
+            modifier = Modifier
+                .size(80.dp)
+                .padding(12.dp),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            FloatingActionButton(
+                onClick = { /* navigateToChatbot() */ },
+                containerColor = Color(0xFF4CAF50),
+                shape = RoundedCornerShape(50)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_gov),
+                    contentDescription = stringResource(R.string.chatbot),
+                    tint = Color.White
+                )
+            }
+        }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = "Tip: Tap a tool above to start your smart farming journey!",
+            text = stringResource(R.string.tip_home),
             style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             textAlign = TextAlign.Center

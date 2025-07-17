@@ -8,10 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.utils.UserPreferences
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -39,7 +41,7 @@ fun SignInScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Sign In",
+            text = stringResource(R.string.sign_in),
             style = MaterialTheme.typography.headlineSmall.copy(
                 color = Color(0xFF4CAF50),
                 fontWeight = FontWeight.Bold
@@ -54,12 +56,23 @@ fun SignInScreen(
                 username = it
                 usernameError = false
             },
-            label = { Text("Username") },
+            label = { Text(stringResource(R.string.username)) },
             isError = usernameError,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF4CAF50),
+                unfocusedBorderColor = Color(0xFF81C784),
+                cursorColor = Color(0xFF4CAF50),
+                focusedLabelColor = Color(0xFF4CAF50),
+                unfocusedLabelColor = Color(0xFF81C784),
+                focusedPlaceholderColor = Color(0xFF66BB6A),
+                unfocusedPlaceholderColor = Color(0xFF81C784),
+                focusedTextColor = Color(0xFF4CAF50),
+                unfocusedTextColor = Color(0xFF4CAF50)
+            )
         )
         if (usernameError) {
-            Text("Please enter your username", color = Color.Red, fontSize = 12.sp)
+            Text(stringResource(R.string.please_enter_your_username), color = Color.Red, fontSize = 12.sp)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -70,14 +83,25 @@ fun SignInScreen(
                 password = it
                 passwordError = false
             },
-            label = { Text("Password") },
+            label = { Text(stringResource(R.string.password)) },
             isError = passwordError,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF4CAF50),
+                unfocusedBorderColor = Color(0xFF81C784),
+                cursorColor = Color(0xFF4CAF50),
+                focusedLabelColor = Color(0xFF4CAF50),
+                unfocusedLabelColor = Color(0xFF81C784),
+                focusedPlaceholderColor = Color(0xFF66BB6A),
+                unfocusedPlaceholderColor = Color(0xFF81C784),
+                focusedTextColor = Color(0xFF4CAF50),
+                unfocusedTextColor = Color(0xFF4CAF50)
+            )
         )
         if (passwordError) {
-            Text("Please enter your password", color = Color.Red, fontSize = 12.sp)
+            Text(stringResource(R.string.please_enter_your_password), color = Color.Red, fontSize = 12.sp)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -104,12 +128,12 @@ fun SignInScreen(
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
             shape = RoundedCornerShape(50)
         ) {
-            Text("Sign In", color = Color.White, fontSize = 16.sp)
+            Text(stringResource(R.string.sign_in), color = Color.White, fontSize = 16.sp)
         }
 
         if (showSuccess) {
             Spacer(modifier = Modifier.height(16.dp))
-            Text("✅ Signed in successfully!", color = Color(0xFF2E7D32))
+            Text(stringResource(R.string.signed_in_successfully), color = Color(0xFF2E7D32))
         }
     }
 }

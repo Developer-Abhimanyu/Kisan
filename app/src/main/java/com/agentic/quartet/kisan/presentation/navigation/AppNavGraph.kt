@@ -66,14 +66,10 @@ fun AppNavGraph(
             composable(Screen.OnboardingScreen.route) {
                 OnboardingScreen(
                     onSignUpClick = {
-                        navController.navigate(Screen.SignUp.route) {
-                            popUpTo(Screen.OnboardingScreen.route) { inclusive = true }
-                        }
+                        navController.navigate(Screen.SignUp.route)
                     },
                     onSignInClick = {
-                        navController.navigate(Screen.SignIn.route) {
-                            popUpTo(Screen.OnboardingScreen.route) { inclusive = true }
-                        }
+                        navController.navigate(Screen.SignIn.route)
                     }
                 )
             }
@@ -82,7 +78,7 @@ fun AppNavGraph(
                 SignUpScreen(
                     onSignUpComplete = {
                         navController.navigate(Screen.HomeScreen.route) {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo("onboarding_screen") { inclusive = true }
                         }
                     }
                 )
@@ -92,7 +88,7 @@ fun AppNavGraph(
                 SignInScreen(
                     onSignInSuccess = {
                         navController.navigate(Screen.HomeScreen.route) {
-                            popUpTo(0) { inclusive = true }
+                            popUpTo("onboarding_screen") { inclusive = true }
                         }
                     }
                 )
