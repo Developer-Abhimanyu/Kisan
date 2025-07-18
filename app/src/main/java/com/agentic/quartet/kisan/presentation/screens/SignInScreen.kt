@@ -1,38 +1,42 @@
 package com.agentic.quartet.kisan.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 import com.agentic.quartet.kisan.utils.UserPreferences
-import kotlinx.coroutines.delay
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
     onSignInSuccess: () -> Unit
 ) {
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    var usernameError by remember { mutableStateOf(false) }
+    var emailError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
-
+    var isSubmitting by remember { mutableStateOf(false) }
     var showSuccess by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
 
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val auth = remember { FirebaseAuth.getInstance() }
 
     AppBackground {
         Column(
@@ -53,32 +57,23 @@ fun SignInScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedTextField(
-                value = username,
+                value = email,
                 onValueChange = {
-                    username = it
-                    usernameError = false
+                    email = it
+                    emailError = false
                 },
-                label = { Text(stringResource(R.string.username)) },
-                isError = usernameError,
+                label = { Text("Username") },
+                isError = emailError,
                 modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF4CAF50),
                     unfocusedBorderColor = Color(0xFF81C784),
                     cursorColor = Color(0xFF4CAF50),
-                    focusedLabelColor = Color(0xFF4CAF50),
-                    unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
-                    focusedTextColor = Color(0xFF4CAF50),
-                    unfocusedTextColor = Color(0xFF4CAF50)
                 )
             )
-            if (usernameError) {
-                Text(
-                    stringResource(R.string.please_enter_your_username),
-                    color = Color.Red,
-                    fontSize = 12.sp
-                )
+            if (emailError) {
+                Text("Please enter your username", color = Color.Red, fontSize = 12.sp)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -89,47 +84,47 @@ fun SignInScreen(
                     password = it
                     passwordError = false
                 },
-                label = { Text(stringResource(R.string.password)) },
+                label = { Text("Password") },
                 isError = passwordError,
+                modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                modifier = Modifier.fillMaxWidth(),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF4CAF50),
                     unfocusedBorderColor = Color(0xFF81C784),
                     cursorColor = Color(0xFF4CAF50),
-                    focusedLabelColor = Color(0xFF4CAF50),
-                    unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
-                    focusedTextColor = Color(0xFF4CAF50),
-                    unfocusedTextColor = Color(0xFF4CAF50)
                 )
             )
             if (passwordError) {
-                Text(
-                    stringResource(R.string.please_enter_your_password),
-                    color = Color.Red,
-                    fontSize = 12.sp
-                )
+                Text("Please enter your password", color = Color.Red, fontSize = 12.sp)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
-                    usernameError = username.isBlank()
+                    emailError = email.isBlank()
                     passwordError = password.isBlank()
-                    if (!usernameError && !passwordError) {
-                        showSuccess = true
-                        scope.launch {
-                            delay(1000)
-                            showSuccess = false
-                            scope.launch {
-                                UserPreferences(context).setSignedIn(true)
-                                onSignInSuccess()
+
+                    if (!emailError && !passwordError) {
+                        isSubmitting = true
+                        auth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                isSubmitting = false
+                                if (task.isSuccessful) {
+                                    showSuccess = true
+                                    scope.launch {
+                                        UserPreferences(context).setSignedIn(true)
+                                        onSignInSuccess()
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "Sign-in failed: ${task.exception?.localizedMessage}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
-                        }
                     }
                 },
                 modifier = Modifier
@@ -138,12 +133,20 @@ fun SignInScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                 shape = RoundedCornerShape(50)
             ) {
-                Text(stringResource(R.string.sign_in), color = Color.White, fontSize = 16.sp)
+                if (isSubmitting) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(20.dp)
+                    )
+                } else {
+                    Text("Sign In", color = Color.White, fontSize = 16.sp)
+                }
             }
 
             if (showSuccess) {
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(stringResource(R.string.signed_in_successfully), color = Color(0xFF2E7D32))
+                Text("Signed in successfully!", color = Color(0xFF2E7D32))
             }
         }
     }

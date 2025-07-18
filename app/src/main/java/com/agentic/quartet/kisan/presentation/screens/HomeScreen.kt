@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
+import com.agentic.quartet.kisan.utils.ProfileManager
 
 @Composable
 fun HomeScreen(
@@ -49,6 +50,8 @@ fun HomeScreen(
     val context = LocalContext.current
     val weatherCardOffset = remember { Animatable(-200f) }
     val scope = rememberCoroutineScope()
+
+    val profile = remember { ProfileManager.loadProfile(context) }
 
     LaunchedEffect(Unit) {
         weatherCardOffset.animateTo(
@@ -68,7 +71,7 @@ fun HomeScreen(
                     .graphicsLayer { translationY = weatherCardOffset.value }
             ) {
                 WeatherCard(
-                    location = "Bekasi Timur",
+                    location = profile.city,
                     date = "27 Nov 2023",
                     temperature = 33,
                     humidity = 76,

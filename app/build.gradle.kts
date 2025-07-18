@@ -70,6 +70,10 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    implementation("com.google.firebase:firebase-auth-ktx:22.1.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.4.4")
+    implementation("com.google.android.gms:play-services-auth:20.6.0")
+
     androidTestImplementation(libs.hilt.android.testing)
 
     kaptTest(libs.hilt.android.compiler)

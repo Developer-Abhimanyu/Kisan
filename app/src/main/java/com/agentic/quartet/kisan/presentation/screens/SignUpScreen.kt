@@ -1,35 +1,40 @@
 package com.agentic.quartet.kisan.presentation.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.*
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.input.*
-import androidx.compose.ui.text.style.TextAlign
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.data.model.FarmerProfile
 import com.agentic.quartet.kisan.presentation.AppBackground
-import com.agentic.quartet.kisan.utils.ProfileManager
 import com.agentic.quartet.kisan.utils.UserPreferences
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import com.agentic.quartet.kisan.utils.ProfileManager
+import kotlinx.coroutines.tasks.await
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SignUpScreen(onSignUpComplete: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val auth = remember { FirebaseAuth.getInstance() }
+    val db = remember { FirebaseFirestore.getInstance() }
 
     var name by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
@@ -39,20 +44,13 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    val farmingSources = listOf(stringResource(R.string.terrace), stringResource(R.string.plotted_plants), stringResource(R.string.agriculture_land))
-    var selectedFarmingSource by remember { mutableStateOf(farmingSources[0]) }
-    var expanded by remember { mutableStateOf(false) }
-
     var errorMessage by remember { mutableStateOf<String?>(null) }
-
     var isSubmitting by remember { mutableStateOf(false) }
     var submitSuccess by remember { mutableStateOf(false) }
 
     AppBackground {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
+            modifier = Modifier.fillMaxSize().padding(24.dp),
             verticalArrangement = Arrangement.Top
         ) {
             Text(
@@ -67,6 +65,12 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            fun isValid(): Boolean {
+                return name.isNotBlank() && phone.length == 10 && city.isNotBlank() &&
+                        state.isNotBlank() && pinCode.length == 6 &&
+                        password.length >= 6 && password == confirmPassword
+            }
+
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
@@ -78,8 +82,6 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     cursorColor = Color(0xFF4CAF50),
                     focusedLabelColor = Color(0xFF4CAF50),
                     unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
                     focusedTextColor = Color(0xFF4CAF50),
                     unfocusedTextColor = Color(0xFF4CAF50)
                 )
@@ -96,8 +98,6 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     cursorColor = Color(0xFF4CAF50),
                     focusedLabelColor = Color(0xFF4CAF50),
                     unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
                     focusedTextColor = Color(0xFF4CAF50),
                     unfocusedTextColor = Color(0xFF4CAF50)
                 )
@@ -113,8 +113,6 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     cursorColor = Color(0xFF4CAF50),
                     focusedLabelColor = Color(0xFF4CAF50),
                     unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
                     focusedTextColor = Color(0xFF4CAF50),
                     unfocusedTextColor = Color(0xFF4CAF50)
                 )
@@ -130,8 +128,6 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     cursorColor = Color(0xFF4CAF50),
                     focusedLabelColor = Color(0xFF4CAF50),
                     unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
                     focusedTextColor = Color(0xFF4CAF50),
                     unfocusedTextColor = Color(0xFF4CAF50)
                 )
@@ -148,8 +144,6 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     cursorColor = Color(0xFF4CAF50),
                     focusedLabelColor = Color(0xFF4CAF50),
                     unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
                     focusedTextColor = Color(0xFF4CAF50),
                     unfocusedTextColor = Color(0xFF4CAF50)
                 )
@@ -166,8 +160,6 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     cursorColor = Color(0xFF4CAF50),
                     focusedLabelColor = Color(0xFF4CAF50),
                     unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
                     focusedTextColor = Color(0xFF4CAF50),
                     unfocusedTextColor = Color(0xFF4CAF50)
                 )
@@ -184,8 +176,6 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     cursorColor = Color(0xFF4CAF50),
                     focusedLabelColor = Color(0xFF4CAF50),
                     unfocusedLabelColor = Color(0xFF81C784),
-                    focusedPlaceholderColor = Color(0xFF66BB6A),
-                    unfocusedPlaceholderColor = Color(0xFF81C784),
                     focusedTextColor = Color(0xFF4CAF50),
                     unfocusedTextColor = Color(0xFF4CAF50)
                 )
@@ -203,40 +193,58 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            val error = stringResource(R.string.please_fill_all_fields_correctly)
+
+            val s = stringResource(R.string.please_fill_all_fields_correctly)
+
             Button(
                 onClick = {
-                    if (name.isBlank() || phone.length != 10 || city.isBlank() || state.isBlank() || pinCode.length != 6 || password.length < 6 || password != confirmPassword) {
-                        errorMessage = error
+                    if (!isValid()) {
+                        errorMessage = s
                         return@Button
                     }
 
                     errorMessage = null
                     isSubmitting = true
-                    scope.launch {
-                        delay(1000)
-                        submitSuccess = true
-                        delay(1000)
-                        isSubmitting = false
 
-                        val profile = FarmerProfile(
-                            name = name,
-                            phone = phone,
-                            city = city,
-                            state = state,
-                            pinCode = pinCode,
-                            farmingSource = selectedFarmingSource
-                        )
-                        ProfileManager.saveProfile(context, profile)
-                        scope.launch {
+                    scope.launch {
+                        try {
+                            val result = auth.createUserWithEmailAndPassword(phone, password).await()
+                            val userId = result.user?.uid ?: throw Exception("User ID not found")
+
+                            val profile = FarmerProfile(
+                                name = name,
+                                phone = phone,
+                                city = city,
+                                state = state,
+                                pinCode = pinCode,
+                                farmingSource = ""
+                            )
+
+                            val profileMap = mapOf(
+                                "name" to name,
+                                "phone" to phone,
+                                "city" to city,
+                                "state" to state,
+                                "pinCode" to pinCode,
+                                "farmingSource" to ""
+                            )
+
+                            submitSuccess = true
+                            Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
+
                             UserPreferences(context).setSignedIn(true)
+                            ProfileManager.saveProfile(context, profile)
                             onSignUpComplete()
+                            db.collection("farmers").document(userId).set(profileMap).await()
+
+                        } catch (e: Exception) {
+                            errorMessage = e.localizedMessage ?: "Signup failed"
+                            isSubmitting = false
+                            errorMessage = "Failed to save profile: ${e.localizedMessage}"
                         }
                     }
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
+                modifier = Modifier.fillMaxWidth().height(54.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (submitSuccess) Color(0xFF388E3C) else Color(0xFF4CAF50)
                 ),
@@ -247,7 +255,7 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     transitionSpec = {
                         fadeIn(animationSpec = tween(300)) with fadeOut(animationSpec = tween(300))
                     },
-                    label = stringResource(R.string.submit_animation)
+                    label = "Submit Button Animation"
                 ) { success ->
                     if (success) {
                         Icon(
@@ -268,6 +276,7 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+
             Text(
                 text = stringResource(R.string.providing_correct_profile_helps_personalize_your_farming_guidance),
                 style = MaterialTheme.typography.bodySmall.copy(color = Color.White),
