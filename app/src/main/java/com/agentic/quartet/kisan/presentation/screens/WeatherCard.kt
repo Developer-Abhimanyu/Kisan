@@ -1,6 +1,5 @@
 package com.agentic.quartet.kisan.presentation.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,22 +18,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.agentic.quartet.kisan.R
 
 @Composable
 fun WeatherCard(
     location: String,
     date: String,
-    temperature: Int,
-    humidity: Int,
+    temperature: String,
+    humidity: String,
     condition: String,
-    suggestion: String
+    suggestion: String,
+    iconUrl: String? = null
 ) {
+
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFF2E7D32)),
@@ -73,10 +74,9 @@ fun WeatherCard(
                 }
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_icon),
-                        //painter = painterResource(id = R.drawable.ic_cloudy),
-                        contentDescription = "Weather Icon",
+                    AsyncImage(
+                        model = iconUrl,
+                        contentDescription = condition,
                         modifier = Modifier.size(48.dp)
                     )
                     Text(
