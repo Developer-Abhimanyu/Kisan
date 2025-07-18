@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.presentation.AppBackground
 import java.util.*
 
 @Composable
@@ -45,81 +46,87 @@ fun CropCalendarScreen(
         )
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.crop_calendar),
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF4CAF50)
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.weight(1f)
+    AppBackground {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            itemsIndexed(months) { index, month ->
-                val isCurrent = index == currentMonth
-                Card(
-                    onClick = { onMonthClick(index) },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = if (isCurrent) Color(0xFF4CAF50) else Color.White
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .graphicsLayer {
-                            if (isCurrent) {
-                                scaleX = animatedScale.value
-                                scaleY = animatedScale.value
-                            }
-                        }
-                ) {
-                    Column(
+            Text(
+                text = stringResource(R.string.crop_calendar),
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF4CAF50)
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                itemsIndexed(months) { index, month ->
+                    val isCurrent = index == currentMonth
+                    Card(
+                        onClick = { onMonthClick(index) },
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isCurrent) Color(0xFF4CAF50) else Color.White
+                        ),
                         modifier = Modifier
-                            .padding(12.dp),
-                        horizontalAlignment = Alignment.Start
+                            .fillMaxWidth()
+                            .graphicsLayer {
+                                if (isCurrent) {
+                                    scaleX = animatedScale.value
+                                    scaleY = animatedScale.value
+                                }
+                            }
                     ) {
-                        Text(
-                            text = month,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                color = if (isCurrent) Color.White else Color(0xFF4CAF50),
-                                fontWeight = FontWeight.Bold
+                        Column(
+                            modifier = Modifier
+                                .padding(12.dp),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = month,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    color = if (isCurrent) Color.White else Color(0xFF4CAF50),
+                                    fontWeight = FontWeight.Bold
+                                )
                             )
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "🌾 ${stringResource(R.string.sowing_millet)}\n💧 ${stringResource(R.string.january)}",
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = if (isCurrent) Color.White else Color(0xFF2E7D32)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "🌾 ${stringResource(R.string.sowing_millet)}\n💧 ${
+                                    stringResource(
+                                        R.string.january
+                                    )
+                                }",
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    color = if (isCurrent) Color.White else Color(0xFF2E7D32)
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.tap_on_a_month_to_explore_seasonal_crop_guidance),
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally)
+            )
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.tap_on_a_month_to_explore_seasonal_crop_guidance),
-            style = MaterialTheme.typography.bodyMedium.copy(
-                color = Color.White,
-                textAlign = TextAlign.Center
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-        )
     }
 }

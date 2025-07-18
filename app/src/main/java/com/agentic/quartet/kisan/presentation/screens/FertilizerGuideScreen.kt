@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.presentation.AppBackground
 
 @Composable
 fun FertilizerGuideScreen(onBack: () -> Unit) {
@@ -100,59 +101,65 @@ fun FertilizerGuideScreen(onBack: () -> Unit) {
 
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.fertilizer_guide),
-            style = MaterialTheme.typography.headlineSmall.copy(
-                color = Color(0xFF4CAF50),
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(text = stringResource(R.string.select_crop), style = MaterialTheme.typography.titleMedium, color = Color(0xFF2E7D32))
-        Spacer(modifier = Modifier.height(8.dp))
-
-        AnimatedVisibility(visible = true, enter = fadeIn(animationSpec = tween(600))) {
-            CropDropdown(
-                cropList,
-                selectedCrop,
-                onCropSelected = { selectedCrop = it },
-                expanded = dropdownVisible,
-                onExpandedChange = { dropdownVisible = it }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        AnimatedVisibility(
-            visible = fertilizers.isNotEmpty(),
-            enter = fadeIn(animationSpec = tween(500)) + slideInVertically(initialOffsetY = { it / 4 })
+    AppBackground {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(16.dp)
         ) {
-            Column {
-                fertilizers.forEachIndexed { index, item ->
-                    ExpandableFertilizerCard(fertilizer = item, index = index)
-                    Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = stringResource(R.string.fertilizer_guide),
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    color = Color(0xFF4CAF50),
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = stringResource(R.string.select_crop),
+                style = MaterialTheme.typography.titleMedium,
+                color = Color(0xFF2E7D32)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            AnimatedVisibility(visible = true, enter = fadeIn(animationSpec = tween(600))) {
+                CropDropdown(
+                    cropList,
+                    selectedCrop,
+                    onCropSelected = { selectedCrop = it },
+                    expanded = dropdownVisible,
+                    onExpandedChange = { dropdownVisible = it }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            AnimatedVisibility(
+                visible = fertilizers.isNotEmpty(),
+                enter = fadeIn(animationSpec = tween(500)) + slideInVertically(initialOffsetY = { it / 4 })
+            ) {
+                Column {
+                    fertilizers.forEachIndexed { index, item ->
+                        ExpandableFertilizerCard(fertilizer = item, index = index)
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.tip_fertilizer),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.tip_fertilizer),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
     }
 }
 

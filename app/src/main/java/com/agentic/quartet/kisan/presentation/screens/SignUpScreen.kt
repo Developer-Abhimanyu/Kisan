@@ -16,7 +16,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.ui.res.stringResource
@@ -191,50 +190,6 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                     unfocusedTextColor = Color(0xFF4CAF50)
                 )
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
-            ) {
-                OutlinedTextField(
-                    value = selectedFarmingSource,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text(stringResource(R.string.source_of_farming)) },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth(),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color(0xFF4CAF50),
-                        unfocusedBorderColor = Color(0xFF81C784),
-                        cursorColor = Color(0xFF4CAF50),
-                        focusedLabelColor = Color(0xFF4CAF50),
-                        unfocusedLabelColor = Color(0xFF81C784),
-                        focusedPlaceholderColor = Color(0xFF66BB6A),
-                        unfocusedPlaceholderColor = Color(0xFF81C784),
-                        focusedTextColor = Color(0xFF4CAF50),
-                        unfocusedTextColor = Color(0xFF4CAF50)
-                    )
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(color = Color(0xFF4CAF50))
-                ) {
-                    farmingSources.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(option, color = Color.White) },
-                            onClick = {
-                                selectedFarmingSource = option
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
 
             Spacer(modifier = Modifier.height(16.dp))
 

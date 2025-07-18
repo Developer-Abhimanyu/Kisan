@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.presentation.AppBackground
 
 @Composable
 fun GovtSchemesScreen(onBack: () -> Unit) {
@@ -70,89 +71,97 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
     val scrollState = rememberScrollState()
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.government_schemes),
-            style = MaterialTheme.typography.headlineSmall.copy(
-                color = Color(0xFF4CAF50),
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
+    AppBackground {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.government_schemes),
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    color = Color(0xFF4CAF50),
+                    fontWeight = FontWeight.Bold
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        schemes.forEachIndexed { index, scheme ->
-            var expanded by remember { mutableStateOf(index == 0) }
+            schemes.forEachIndexed { index, scheme ->
+                var expanded by remember { mutableStateOf(index == 0) }
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .clickable { expanded = !expanded }
-                    .animateContentSize(animationSpec = tween(300)),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.Top
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                        .clickable { expanded = !expanded }
+                        .animateContentSize(animationSpec = tween(300)),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
                 ) {
-                    Image(
-                        painter = painterResource(id = scheme.icon),
-                        contentDescription = scheme.title,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(end = 12.dp)
-                    )
-
-                    Column {
-                        Text(
-                            text = scheme.title,
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                color = Color(
-                                    0xFF2E7D32
-                                )
-                            ),
-                            fontWeight = FontWeight.SemiBold
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Image(
+                            painter = painterResource(id = scheme.icon),
+                            contentDescription = scheme.title,
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(end = 12.dp)
                         )
-                        AnimatedVisibility(visible = expanded, enter = expandVertically()) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp)
-                            ) {
-                                Text(
-                                    text = scheme.description,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color(0xFF2E7D32)
-                                )
 
-                                Spacer(modifier = Modifier.height(12.dp))
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End
+                        Column {
+                            Text(
+                                text = scheme.title,
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    color = Color(
+                                        0xFF2E7D32
+                                    )
+                                ),
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            AnimatedVisibility(visible = expanded, enter = expandVertically()) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp)
                                 ) {
-                                    Button(
-                                        onClick = {
-                                            val intent =
-                                                Intent(Intent.ACTION_VIEW, Uri.parse(scheme.url))
-                                            context.startActivity(intent)
-                                        },
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = Color(
-                                                0xFF4CAF50
-                                            )
-                                        ),
+                                    Text(
+                                        text = scheme.description,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color(0xFF2E7D32)
+                                    )
+
+                                    Spacer(modifier = Modifier.height(12.dp))
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
                                     ) {
-                                        Text(stringResource(R.string.learn_more), color = Color.White)
+                                        Button(
+                                            onClick = {
+                                                val intent =
+                                                    Intent(
+                                                        Intent.ACTION_VIEW,
+                                                        Uri.parse(scheme.url)
+                                                    )
+                                                context.startActivity(intent)
+                                            },
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = Color(
+                                                    0xFF4CAF50
+                                                )
+                                            ),
+                                        ) {
+                                            Text(
+                                                stringResource(R.string.learn_more),
+                                                color = Color.White
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -160,16 +169,16 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.visit_krishi_kendra),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.visit_krishi_kendra),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
     }
 }
 

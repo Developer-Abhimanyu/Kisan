@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.presentation.AppBackground
 import java.io.File
 import java.io.FileOutputStream
 
@@ -104,123 +105,125 @@ fun CropDetailScreen(
     val density = LocalDensity.current
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp)
-            .onGloballyPositioned { screenSize = it.size }
-    ) {
-        Card(
-            shape = RoundedCornerShape(16.dp),
+    AppBackground {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(16.dp)
+                .onGloballyPositioned { screenSize = it.size }
         ) {
-            Image(
-                painter = painterResource(id = cropImages[monthIndex]),
-                contentDescription = "$month ${stringResource(R.string.crop_image)}",
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "$month ${stringResource(R.string.crop_activities)}",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                color = Color(0xFF4CAF50),
-                fontWeight = FontWeight.Bold
-            )
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        activities.forEach { (title, desc, icon) ->
-            ActivityCard(title, desc, painterResource(id = icon))
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Expandable tips
-        Card(
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { tipsExpanded = !tipsExpanded }
-                .animateContentSize()
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.smart_farming_tips),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Medium,
-                        color = Color(0xFF2E7D32)
-                    )
+            Card(
+                shape = RoundedCornerShape(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+            ) {
+                Image(
+                    painter = painterResource(id = cropImages[monthIndex]),
+                    contentDescription = "$month ${stringResource(R.string.crop_image)}",
+                    modifier = Modifier.fillMaxSize()
                 )
+            }
 
-                if (tipsExpanded) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    tips.forEach {
-                        Text(
-                            "• $it",
-                            style = MaterialTheme.typography.bodyMedium,
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "$month ${stringResource(R.string.crop_activities)}",
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    color = Color(0xFF4CAF50),
+                    fontWeight = FontWeight.Bold
+                )
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            activities.forEach { (title, desc, icon) ->
+                ActivityCard(title, desc, painterResource(id = icon))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Expandable tips
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFE8F5E9)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { tipsExpanded = !tipsExpanded }
+                    .animateContentSize()
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = stringResource(R.string.smart_farming_tips),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Medium,
                             color = Color(0xFF2E7D32)
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                    )
+
+                    if (tipsExpanded) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        tips.forEach {
+                            Text(
+                                "• $it",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFF2E7D32)
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                        }
                     }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        // Download and Share Buttons
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            val shareVia = stringResource(R.string.share_via)
-            Button(
-                onClick = {
-                    val bitmap = captureViewBitmap(view)
-                    bitmap?.let {
-                        val file = saveBitmapAsPdf(context, it, "${month}_crop_guide")
-                        sharePdf(context, file, shareVia)
-                    }
-                },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+            // Download and Share Buttons
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Icon(
-                    Icons.Default.Share,
-                    contentDescription = stringResource(R.string.share),
-                    tint = Color.White
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.share))
-            }
-            val std = stringResource(R.string.saved_to_documents)
-            Button(
-                onClick = {
-                    val bitmap = captureViewBitmap(view)
-                    bitmap?.let {
-                        saveBitmapAsPdf(context, it, "${month}_crop_guide")
-                        Toast.makeText(context, std, Toast.LENGTH_SHORT).show()
-                    }
-                },
-                modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
-            ) {
-                Icon(
-                    Icons.Default.DateRange,
-                    contentDescription = stringResource(R.string.download_pdf),
-                    tint = Color.White
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.download_pdf))
+                val shareVia = stringResource(R.string.share_via)
+                Button(
+                    onClick = {
+                        val bitmap = captureViewBitmap(view)
+                        bitmap?.let {
+                            val file = saveBitmapAsPdf(context, it, "${month}_crop_guide")
+                            sharePdf(context, file, shareVia)
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                ) {
+                    Icon(
+                        Icons.Default.Share,
+                        contentDescription = stringResource(R.string.share),
+                        tint = Color.White
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.share))
+                }
+                val std = stringResource(R.string.saved_to_documents)
+                Button(
+                    onClick = {
+                        val bitmap = captureViewBitmap(view)
+                        bitmap?.let {
+                            saveBitmapAsPdf(context, it, "${month}_crop_guide")
+                            Toast.makeText(context, std, Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                ) {
+                    Icon(
+                        Icons.Default.DateRange,
+                        contentDescription = stringResource(R.string.download_pdf),
+                        tint = Color.White
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.download_pdf))
+                }
             }
         }
     }
@@ -234,7 +237,10 @@ fun ActivityCard(title: String, desc: String, icon: Painter) {
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9)),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
                 painter = icon,
                 contentDescription = title,

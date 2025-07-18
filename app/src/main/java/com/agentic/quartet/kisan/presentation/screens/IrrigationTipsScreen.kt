@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.presentation.AppBackground
 
 @Composable
 fun IrrigationTipsScreen(onBack: () -> Unit) {
@@ -60,87 +61,93 @@ fun IrrigationTipsScreen(onBack: () -> Unit) {
         R.drawable.ic_leaf
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.irrigation_tips),
-            style = MaterialTheme.typography.headlineSmall.copy(
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF4CAF50)
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Image(
-            //painter = painterResource(R.drawable.ic_irrigation_bg),
-            painter = painterResource(R.drawable.ic_leaf),
-            contentDescription = null,
+    AppBackground {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp)
-                .clip(RoundedCornerShape(16.dp))
-        )
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.irrigation_tips),
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF4CAF50)
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        tips.forEachIndexed { index, tip ->
-            var expanded by remember { mutableStateOf(index == 0) }
-
-            Card(
+            Image(
+                //painter = painterResource(R.drawable.ic_irrigation_bg),
+                painter = painterResource(R.drawable.ic_leaf),
+                contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 6.dp)
-                    .animateContentSize(animationSpec = tween(300))
-                    .clickable { expanded = !expanded },
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    Image(
-                        painter = painterResource(tipIcons[index]),
-                        contentDescription = "Icon",
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(end = 12.dp)
-                    )
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(16.dp))
+            )
 
-                    Column {
-                        Text(
-                            text = "Tip ${index + 1}",
-                            style = MaterialTheme.typography.titleMedium.copy(color = Color(0xFF2E7D32))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            tips.forEachIndexed { index, tip ->
+                var expanded by remember { mutableStateOf(index == 0) }
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .animateContentSize(animationSpec = tween(300))
+                        .clickable { expanded = !expanded },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Image(
+                            painter = painterResource(tipIcons[index]),
+                            contentDescription = "Icon",
+                            modifier = Modifier
+                                .size(40.dp)
+                                .padding(end = 12.dp)
                         )
-                        AnimatedVisibility(visible = expanded, enter = expandVertically()) {
+
+                        Column {
                             Text(
-                                text = tip,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(top = 8.dp),
-                                color = Color(0xFF2E7D32)
+                                text = "Tip ${index + 1}",
+                                style = MaterialTheme.typography.titleMedium.copy(
+                                    color = Color(
+                                        0xFF2E7D32
+                                    )
+                                )
                             )
+                            AnimatedVisibility(visible = expanded, enter = expandVertically()) {
+                                Text(
+                                    text = tip,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    color = Color(0xFF2E7D32)
+                                )
+                            }
                         }
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Proper irrigation saves water and improves yield.\nKeep monitoring soil and crop conditions.",
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Proper irrigation saves water and improves yield.\nKeep monitoring soil and crop conditions.",
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
     }
 }

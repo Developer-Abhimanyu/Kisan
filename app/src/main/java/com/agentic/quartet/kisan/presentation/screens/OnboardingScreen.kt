@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.presentation.AppBackground
 import com.agentic.quartet.kisan.utils.LanguagePreferenceManager
 import com.agentic.quartet.kisan.utils.LocaleHelper.setAppLocale
 import kotlinx.coroutines.launch
@@ -45,149 +47,167 @@ fun OnboardingScreen(
 
     val languages = mapOf("en" to "English", "kn" to "ಕನ್ನಡ", "hi" to "हिंदी")
     var expanded by remember { mutableStateOf(false) }
-    var selectedLangCode by remember { mutableStateOf("en") }
-
-    LaunchedEffect(Unit) {
-        val savedLang = languagePref.getSavedLanguage() // safe call inside coroutine
-        if (savedLang != null) {
-            selectedLangCode = savedLang
-            setAppLocale(savedLang, context)
-        }
-    }
 
     fun updateLocale(localeCode: String) {
         val locale = Locale(localeCode)
         Locale.setDefault(locale)
         val resources = context.resources
         val config = resources.configuration
-        config.setLocales(LocaleList(locale))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            config.setLocales(LocaleList(locale))
+        } else {
+            @Suppress("DEPRECATION")
+            config.setLocale(locale)
+        }
         resources.updateConfiguration(config, resources.displayMetrics)
-
         (context as? Activity)?.recreate()
     }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 40.dp)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp)
-                )
+        AppBackground {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp, vertical = 40.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp)
+                    )
 
-                Box {
-                    TextButton(onClick = { expanded = true }) {
-                        Text(languages[selectedLangCode] ?: "Language", color = Color(0xFF4CAF50))
-                    }
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        languages.forEach { (code, name) ->
-                            DropdownMenuItem(
-                                text = { Text(name) },
-                                onClick = {
-                                    expanded = false
-                                    selectedLangCode = code
-                                    scope.launch {
-                                        languagePref.saveLanguage(code)
-                                        updateLocale(code)
-                                    }
-                                }
+                    Box {
+                        TextButton(onClick = { expanded = true }) {
+                            Text(
+                                languages[selectedLangCode] ?: "Language",
+                                color = Color(0xFF4CAF50)
                             )
+                        }
+                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier.background(color = Color(0xFF2E7D32))) {
+                            languages.forEach { (code, name) ->
+                                DropdownMenuItem(
+                                    text = { Text(name, color = Color.White) },
+                                    onClick = {
+                                        expanded = false
+                                        scope.launch {
+                                            languagePref.saveLanguage(code)
+                                            onLanguageChange(code)      // Notify root
+                                            updateLocale(code)          // Recreate
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-            Text(
-                buildAnnotatedString {
-                    withStyle(SpanStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50))) {
-                        append(stringResource(R.string.the_new_era))
+                Text(
+                    buildAnnotatedString {
+                        withStyle(
+                            SpanStyle(
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF4CAF50)
+                            )
+                        ) {
+                            append(stringResource(R.string.the_new_era))
+                        }
+                        withStyle(
+                            SpanStyle(
+                                fontSize = 22.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF4CAF50)
+                            )
+                        ) {
+                            append("\n")
+                            append(stringResource(R.string.agriculture))
+                        }
                     }
-                    withStyle(SpanStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50))) {
-                        append("\n")
-                        append(stringResource(R.string.agriculture))
-                    }
-                }
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(R.string.growing_resources_thriving_futures),
-                style = MaterialTheme.typography.bodyLarge.copy(color = Color(0xFF4CAF50)),
-                lineHeight = 28.sp
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.leaf),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 350.dp)
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                Text(
+                    text = stringResource(R.string.growing_resources_thriving_futures),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Color(0xFF4CAF50)),
+                    lineHeight = 28.sp
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Button(
-                        onClick = onSignUpClick,
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                        modifier = Modifier.weight(1f)
+                    Image(
+                        painter = painterResource(id = R.drawable.leaf),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 350.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Text(stringResource(R.string.sign_up), color = Color.White)
+                        Button(
+                            onClick = onSignUpClick,
+                            shape = RoundedCornerShape(50),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(stringResource(R.string.sign_up), color = Color.White)
+                        }
+
+                        Button(
+                            onClick = onSignInClick,
+                            shape = RoundedCornerShape(50),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(stringResource(R.string.sign_in), color = Color.White)
+                        }
                     }
 
-                    Button(
-                        onClick = onSignInClick,
-                        shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                        modifier = Modifier.weight(1f)
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+                        exit = fadeOut(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp)
                     ) {
-                        Text(stringResource(R.string.sign_in), color = Color.White)
-                    }
-                }
-
-                AnimatedVisibility(
-                    visible = true,
-                    enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
-                    exit = fadeOut(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = stringResource(R.string.ai_powered_insights_for_modern_agriculture),
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                color = Color(0xFF2E7D32),
-                                fontWeight = FontWeight.Normal,
-                                fontSize = 12.sp,
-                                lineHeight = 16.sp,
-                            ),
-                            textAlign = TextAlign.Center,
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
-                        )
+                        ) {
+                            Text(
+                                text = stringResource(R.string.ai_powered_insights_for_modern_agriculture),
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = Color(0xFF2E7D32),
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 12.sp,
+                                    lineHeight = 16.sp,
+                                ),
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }

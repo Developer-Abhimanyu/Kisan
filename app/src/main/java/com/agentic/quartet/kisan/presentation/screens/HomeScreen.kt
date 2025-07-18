@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.presentation.AppBackground
 
 @Composable
 fun HomeScreen(
@@ -56,110 +57,136 @@ fun HomeScreen(
         )
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Box(
+    AppBackground {
+        Column(
             modifier = Modifier
-                .graphicsLayer { translationY = weatherCardOffset.value }
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
-            WeatherCard(
-                location = "Bekasi Timur",
-                date = "27 Nov 2023",
-                temperature = 33,
-                humidity = 76,
-                condition = "Cloudy",
-                suggestion = "Today is a good day to apply pesticides."
-            )
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        GeminiAdviceCard(
-            text = "Based on today’s weather and soil moisture, consider irrigation before sunset for better crop absorption."
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(R.string.smart_farming_tools),
-            style = MaterialTheme.typography.titleMedium.copy(
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF4CAF50)
-            )
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            item {
-                HomeFeatureButton(
-                    stringResource(R.string.disease_detection),
-                    R.drawable.ic_disease_detection,
-                    onNavigateToDiseaseDetection
-                )
-            }
-            item {
-                HomeFeatureButton(stringResource(R.string.market_prices), R.drawable.ic_chart, onNavigateToMarketPrices)
-            }
-            item {
-                HomeFeatureButton(stringResource(R.string.govt_schemes), R.drawable.ic_gov, onNavigateToGovtSchemes)
-            }
-            item {
-                HomeFeatureButton(stringResource(R.string.voice_agent), R.drawable.ic_mic, onVoiceAgentClick)
-            }
-            item {
-                HomeFeatureButton(stringResource(R.string.soil_scanner), R.drawable.ic_soil_scanner) {
-                    onSoilDetectorClick()
-                }
-            }
-            item {
-                HomeFeatureButton(stringResource(R.string.crop_calendar), R.drawable.ic_crop_calendar) {
-                    onCropCalendarClick()
-                }
-            }
-            item {
-                HomeFeatureButton(stringResource(R.string.irrigation_tips), R.drawable.ic_irrigation_tips) {
-                    onIrrigationTipsClick()
-                }
-            }
-            item {
-                HomeFeatureButton(stringResource(R.string.fertilizer_guide), R.drawable.ic_fertilizer_guide) {
-                    onFertilizerGuideClick()
-                }
-            }
-        }
-        Box(
-            modifier = Modifier
-                .size(80.dp)
-                .padding(12.dp),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            FloatingActionButton(
-                onClick = { /* navigateToChatbot() */ },
-                containerColor = Color(0xFF4CAF50),
-                shape = RoundedCornerShape(50)
+            Box(
+                modifier = Modifier
+                    .graphicsLayer { translationY = weatherCardOffset.value }
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_gov),
-                    contentDescription = stringResource(R.string.chatbot),
-                    tint = Color.White
+                WeatherCard(
+                    location = "Bekasi Timur",
+                    date = "27 Nov 2023",
+                    temperature = 33,
+                    humidity = 76,
+                    condition = "Cloudy",
+                    suggestion = "Today is a good day to apply pesticides."
                 )
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            GeminiAdviceCard(
+                text = "Based on today’s weather and soil moisture, consider irrigation before sunset for better crop absorption."
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = stringResource(R.string.smart_farming_tools),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF4CAF50)
+                )
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                item {
+                    HomeFeatureButton(
+                        stringResource(R.string.disease_detection),
+                        R.drawable.ic_disease_detection,
+                        onNavigateToDiseaseDetection
+                    )
+                }
+                item {
+                    HomeFeatureButton(
+                        stringResource(R.string.market_prices),
+                        R.drawable.ic_chart,
+                        onNavigateToMarketPrices
+                    )
+                }
+                item {
+                    HomeFeatureButton(
+                        stringResource(R.string.govt_schemes),
+                        R.drawable.ic_gov,
+                        onNavigateToGovtSchemes
+                    )
+                }
+                item {
+                    HomeFeatureButton(
+                        stringResource(R.string.voice_agent),
+                        R.drawable.ic_mic,
+                        onVoiceAgentClick
+                    )
+                }
+                item {
+                    HomeFeatureButton(
+                        stringResource(R.string.soil_scanner),
+                        R.drawable.ic_soil_scanner
+                    ) {
+                        onSoilDetectorClick()
+                    }
+                }
+                item {
+                    HomeFeatureButton(
+                        stringResource(R.string.crop_calendar),
+                        R.drawable.ic_crop_calendar
+                    ) {
+                        onCropCalendarClick()
+                    }
+                }
+                item {
+                    HomeFeatureButton(
+                        stringResource(R.string.irrigation_tips),
+                        R.drawable.ic_irrigation_tips
+                    ) {
+                        onIrrigationTipsClick()
+                    }
+                }
+                item {
+                    HomeFeatureButton(
+                        stringResource(R.string.fertilizer_guide),
+                        R.drawable.ic_fertilizer_guide
+                    ) {
+                        onFertilizerGuideClick()
+                    }
+                }
+            }
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(12.dp),
+                contentAlignment = Alignment.BottomEnd
+            ) {
+                FloatingActionButton(
+                    onClick = { /* navigateToChatbot() */ },
+                    containerColor = Color(0xFF4CAF50),
+                    shape = RoundedCornerShape(50)
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_gov),
+                        contentDescription = stringResource(R.string.chatbot),
+                        tint = Color.White
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.tip_home),
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                textAlign = TextAlign.Center
+            )
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        Text(
-            text = stringResource(R.string.tip_home),
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center
-        )
     }
 }

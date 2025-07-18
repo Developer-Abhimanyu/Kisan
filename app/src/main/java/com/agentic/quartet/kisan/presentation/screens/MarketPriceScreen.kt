@@ -27,6 +27,7 @@ import com.agentic.quartet.kisan.data.remote.GeminiApiService
 import com.agentic.quartet.kisan.utils.SpeechRecognizerHelper
 import androidx.compose.foundation.*
 import androidx.compose.ui.text.style.TextAlign
+import com.agentic.quartet.kisan.presentation.AppBackground
 
 @Composable
 fun MarketPriceScreen() {
@@ -64,111 +65,122 @@ fun MarketPriceScreen() {
 
     val geminiApi = remember { GeminiApiService(apiKey = "YOUR_API_KEY") }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Market Price Assistant",
-            style = MaterialTheme.typography.headlineSmall.copy(
-                color = Color(0xFF4CAF50),
-                fontWeight = FontWeight.Bold
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = commodity,
-            onValueChange = { commodity = it },
-            label = { Text("Enter Commodity Name", color = Color(0xFF2E7D32)) },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            onClick = {
-                if (ContextCompat.checkSelfPermission(
-                        context, Manifest.permission.RECORD_AUDIO
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    speechHelper.startListening()
-                } else {
-                    permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-                }
-            },
-            modifier = Modifier.align(Alignment.End),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF81C784)),
-            shape = RoundedCornerShape(50)
+    AppBackground {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(16.dp)
         ) {
-            Icon(Icons.Default.Home, contentDescription = "Mic", tint = Color.White)
-            Spacer(modifier = Modifier.width(6.dp))
-            Text("Speak", color = Color.White)
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("📈 Crop Market Trend", style = MaterialTheme.typography.titleMedium, color = Color(0xFF2E7D32))
-            DropdownMenuCropSelector(
-                options = cropPriceMap.keys.toList(),
-                selected = selectedCrop,
-                onCropSelected = { selectedCrop = it }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        MarketBarChart(days = days, prices = prices)
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                    advice = "$selectedCrop prices have shown a steady rise this week. Consider selling on Friday for the best rate."
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-            shape = RoundedCornerShape(50)
-        ) {
-            Text("Get AI Price Advice", color = Color.White)
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        AnimatedVisibility(
-            visible = advice.isNotBlank(),
-            enter = fadeIn(animationSpec = tween(500)) + slideInVertically(initialOffsetY = { it / 2 })
-        ) {
-            Card(
+            Text(
+                text = "Market Price Assistant",
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    color = Color(0xFF4CAF50),
+                    fontWeight = FontWeight.Bold
+                ),
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFC8E6C9))
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = commodity,
+                onValueChange = { commodity = it },
+                label = { Text("Enter Commodity Name", color = Color(0xFF2E7D32)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {
+                    if (ContextCompat.checkSelfPermission(
+                            context, Manifest.permission.RECORD_AUDIO
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        speechHelper.startListening()
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                    }
+                },
+                modifier = Modifier.align(Alignment.End),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF81C784)),
+                shape = RoundedCornerShape(50)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text("AI Insight", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(advice, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32))
+                Icon(Icons.Default.Home, contentDescription = "Mic", tint = Color.White)
+                Spacer(modifier = Modifier.width(6.dp))
+                Text("Speak", color = Color.White)
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "📈 Crop Market Trend",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFF2E7D32)
+                )
+                DropdownMenuCropSelector(
+                    options = cropPriceMap.keys.toList(),
+                    selected = selectedCrop,
+                    onCropSelected = { selectedCrop = it }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            MarketBarChart(days = days, prices = prices)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    advice =
+                        "$selectedCrop prices have shown a steady rise this week. Consider selling on Friday for the best rate."
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                shape = RoundedCornerShape(50)
+            ) {
+                Text("Get AI Price Advice", color = Color.White)
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            AnimatedVisibility(
+                visible = advice.isNotBlank(),
+                enter = fadeIn(animationSpec = tween(500)) + slideInVertically(initialOffsetY = { it / 2 })
+            ) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFC8E6C9))
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text("AI Insight", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            advice,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color(0xFF2E7D32)
+                        )
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Text(
+                text = "Tip: Use this data to decide best selling time for your crops.",
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Tip: Use this data to decide best selling time for your crops.",
-            style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
-        )
     }
 }
 
