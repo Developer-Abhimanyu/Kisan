@@ -76,6 +76,7 @@ fun HomeScreen(
     var condition by remember { mutableStateOf("Loading...") }
     var suggestion by remember { mutableStateOf("") }
     var iconUrl by remember { mutableStateOf("") }
+    var geminiAdvice by remember { mutableStateOf("Fetching weather-based advice...") }
 
     val currentDate: String = LocalDate.now().format(
         DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH)
@@ -91,6 +92,23 @@ fun HomeScreen(
                 cond.contains("rain", true) -> "It may rain today. Consider drainage or harvesting early."
                 t.toFloatOrNull()?.let { it > 35 } == true -> "It's hot. Irrigate your crops in the evening."
                 else -> "Today is a good day to apply pesticides."
+            }
+            geminiAdvice = buildString {
+                appendLine("Current weather in ${profile.city} is $cond with $t°C and $h% humidity.")
+                when {
+                    cond.contains("rain", true) -> {
+                        appendLine("It may rain today. Ensure proper drainage in your field.")
+                        appendLine("Avoid pesticide spraying to prevent wash-off.")
+                    }
+                    t.toFloatOrNull()?.let { it > 35 } == true -> {
+                        appendLine("The temperature is quite high. Irrigation should be done in the evening.")
+                        appendLine("Mulching can help retain soil moisture.")
+                    }
+                    else -> {
+                        appendLine("Conditions are ideal for routine farming tasks.")
+                        appendLine("You may apply fertilizers or pesticides today.")
+                    }
+                }
             }
         }
     }
@@ -119,7 +137,7 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             GeminiAdviceCard(
-                text = "Based on today’s weather and soil moisture, consider irrigation before sunset for better crop absorption."
+                text = geminiAdvice
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -204,7 +222,7 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .size(80.dp)
-                    .padding(12.dp),
+                    .padding(12.dp).align(Alignment.End),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 FloatingActionButton(
