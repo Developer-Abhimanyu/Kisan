@@ -19,62 +19,59 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.net.URL
+
+data class Scheme(
+    val title: String,
+    val icon: Int,
+    val url: String,
+    val intro: String
+)
 
 @Composable
 fun GovtSchemesScreen(onBack: () -> Unit) {
-    val schemes = listOf(
-        Scheme(
-            "PM-KISAN",
-            "Provides ₹6,000 per year to small and marginal farmers in three equal installments.",
-            R.drawable.ic_leaf,
-            "https://pmkisan.gov.in"
-        ),
-        Scheme(
-            "Soil Health Card",
-            "Provides info on nutrient status of soil for better fertilizer application.",
-            R.drawable.ic_leaf,
-            "https://soilhealth.dac.gov.in"
-        ),
-        Scheme(
-            "PMFBY",
-            "Crop insurance scheme covering losses due to natural calamities.",
-            R.drawable.ic_leaf,
-            "https://pmfby.gov.in"
-        ),
-        Scheme(
-            "eNAM",
-            "Online agri-market platform for transparent price discovery and trade.",
-            R.drawable.ic_chart,
-            "https://enam.gov.in"
-        ),
-        Scheme(
-            "Agri Infra Fund",
-            "Loan support for building post-harvest and agri infra facilities.",
-            R.drawable.ic_leaf,
-            "https://agrinfra.dac.gov.in"
-        )
-    )
-
-    /*val schemes = listOf(
-        Scheme("PM-KISAN", "Provides ₹6,000 per year to small and marginal farmers in three equal installments.", R.drawable.ic_money),
-        Scheme("Soil Health Card", "Provides info on nutrient status of soil for better fertilizer application.", R.drawable.ic_soil),
-        Scheme("PMFBY", "Crop insurance scheme covering losses due to natural calamities.", R.drawable.ic_insurance),
-        Scheme("eNAM", "Online agri-market platform for transparent price discovery and trade.", R.drawable.ic_chart),
-        Scheme("Agri Infra Fund", "Loan support for building post-harvest and agri infra facilities.", R.drawable.ic_infra)
-    )*/
-
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
+    var schemes by remember { mutableStateOf<List<Scheme>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
+
+    // Fetch intros from Wikipedia API
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            val pmkIntro = fetchWikipediaIntro("Pradhan Mantri Kisan Samman Nidhi")
+            val pmfIntro = fetchWikipediaIntro("Pradhan Mantri Fasal Bima Yojana")
+            val soilCardIntro = fetchWikipediaIntro("Soil Health Card Scheme")
+            val enamIntro = fetchWikipediaIntro("National Agriculture Market")
+            val agriInfraIntro = fetchWikipediaIntro("Agriculture Infrastructure Fund")
+            val rashtriyaKrishiVikasYojanaIntro = fetchWikipediaIntro("Rashtriya Krishi Vikas Yojana")
+            val paramparagatIntro = fetchWikipediaIntro("Paramparagat Krishi Vikas Yojana")
+            val atmaIntro = fetchWikipediaIntro("Support to State Extension Programs for Extension Reforms (ATMA)")
+
+            schemes = listOf(
+                Scheme("PM-KISAN", R.drawable.ic_leaf, "https://pmkisan.gov.in", pmkIntro),
+                Scheme("PMFBY", R.drawable.ic_leaf, "https://pmfby.gov.in", pmfIntro),
+                Scheme("Soil Health Card", R.drawable.ic_leaf, "https://soilhealth.dac.gov.in", soilCardIntro),
+                Scheme("eNAM", R.drawable.ic_chart, "https://enam.gov.in", enamIntro),
+                Scheme("Agri Infra Fund", R.drawable.ic_leaf, "https://agrinfra.dac.gov.in", agriInfraIntro),
+                Scheme("RKVY", R.drawable.ic_leaf, "https://rkvy.nic.in", rashtriyaKrishiVikasYojanaIntro),
+                Scheme("PKVY", R.drawable.ic_leaf, "https://pgsindia-ncof.gov.in", paramparagatIntro),
+                Scheme("ATMA", R.drawable.ic_leaf, "https://dackkms.gov.in", atmaIntro)
+            )
+        }
+    }
 
     AppBackground {
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .verticalScroll(scrollState)
                 .padding(16.dp)
         ) {
@@ -87,8 +84,7 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
             schemes.forEachIndexed { index, scheme ->
                 var expanded by remember { mutableStateOf(index == 0) }
@@ -98,25 +94,21 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                         .clickable { expanded = !expanded }
-                        .animateContentSize(animationSpec = tween(300)),
+                        .animateContentSize(tween(300)),
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
                 ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.Top
-                    ) {
+                    Row(modifier = Modifier.padding(16.dp)) {
                         Image(
-                            painter = painterResource(id = scheme.icon),
+                            painter = painterResource(scheme.icon),
                             contentDescription = scheme.title,
                             modifier = Modifier
                                 .size(40.dp)
                                 .padding(end = 12.dp)
                         )
-
                         Column {
                             Text(
-                                text = scheme.title,
+                                scheme.title,
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     color = Color(
                                         0xFF2E7D32
@@ -125,43 +117,26 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                                 fontWeight = FontWeight.SemiBold
                             )
                             AnimatedVisibility(visible = expanded, enter = expandVertically()) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 8.dp)
-                                ) {
-                                    Text(
-                                        text = scheme.description,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color(0xFF2E7D32)
-                                    )
-
-                                    Spacer(modifier = Modifier.height(12.dp))
-
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.End
-                                    ) {
-                                        Button(
-                                            onClick = {
-                                                val intent =
-                                                    Intent(
-                                                        Intent.ACTION_VIEW,
-                                                        Uri.parse(scheme.url)
-                                                    )
-                                                context.startActivity(intent)
-                                            },
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = Color(
-                                                    0xFF4CAF50
-                                                )
-                                            ),
-                                        ) {
-                                            Text(
-                                                stringResource(R.string.learn_more),
-                                                color = Color.White
+                                Column(Modifier.padding(top = 8.dp)) {
+                                    Text(scheme.intro, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32))
+                                    Spacer(Modifier.height(8.dp))
+                                    Button(
+                                        onClick = {
+                                            context.startActivity(
+                                                Intent(Intent.ACTION_VIEW, Uri.parse(scheme.url))
                                             )
-                                        }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = Color(
+                                                0xFF4CAF50
+                                            )
+                                        ),
+                                        modifier = Modifier.align(Alignment.End)
+                                    ) {
+                                        Text(
+                                            stringResource(R.string.learn_more),
+                                            color = Color.White
+                                        )
                                     }
                                 }
                             }
@@ -170,8 +145,7 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
+            Spacer(Modifier.height(24.dp))
             Text(
                 text = stringResource(R.string.visit_krishi_kendra),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
@@ -182,9 +156,12 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
     }
 }
 
-data class Scheme(
-    val title: String,
-    val description: String,
-    val icon: Int,
-    val url: String
-)
+suspend fun fetchWikipediaIntro(pageTitle: String): String = withContext(Dispatchers.IO) {
+    return@withContext try {
+        val url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + pageTitle.replace(" ", "_")
+        val json = JSONObject(URL(url).readText())
+        json.optString("extract")
+    } catch (e: Exception) {
+        "Description not available."
+    }
+}

@@ -74,6 +74,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:24.4.4")
     implementation("com.google.android.gms:play-services-auth:20.6.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("org.jsoup:jsoup:1.17.2")
 
     androidTestImplementation(libs.hilt.android.testing)
 
