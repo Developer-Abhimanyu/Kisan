@@ -1,7 +1,6 @@
 package com.agentic.quartet.kisan
 
 import android.app.Application
-import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -12,12 +11,23 @@ import com.agentic.quartet.kisan.presentation.ui.theme.KisanTheme
 import com.agentic.quartet.kisan.utils.LanguagePreferenceManager
 import com.agentic.quartet.kisan.utils.LocaleHelper
 import com.agentic.quartet.kisan.utils.UserPreferences
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @HiltAndroidApp
-class KisanApp : Application()
+class KisanApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        FirebaseApp.initializeApp(this)
+
+        FirebaseFirestore.getInstance().firestoreSettings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(false)
+            .build()
+    }
+}
 
 @Composable
 fun KisanAppRoot() {
@@ -29,7 +39,6 @@ fun KisanAppRoot() {
     var selectedLangCode by remember { mutableStateOf("en") }
     val scope = rememberCoroutineScope()
 
-    // Fetch saved language once app launches
     LaunchedEffect(Unit) {
         val savedLang = languagePref.getSavedLanguage()
         if (!savedLang.isNullOrBlank()) {
@@ -38,7 +47,6 @@ fun KisanAppRoot() {
         }
     }
 
-    // When language changes in runtime
     SideEffect {
         LocaleHelper.setAppLocale(selectedLangCode, context)
     }

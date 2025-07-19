@@ -17,10 +17,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
+import com.agentic.quartet.kisan.data.model.FarmerProfile
 import com.agentic.quartet.kisan.presentation.AppBackground
+import com.agentic.quartet.kisan.utils.ProfileManager
 import com.agentic.quartet.kisan.utils.UserPreferences
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun SignInScreen(
@@ -114,8 +119,30 @@ fun SignInScreen(
                                 if (task.isSuccessful) {
                                     showSuccess = true
                                     scope.launch {
-                                        UserPreferences(context).setSignedIn(true)
-                                        onSignInSuccess()
+                                        try {
+                                            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
+                                            val db = FirebaseFirestore.getInstance()
+
+                                            repeat(3) { attempt ->
+                                                try {
+                                                    val snapshot = db.collection("farmers").document(userId).get().await()
+                                                    val profile = snapshot.toObject(FarmerProfile::class.java)
+                                                    if (profile != null) {
+                                                        ProfileManager.saveProfile(context, profile)
+                                                        UserPreferences(context).setSignedIn(true)
+                                                        onSignInSuccess()
+                                                    } else {
+                                                        Toast.makeText(context, "Profile not found.", Toast.LENGTH_SHORT).show()
+                                                    }
+                                                    return@launch // success
+                                                } catch (e: Exception) {
+                                                    if (attempt == 2) throw e
+                                                    delay(1000) // wait 1s before retrying
+                                                }
+                                            }
+                                        } catch (e: Exception) {
+                                            Toast.makeText(context, "Failed to load profile: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                                        }
                                     }
                                 } else {
                                     Toast.makeText(

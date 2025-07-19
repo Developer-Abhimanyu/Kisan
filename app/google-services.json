@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "450450822619",
+    "firebase_url": "https://kisan-1a786-default-rtdb.firebaseio.com",
     "project_id": "kisan-1a786",
     "storage_bucket": "kisan-1a786.firebasestorage.app"
   },

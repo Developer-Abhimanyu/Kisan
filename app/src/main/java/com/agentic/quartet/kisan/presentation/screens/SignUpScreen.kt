@@ -27,6 +27,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.utils.ProfileManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -51,7 +52,9 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
 
     AppBackground {
         Column(
-            modifier = Modifier.fillMaxSize().padding(24.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
             verticalArrangement = Arrangement.Top
         ) {
             Text(
@@ -209,7 +212,10 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
 
                     scope.launch {
                         try {
-                            val result = auth.createUserWithEmailAndPassword(phone, password).await()
+                            val result = auth.createUserWithEmailAndPassword(
+                                phone.plus("@kisan.com"),
+                                password
+                            ).await()
                             val userId = result.user?.uid ?: throw Exception("User ID not found")
 
                             val profile = FarmerProfile(
@@ -229,14 +235,13 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                                 "pinCode" to pinCode,
                                 "farmingSource" to ""
                             )
-
+                            db.collection("farmers").document(userId).set(profileMap).await()
                             submitSuccess = true
                             Toast.makeText(context, "Signup successful", Toast.LENGTH_SHORT).show()
-
+                            delay(1000)
                             UserPreferences(context).setSignedIn(true)
                             ProfileManager.saveProfile(context, profile)
                             onSignUpComplete()
-                            db.collection("farmers").document(userId).set(profileMap).await()
 
                         } catch (e: Exception) {
                             errorMessage = e.localizedMessage ?: "Signup failed"
@@ -245,7 +250,9 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                         }
                     }
                 },
-                modifier = Modifier.fillMaxWidth().height(54.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(54.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = if (submitSuccess) Color(0xFF388E3C) else Color(0xFF4CAF50)
                 ),
@@ -271,7 +278,11 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text(stringResource(R.string.submit), color = Color.White,  fontSize = 18.sp,)
+                        Text(
+                            stringResource(R.string.submit),
+                            color = Color.White,
+                            fontSize = 18.sp,
+                        )
                     }
                 }
             }
