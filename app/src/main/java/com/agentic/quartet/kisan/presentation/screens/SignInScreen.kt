@@ -140,7 +140,7 @@ fun SignInScreen(
                         modifier = Modifier.size(20.dp)
                     )
                 } else {
-                    Text("Sign In", color = Color.White, fontSize = 16.sp)
+                    Text("Sign In", color = Color.White,  fontSize = 18.sp,)
                 }
             }
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 
@@ -123,7 +124,8 @@ fun FertilizerGuideScreen(onBack: () -> Unit) {
             Text(
                 text = stringResource(R.string.select_crop),
                 style = MaterialTheme.typography.titleMedium,
-                color = Color(0xFF2E7D32)
+                color = Color(0xFF2E7D32),
+                fontSize = 18.sp,
             )
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -156,8 +158,9 @@ fun FertilizerGuideScreen(onBack: () -> Unit) {
             Text(
                 text = stringResource(R.string.tip_fertilizer),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
+                fontSize = 18.sp,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     }
@@ -211,7 +214,7 @@ fun CropDropdown(
                                         .padding(end = 8.dp)
                                 )
                             }
-                            Text(crop, color = Color(0xFF2E7D32))
+                            Text(crop, color = Color(0xFF2E7D32), fontSize = 18.sp,)
                         }
                     },
                     onClick = {
@@ -266,17 +269,18 @@ fun ExpandableFertilizerCard(fertilizer: FertilizerInfo, index: Int) {
                 Text(
                     text = fertilizer.name,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = Color(0xFF2E7D32)
+                    color = Color(0xFF2E7D32),
+                    fontSize = 18.sp,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
 
                 AnimatedVisibility(visible = expanded, enter = expandVertically()) {
                     Column {
-                        Text("🧩 Usage: ${fertilizer.usage}", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32))
+                        Text("🧩 Usage: ${fertilizer.usage}", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32), fontSize = 18.sp,)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text("📏 Dosage: ${fertilizer.dosage}", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32))
+                        Text("📏 Dosage: ${fertilizer.dosage}", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32), fontSize = 18.sp,)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text("⏰ Timing: ${fertilizer.timing}", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32))
+                        Text("⏰ Timing: ${fertilizer.timing}", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32), fontSize = 18.sp,)
                     }
                 }
             }

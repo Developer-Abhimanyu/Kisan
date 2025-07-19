@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
@@ -133,7 +134,8 @@ fun CropDetailScreen(
                 style = MaterialTheme.typography.headlineSmall.copy(
                     color = Color(0xFF4CAF50),
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                fontSize = 18.sp,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -160,7 +162,8 @@ fun CropDetailScreen(
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Medium,
                             color = Color(0xFF2E7D32)
-                        )
+                        ),
+                        fontSize = 18.sp,
                     )
 
                     if (tipsExpanded) {
@@ -169,7 +172,8 @@ fun CropDetailScreen(
                             Text(
                                 "• $it",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFF2E7D32)
+                                color = Color(0xFF2E7D32),
+                                fontSize = 18.sp,
                             )
                             Spacer(modifier = Modifier.height(6.dp))
                         }
@@ -202,7 +206,7 @@ fun CropDetailScreen(
                         tint = Color.White
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.share))
+                    Text(stringResource(R.string.share),  fontSize = 14.sp,)
                 }
                 val std = stringResource(R.string.saved_to_documents)
                 Button(
@@ -222,7 +226,7 @@ fun CropDetailScreen(
                         tint = Color.White
                     )
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.download_pdf))
+                    Text(stringResource(R.string.download_pdf),  fontSize = 14.sp,)
                 }
             }
         }
@@ -249,11 +253,12 @@ fun ActivityCard(title: String, desc: String, icon: Painter) {
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text(text = title, fontWeight = FontWeight.SemiBold, color = Color(0xFF2E7D32))
+                Text(text = title, fontWeight = FontWeight.SemiBold, color = Color(0xFF2E7D32),  fontSize = 18.sp,)
                 Text(
                     text = desc,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF2E7D32)
+                    color = Color(0xFF2E7D32),
+                    fontSize = 18.sp,
                 )
             }
         }

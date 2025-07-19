@@ -27,6 +27,7 @@ import com.agentic.quartet.kisan.data.remote.GeminiApiService
 import com.agentic.quartet.kisan.utils.SpeechRecognizerHelper
 import androidx.compose.foundation.*
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.presentation.AppBackground
 
 @Composable
@@ -110,7 +111,7 @@ fun MarketPriceScreen() {
             ) {
                 Icon(Icons.Default.Home, contentDescription = "Mic", tint = Color.White)
                 Spacer(modifier = Modifier.width(6.dp))
-                Text("Speak", color = Color.White)
+                Text("Speak", color = Color.White,  fontSize = 18.sp,)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -122,7 +123,8 @@ fun MarketPriceScreen() {
                 Text(
                     "📈 Crop Market Trend",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF2E7D32)
+                    color = Color(0xFF2E7D32),
+                    fontSize = 18.sp,
                 )
                 DropdownMenuCropSelector(
                     options = cropPriceMap.keys.toList(),
@@ -146,7 +148,7 @@ fun MarketPriceScreen() {
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                 shape = RoundedCornerShape(50)
             ) {
-                Text("Get AI Price Advice", color = Color.White)
+                Text("Get AI Price Advice", color = Color.White,  fontSize = 18.sp,)
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -178,7 +180,8 @@ fun MarketPriceScreen() {
                 text = "Tip: Use this data to decide best selling time for your crops.",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
             )
         }
     }
@@ -202,7 +205,7 @@ fun MarketBarChart(days: List<String>, prices: List<Int>) {
                         .background(Color(0xFF81C784), RoundedCornerShape(6.dp))
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(label, style = MaterialTheme.typography.labelSmall, color = Color(0xFF2E7D32))
+                Text(label, style = MaterialTheme.typography.labelSmall, color = Color(0xFF2E7D32),  fontSize = 18.sp,)
             }
         }
     }

@@ -108,7 +108,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
                 ) {
                     Icon(Icons.Default.Home, contentDescription = null, tint = Color.White)
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.gallery), color = Color.White)
+                    Text(stringResource(R.string.gallery), color = Color.White,  fontSize = 18.sp,)
                 }
 
                 Button(
@@ -118,7 +118,7 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
                 ) {
                     Icon(Icons.Default.AddCircle, contentDescription = null, tint = Color.White)
                     Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.use_camera), color = Color.White)
+                    Text(stringResource(R.string.use_camera), color = Color.White,  fontSize = 18.sp,)
                 }
             }
 
@@ -183,7 +183,8 @@ fun DiseaseDetectionScreen(onBack: () -> Unit) {
                 text = stringResource(R.string.tip_for_disease),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp
             )
         }
     }

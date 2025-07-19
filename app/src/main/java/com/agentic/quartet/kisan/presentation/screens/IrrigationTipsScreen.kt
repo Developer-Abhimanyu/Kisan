@@ -21,7 +21,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 import kotlinx.coroutines.Dispatchers
@@ -93,14 +95,16 @@ fun IrrigationTipsScreen(onBack: () -> Unit) {
                                     color = Color(
                                         0xFF2E7D32
                                     )
-                                )
+                                ),
+                                fontSize = 18.sp,
                             )
                             if (expanded) {
                                 Spacer(Modifier.height(8.dp))
                                 Text(
                                     text = tip,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color(0xFF2E7D32)
+                                    color = Color(0xFF2E7D32),
+                                    fontSize = 18.sp,
                                 )
                             }
                         }
@@ -112,7 +116,9 @@ fun IrrigationTipsScreen(onBack: () -> Unit) {
             Text(
                 text = "Proper irrigation saves water and improves yield.\nKeep monitoring soil and crop conditions.",
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center
             )
         }
     }

@@ -79,13 +79,13 @@ fun SoilDetectorScreen(onBack: () -> Unit) {
                 ) {
                     Icon(Icons.Default.Refresh, contentDescription = null, tint = Color.White)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(R.string.scan_soil_health), color = Color.White)
+                    Text(stringResource(R.string.scan_soil_health), color = Color.White,  fontSize = 18.sp,)
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 if (isLoading) {
-                    Text(stringResource(R.string.scanning), color = Color.White)
+                    Text(stringResource(R.string.scanning), color = Color.White,  fontSize = 18.sp,)
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
 
@@ -107,7 +107,8 @@ fun SoilDetectorScreen(onBack: () -> Unit) {
                     text = stringResource(R.string.soil_health_improves_with_crop_rotation_and_organic_matter),
                     style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
                 )
             }
         }
@@ -128,13 +129,15 @@ fun ResultCard(title: String, value: String) {
                 text = title,
                 style = MaterialTheme.typography.titleMedium.copy(
                     color = Color(0xFF2E7D32),
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp,
                 )
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = value,
-                style = MaterialTheme.typography.bodyLarge.copy(color = Color.DarkGray)
+                style = MaterialTheme.typography.bodyLarge.copy(color = Color.DarkGray),
+                fontSize = 18.sp,
             )
         }
     }

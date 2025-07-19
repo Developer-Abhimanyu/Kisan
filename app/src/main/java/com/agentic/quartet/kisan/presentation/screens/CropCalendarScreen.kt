@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 import java.util.*
@@ -65,7 +66,7 @@ fun CropCalendarScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
+                columns = GridCells.Fixed(2),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.weight(1f)
@@ -80,6 +81,7 @@ fun CropCalendarScreen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(125.dp)
                             .graphicsLayer {
                                 if (isCurrent) {
                                     scaleX = animatedScale.value
@@ -97,18 +99,20 @@ fun CropCalendarScreen(
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     color = if (isCurrent) Color.White else Color(0xFF4CAF50),
                                     fontWeight = FontWeight.Bold
-                                )
+                                ),
+                                fontSize = 16.sp,
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "🌾 ${stringResource(R.string.sowing_millet)}\n💧 ${
+                                text = "🌾 ${stringResource(R.string.sowing_millet)}\n\n💧 ${
                                     stringResource(
                                         R.string.january
                                     )
                                 }",
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     color = if (isCurrent) Color.White else Color(0xFF2E7D32)
-                                )
+                                ),
+                                fontSize = 16.sp,
                             )
                         }
                     }
@@ -123,6 +127,7 @@ fun CropCalendarScreen(
                     color = Color.White,
                     textAlign = TextAlign.Center
                 ),
+                fontSize = 18.sp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.CenterHorizontally)

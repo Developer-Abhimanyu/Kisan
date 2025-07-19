@@ -144,7 +144,7 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
         ) {
             Text(voiceAgent, style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, color = Color(0xFF4CAF50)))
             Spacer(modifier = Modifier.height(16.dp))
-            Text(askAnything, style = MaterialTheme.typography.bodyMedium.copy(color = Color.White), textAlign = TextAlign.Center)
+            Text(askAnything, style = MaterialTheme.typography.bodyMedium.copy(color = Color.White), textAlign = TextAlign.Center, fontSize = 18.sp,)
             Spacer(modifier = Modifier.height(24.dp))
 
             Box(
@@ -168,11 +168,11 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (isListening) Text(stringResource(R.string.listening), color = Color.White, fontWeight = FontWeight.Medium)
+            if (isListening) Text(stringResource(R.string.listening), color = Color.White, fontWeight = FontWeight.Medium,  fontSize = 18.sp,)
             if (isProcessing) {
                 Spacer(modifier = Modifier.height(16.dp))
                 CircularProgressIndicator(color = Color.White)
-                Text(stringResource(R.string.processing_your_query), color = Color.White)
+                Text(stringResource(R.string.processing_your_query), color = Color.White,  fontSize = 18.sp,)
             }
 
             AnimatedVisibility(
@@ -185,19 +185,19 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text("🤖 ${stringResource(R.string.gemini_response)}", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32))
+                        Text("🤖 ${stringResource(R.string.gemini_response)}", fontWeight = FontWeight.Bold, color = Color(0xFF2E7D32),  fontSize = 18.sp,)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(aiResponse, color = Color(0xFF2E7D32))
+                        Text(aiResponse, color = Color(0xFF2E7D32),  fontSize = 18.sp,)
                         Spacer(modifier = Modifier.height(12.dp))
                         Button(onClick = { tts.speak(aiResponse, TextToSpeech.QUEUE_FLUSH, null, null) }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2E7D32))) {
-                            Text("🔊 ${stringResource(R.string.play_response)}", color = Color.White)
+                            Text("🔊 ${stringResource(R.string.play_response)}", color = Color.White,  fontSize = 18.sp,)
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(onClick = {
                             requestStoragePermission()
                             latestPdfFile = exportAsPdf(context, aiResponse)
                         }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF388E3C))) {
-                            Text("⬇️ ${stringResource(R.string.download_as_pdf)}", color = Color.White)
+                            Text("⬇️ ${stringResource(R.string.download_as_pdf)}", color = Color.White,  fontSize = 18.sp,)
                         }
                         latestPdfFile?.let { file ->
                             Spacer(modifier = Modifier.height(8.dp))
@@ -210,7 +210,7 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                                 }
                                 context.startActivity(Intent.createChooser(intent, sharePdf))
                             }, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))) {
-                                Text("📤 $sharePdf", color = Color.White)
+                                Text("📤 $sharePdf", color = Color.White,  fontSize = 18.sp,)
                             }
                         }
                     }
@@ -219,7 +219,7 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
 
             if (history.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text("📜 ${stringResource(R.string.last_queries)}", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold)
+                Text("📜 ${stringResource(R.string.last_queries)}", color = Color(0xFF4CAF50), fontWeight = FontWeight.Bold,  fontSize = 18.sp,)
                 history.take(5).forEach { (q, r) ->
                     Card(
                         shape = RoundedCornerShape(12.dp),
@@ -227,8 +227,8 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
                         colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F8E9))
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
-                            Text("🗣️ $q", fontWeight = FontWeight.SemiBold)
-                            Text("🤖 $r", fontSize = 14.sp)
+                            Text("🗣️ $q", fontWeight = FontWeight.SemiBold,  fontSize = 18.sp,)
+                            Text("🤖 $r", fontSize = 18.sp)
                         }
                     }
                 }
@@ -236,7 +236,7 @@ fun VoiceAgentScreen(onBack: () -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            Text("${stringResource(R.string.tip_try_asking)} \"${stringResource(R.string.how_to_treat_leaf_rust_in_wheat)}\"", color = Color.White, textAlign = TextAlign.Center)
+            Text("${stringResource(R.string.tip_try_asking)} \"${stringResource(R.string.how_to_treat_leaf_rust_in_wheat)}\"", color = Color.White, textAlign = TextAlign.Center,  fontSize = 18.sp,)
         }
     }
 }

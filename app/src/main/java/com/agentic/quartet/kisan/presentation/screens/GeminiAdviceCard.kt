@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun GeminiAdviceCard(text: String) {
@@ -29,7 +30,8 @@ fun GeminiAdviceCard(text: String) {
         ) {
             Text(
                 text = text.trim(),
-                style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF2E7D32))
+                style = MaterialTheme.typography.bodyMedium.copy(color = Color(0xFF2E7D32)),
+                fontSize = 14.sp,
             )
         }
     }

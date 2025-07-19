@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 import com.agentic.quartet.kisan.utils.ProfileManager
@@ -147,7 +148,8 @@ fun HomeScreen(
                 style = MaterialTheme.typography.titleMedium.copy(
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF4CAF50)
-                )
+                ),
+                fontSize = 18.sp,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -242,7 +244,8 @@ fun HomeScreen(
                 text = stringResource(R.string.tip_home),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
             )
         }
     }

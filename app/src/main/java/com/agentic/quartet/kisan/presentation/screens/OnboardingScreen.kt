@@ -93,7 +93,7 @@ fun OnboardingScreen(
                         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier.background(color = Color(0xFF2E7D32))) {
                             languages.forEach { (code, name) ->
                                 DropdownMenuItem(
-                                    text = { Text(name, color = Color.White) },
+                                    text = { Text(name, color = Color.White,  fontSize = 18.sp,) },
                                     onClick = {
                                         expanded = false
                                         scope.launch {
@@ -128,7 +128,6 @@ fun OnboardingScreen(
                                 color = Color(0xFF4CAF50)
                             )
                         ) {
-                            append("\n")
                             append(stringResource(R.string.agriculture))
                         }
                     }
@@ -139,7 +138,8 @@ fun OnboardingScreen(
                 Text(
                     text = stringResource(R.string.growing_resources_thriving_futures),
                     style = MaterialTheme.typography.bodyLarge.copy(color = Color(0xFF4CAF50)),
-                    lineHeight = 28.sp
+                    lineHeight = 28.sp,
+                    fontSize = 18.sp,
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -171,16 +171,16 @@ fun OnboardingScreen(
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(stringResource(R.string.sign_up), color = Color.White)
+                            Text(stringResource(R.string.sign_up), color = Color.White,  fontSize = 18.sp,)
                         }
 
                         Button(
                             onClick = onSignInClick,
                             shape = RoundedCornerShape(50),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         ) {
-                            Text(stringResource(R.string.sign_in), color = Color.White)
+                            Text(stringResource(R.string.sign_in), color = Color.White,  fontSize = 18.sp,)
                         }
                     }
 
@@ -201,7 +201,7 @@ fun OnboardingScreen(
                                 style = MaterialTheme.typography.bodyLarge.copy(
                                     color = Color(0xFF2E7D32),
                                     fontWeight = FontWeight.Normal,
-                                    fontSize = 12.sp,
+                                    fontSize = 18.sp,
                                     lineHeight = 16.sp,
                                 ),
                                 textAlign = TextAlign.Center,

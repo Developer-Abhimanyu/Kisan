@@ -22,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 import kotlinx.coroutines.launch
@@ -118,7 +119,7 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                             )
                             AnimatedVisibility(visible = expanded, enter = expandVertically()) {
                                 Column(Modifier.padding(top = 8.dp)) {
-                                    Text(scheme.intro, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32))
+                                    Text(scheme.intro, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF2E7D32),  fontSize = 18.sp,)
                                     Spacer(Modifier.height(8.dp))
                                     Button(
                                         onClick = {
@@ -135,7 +136,8 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                                     ) {
                                         Text(
                                             stringResource(R.string.learn_more),
-                                            color = Color.White
+                                            color = Color.White,
+                                            fontSize = 18.sp,
                                         )
                                     }
                                 }
@@ -150,7 +152,8 @@ fun GovtSchemesScreen(onBack: () -> Unit) {
                 text = stringResource(R.string.visit_krishi_kendra),
                 style = MaterialTheme.typography.bodyMedium.copy(color = Color.White),
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
             )
         }
     }

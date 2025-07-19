@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.utils.ProfileManager
 import kotlinx.coroutines.tasks.await
 
@@ -270,7 +271,7 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text(stringResource(R.string.submit), color = Color.White)
+                        Text(stringResource(R.string.submit), color = Color.White,  fontSize = 18.sp,)
                     }
                 }
             }
@@ -281,7 +282,8 @@ fun SignUpScreen(onSignUpComplete: () -> Unit) {
                 text = stringResource(R.string.providing_correct_profile_helps_personalize_your_farming_guidance),
                 style = MaterialTheme.typography.bodySmall.copy(color = Color.White),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 18.sp,
             )
         }
     }
