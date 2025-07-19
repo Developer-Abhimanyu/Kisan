@@ -254,7 +254,7 @@ fun HomeScreen(
 private fun fetchWeather(city: String, onResult: (String, String, String, String) -> Unit) {
     val apiKey = "54cb908afa507577edcf811874836703"
     val url =
-        "https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=$apiKey"
+        "https://api.openweathermap.org/data/2.5/weather?q=${city.trim()}&units=metric&appid=$apiKey"
 
     kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
         try {
