@@ -197,7 +197,7 @@ fun HomeScreen(
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.crop_calendar),
-                        R.drawable.ic_crop_calendar
+                        R.drawable.ic_calendar_final
                     ) {
                         onCropCalendarClick()
                     }
@@ -205,7 +205,7 @@ fun HomeScreen(
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.irrigation_tips),
-                        R.drawable.ic_irrigation_tips
+                        R.drawable.irrigation_tips_final
                     ) {
                         onIrrigationTipsClick()
                     }
@@ -213,7 +213,7 @@ fun HomeScreen(
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.fertilizer_guide),
-                        R.drawable.ic_fertilizer_guide
+                        R.drawable.fertilizer_guide_final
                     ) {
                         onFertilizerGuideClick()
                     }
@@ -231,7 +231,7 @@ fun HomeScreen(
                     shape = RoundedCornerShape(50)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_gov),
+                        painter = painterResource(R.drawable.ic_chatbot),
                         contentDescription = stringResource(R.string.chatbot),
                         tint = Color.White
                     )

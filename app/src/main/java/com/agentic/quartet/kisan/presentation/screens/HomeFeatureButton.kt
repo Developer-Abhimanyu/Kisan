@@ -35,7 +35,7 @@ fun HomeFeatureButton(title: String, iconRes: Int, onClick: () -> Unit) {
                 painter = painterResource(id = iconRes),
                 contentDescription = title,
                 tint = Color(0xFF4CAF50),
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(48.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
