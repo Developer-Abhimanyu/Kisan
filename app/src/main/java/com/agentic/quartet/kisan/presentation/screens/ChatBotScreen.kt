@@ -163,7 +163,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                                     }
 
                                                     chip.contains("Helpline") -> {
-                                                        val digits = "9632672183"
+                                                        val digits = "1800-180-1551"
                                                         if (digits != null) {
                                                             val dialIntent =
                                                                 Intent(Intent.ACTION_DIAL).apply {
