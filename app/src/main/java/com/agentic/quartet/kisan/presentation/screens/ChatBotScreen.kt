@@ -2,14 +2,18 @@ package com.agentic.quartet.kisan.presentation.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -63,10 +67,25 @@ data class TextContent(
     val text: List<String>? = null
 )
 
+data class ChatMessage(
+    val message: String,
+    val isUser: Boolean,
+    val suggestions: List<String>? = null // ✅ Add this line
+)
+
 @Composable
 fun ChatBotScreen(onBack: () -> Unit) {
     var userMessage by remember { mutableStateOf(TextFieldValue("")) }
-    var messages by remember { mutableStateOf(listOf("Welcome to Kisan AI Chatbot 👨‍🌾")) }
+    var chatMessages by remember {
+        mutableStateOf(
+            listOf(
+                ChatMessage(
+                    "Welcome to Kisan AI Chatbot 👨‍🌾",
+                    false
+                )
+            )
+        )
+    }
 
     val context = LocalContext.current
 
@@ -96,24 +115,50 @@ fun ChatBotScreen(onBack: () -> Unit) {
                     .weight(1f)
                     .padding(8.dp)
             ) {
-                items(messages) { msg ->
-                    val isUser = msg.startsWith("👤")
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
-                    ) {
-                        Text(
-                            text = msg.removePrefix("👤 ").removePrefix("🤖 "),
-                            color = Color(0xFF4CAF50),
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .background(
-                                    Color.White,
-                                    shape = MaterialTheme.shapes.medium
+                items(chatMessages) { message ->
+                    if (message.isUser) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = message.message,
+                                color = Color(0xFF4CAF50),
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .background(Color.White, shape = MaterialTheme.shapes.medium)
+                                    .padding(12.dp)
+                            )
+                        }
+                    } else {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Column {
+                                Text(
+                                    text = message.message,
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .background(Color(0xFFE8F5E9), RoundedCornerShape(12.dp))
+                                        .padding(12.dp)
                                 )
-                                .padding(12.dp)
-                        )
+                                message.suggestions?.let { suggestions ->
+                                    LazyRow(
+                                        modifier = Modifier
+                                            .padding(start = 8.dp, top = 4.dp, bottom = 4.dp)
+                                            .fillMaxWidth()
+                                    ) {
+                                        items(suggestions) { chip ->
+                                            SuggestionChip(text = chip) {
+                                                userMessage = TextFieldValue(chip)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -137,13 +182,13 @@ fun ChatBotScreen(onBack: () -> Unit) {
                 onClick = {
                     val text = userMessage.text
                     if (text.isNotBlank()) {
-                        messages = messages + "👤 $text"
-                        sendMessageToDialogflow(text) { response ->
-                            response?.let {
-                                messages = messages + "🤖 $it"
-                            } ?: run {
-                                messages = messages + "🤖 Sorry, no response."
-                            }
+                        chatMessages = chatMessages + ChatMessage("$text", true)
+                        sendMessageToDialogflow(text) { reply, suggestions ->
+                            chatMessages = chatMessages + ChatMessage(
+                                reply ?: "Sorry, no response.",
+                                false,
+                                suggestions
+                            )
                         }
                         userMessage = TextFieldValue("")
                     }
@@ -156,9 +201,9 @@ fun ChatBotScreen(onBack: () -> Unit) {
     }
 }
 
-fun sendMessageToDialogflow(userMessage: String, onResult: (String?) -> Unit) {
+fun sendMessageToDialogflow(userMessage: String, onResult: (String?, List<String>?) -> Unit) {
     val accessToken =
-        "ya29.c.c0ASRK0GYKgQ-w9HF771gI4j60YBAN2XKtMevAKf4OqxYP0dHmsrEGGnM3g5P-djVtzhYYxm2LZSODW-TQd__B6NIb1JvCm5jGVe2EQYOW_cIKPIG8lsyY29iaJR01INdS7_lwF7k3HCMEuk67lrrvJmF-dcmcU3IhXOkTUFzEiLdE75gVCSCSNx9AGN0EzDCz2ostTgJDHgrSfwkwfqcdialrMTMxqU6kA38LJ7QtoNf6zYgzqmNgizKmYt2H21KhPb7boPrlbI7YqIAptWWvL02xeCoF4fJvmWcoTPz40LSjg5GSwVMm2So0cediammW_29loo6UtTaA0-IQVYCmSS_7HpQbXKQRsXhh-qgdhyhlyk9P_FPLwyIzIQE387DF5z4ROgUcl38_k_yIOBXRlQlQzgg5wc4WSq1vMa3O47VibhlWmw-jf_ZlYcgWeSj9iYeq2k2aZjM_IvB3wk87OgBQJx7eVz2eR04WngZMB5YbjUvr5Ysf858bxbw8OcYV7kB_5xehr3_YQ1kI-X0mlzul960lOlbh9jIz54a59ixb0qavZuaOcqnOz05IM9XxyOWpY3MIUZqlMSsy1412S2bquBnctg5Mz711Z3muxxIOQcmrlk44SUZqIk-rYzQ4V4iblQqkzswMR7W9bZwR6wxw9n9zBarqO0uhpO923jY_2YWgi5ZOqt4_bl0Vnmtd3U8RcfB-42be2XXlBOW6l8XbI3ujuR4yIFc6xl1n6ObXbnk3acZpskYgpR_Vqbhf-x6orbXtF3aRlafgJ0Jf8tycIes--uJgu_fn8-m_5wRbxQ6xxoB_uQh4Ilg5-sX6-q87mZsZmve8xno424Ud6WcQ5RQVJx76Faf54iVdw0l8dYz8pwZrxpQO0RW09ktSvmyJy5c8oOinR1zm3u4vBBbgUxJ0tz3dJh4VU08fBxozwt8l3mW2Wcp4yMBexRV7F2tawZV22OoUWk3hZvas7XwxOJFnJbX7hwZXp41wffuIp88yxSWprgt" // Replace with actual access token if needed
+        "ya29.c.c0ASRK0Ga7W91o79dnidbOF7ovK9mib5WOJSWLlfFAF6u5zIbI24G4BSrLGFtfLlDdYtOE-Hz2zPfvMxVUmX98Mh7SePMQU5uCgF23YRJuXjel-LKiXshOShUgL5KDCAk1YQV5WZByVhKdTaIWgvEAtb97VexbEyfNwOgoAX8u06FADLmHCp48G8XcJNaWVhg_42px5MwUi6r0Gx67sFlJ-TWrFZzgvoDP8jVbErgKdjDn2kdZhX4iNcJXWJpcbuokzKbT7GFTBV-0NtZyBBF99YV2n1Nz78K21lHO7q66FugtR-LwRa7gyOjX0qHKtUU_rjWbPhnmUYTV0eGvANfVIjzQlM22Mmz_pIvf-_jeBH5VaeYhSBXLuPzyN385DM4uWbM7zXOs_RMMV06WermMyZ7qt4OeYvhsz04sSvoRnZlvRQBVs8dkkd7c_okJ1wptbxbfkfWt4Mgj_oJF9o7n91_r2qOUJjF7gFiQUQ64jzoq66jjoyeJVw9vSapi_X7Uhr-3z8bqFdqpRRdmslnVsUX-B5tnJzdXmVrSm_0Biotdw13gy0Ys0qenUqu3jmOnjveq7rseem0hjewZhpfijSqgofeMmmuyjqZobX66SvSszX_1MjSMSy14f2XFM_vrZVxz2MVgh4s7iofRuZb3sv8F4R0jvJw-j2k7fIOcoFMRMJeSS7mZx5ZFy1rI8VQOYwVIJo9UdOvbI7riO8J1mOsB5qW66JpJbZMJykXj4-WBB0oMmuzgk7pW-bRYop8xZywJt46BemmaU9z6oBxoSZmSF7Q_sz2jgR_n2qkSJZ4txfW5t-gVd_vlluURu0lYSRjUUx4WYVV8se4dB91RqzqV_vyOZa5U05Xwb3oMIV9w7wkY-fmY6Wus0IU64OQ_BWcs6i1y4alx7suar7RS2OSYsOgZvfI0IIvB7aUJOZyaZqYgRMsu9QQOXg2XnJ9RfRIarpw6etFXVrelj35Bpz1isnR15wYd-8uzRop7rbdbYBJaaqBFg7O" // Replace with actual access token if needed
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
@@ -171,9 +216,9 @@ fun sendMessageToDialogflow(userMessage: String, onResult: (String?) -> Unit) {
     val requestBody = buildJsonObject {
         putJsonObject("queryInput") {
             putJsonObject("text") {
-                put("text", JsonPrimitive(userMessage))
+                put("text", userMessage)
             }
-            put("languageCode", JsonPrimitive("en")) // or "hi", "kn" based on your app language
+            put("languageCode", "en") // Change dynamically if needed
         }
     }
 
@@ -187,20 +232,70 @@ fun sendMessageToDialogflow(userMessage: String, onResult: (String?) -> Unit) {
                 }
             }
 
-            val json = Json.parseToJsonElement(response.bodyAsText())
-            val botReply = json
-                .jsonObject["queryResult"]
-                ?.jsonObject?.get("responseMessages")
-                ?.jsonArray?.getOrNull(0)
-                ?.jsonObject?.get("text")
-                ?.jsonObject?.get("text")
-                ?.jsonArray?.getOrNull(0)
-                ?.jsonPrimitive?.contentOrNull
+            val responseJson = Json.parseToJsonElement(response.bodyAsText()).jsonObject
+            val queryResult = responseJson["queryResult"]?.jsonObject
 
-            onResult(botReply)
+            // 1. Extract the main bot reply (text response)
+            val botReply = queryResult?.get("responseMessages")
+                ?.jsonArray
+                ?.firstOrNull { it.jsonObject.containsKey("text") }
+                ?.jsonObject
+                ?.get("text")
+                ?.jsonObject
+                ?.get("text")
+                ?.jsonArray
+                ?.firstOrNull()
+                ?.jsonPrimitive
+                ?.contentOrNull
+
+            // 2. Extract chip suggestions from payload.richContent
+            val suggestions = mutableListOf<String>()
+            val payloadResponse = queryResult?.get("responseMessages")
+                ?.jsonArray
+                ?.firstOrNull { it.jsonObject.containsKey("payload") }
+                ?.jsonObject
+                ?.get("payload")
+                ?.jsonObject
+
+            val richContent = payloadResponse?.get("richContent")?.jsonArray
+
+            richContent?.forEach { outer ->
+                outer.jsonArray.forEach { inner ->
+                    val type = inner.jsonObject["type"]?.jsonPrimitive?.contentOrNull
+                    if (type == "chips") {
+                        val options = inner.jsonObject["options"]?.jsonArray
+                        options?.forEach { chip ->
+                            val text = chip.jsonObject["text"]?.jsonPrimitive?.contentOrNull
+                            if (!text.isNullOrEmpty()) {
+                                suggestions.add(text)
+                            }
+                        }
+                    }
+                }
+            }
+
+            onResult(botReply, if (suggestions.isNotEmpty()) suggestions else null)
 
         } catch (e: Exception) {
-            onResult("Error: ${e.message}")
+            onResult("Error: ${e.message}", null)
         }
+    }
+}
+
+@Composable
+fun SuggestionChip(text: String, onClick: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(50),
+        color = Color(0xFF81C784),
+        modifier = Modifier
+            .padding(end = 8.dp)
+            .clickable { onClick() }
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            fontSize = 14.sp
+        )
     }
 }
