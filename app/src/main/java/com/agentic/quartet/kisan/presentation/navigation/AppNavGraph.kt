@@ -9,7 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.agentic.quartet.kisan.presentation.screens.ChatbotScreen
+import com.agentic.quartet.kisan.presentation.screens.ChatBotScreen
 import com.agentic.quartet.kisan.presentation.screens.CropCalendarScreen
 import com.agentic.quartet.kisan.presentation.screens.CropDetailScreen
 import com.agentic.quartet.kisan.presentation.screens.DiseaseDetectionScreen
@@ -179,7 +179,7 @@ fun AppNavGraph(
             }
 
             composable(Screen.ChatBot.route) {
-                ChatbotScreen( )
+                ChatBotScreen(onBack = { navController.popBackStack() })
             }
         }
     }
