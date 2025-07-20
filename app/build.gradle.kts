@@ -77,6 +77,9 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("org.jsoup:jsoup:1.17.2")
 
+    implementation("io.ktor:ktor-client-content-negotiation:3.2.2")
+    implementation("io.ktor:ktor-serialization-gson:3.2.2")
+
     androidTestImplementation(libs.hilt.android.testing)
 
     kaptTest(libs.hilt.android.compiler)

@@ -9,6 +9,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.agentic.quartet.kisan.presentation.screens.ChatbotScreen
 import com.agentic.quartet.kisan.presentation.screens.CropCalendarScreen
 import com.agentic.quartet.kisan.presentation.screens.CropDetailScreen
 import com.agentic.quartet.kisan.presentation.screens.DiseaseDetectionScreen
@@ -41,6 +42,7 @@ sealed class Screen(val route: String) {
     object IrrigationTips : Screen("irrigation_tips")
     object SoilDetector : Screen("soil_detector")
     object VoiceAgent : Screen("voice_agent")
+    object ChatBot : Screen("chat_bot")
 }
 
 @Composable
@@ -123,6 +125,9 @@ fun AppNavGraph(
                     },
                     onFertilizerGuideClick = {
                         navController.navigate(Screen.FertilizerGuide.route)
+                    },
+                    onChatBotClick = {
+                        navController.navigate(Screen.ChatBot.route)
                     }
                 )
             }
@@ -171,6 +176,10 @@ fun AppNavGraph(
 
             composable(Screen.VoiceAgent.route) {
                 VoiceAgentScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable(Screen.ChatBot.route) {
+                ChatbotScreen( )
             }
         }
     }

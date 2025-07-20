@@ -59,7 +59,8 @@ fun HomeScreen(
     onSoilDetectorClick: () -> Unit,
     onCropCalendarClick: () -> Unit,
     onIrrigationTipsClick: () -> Unit,
-    onFertilizerGuideClick: () -> Unit
+    onFertilizerGuideClick: () -> Unit,
+    onChatBotClick: () -> Unit
 ) {
     val context = LocalContext.current
     val weatherCardOffset = remember { Animatable(-200f) }
@@ -228,7 +229,9 @@ fun HomeScreen(
                 contentAlignment = Alignment.BottomEnd
             ) {
                 FloatingActionButton(
-                    onClick = { /* navigateToChatbot() */ },
+                    onClick = {
+                        onChatBotClick()
+                    },
                     containerColor = Color(0xFF4CAF50),
                     shape = RoundedCornerShape(50)
                 ) {
