@@ -1,7 +1,9 @@
 package com.agentic.quartet.kisan.presentation.screens
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +13,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -71,8 +77,18 @@ data class TextContent(
 data class ChatMessage(
     val message: String,
     val isUser: Boolean,
-    val suggestions: List<String>? = null // ✅ Add this line
+    val suggestions: List<String>? = null
 )
+
+fun saveSelectedLanguage(context: Context, code: String) {
+    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    prefs.edit().putString("selected_language", code).apply()
+}
+
+fun getCurrentLanguageFromPreferences(context: Context): String {
+    val prefs = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+    return prefs.getString("selected_language", "en") ?: "en"
+}
 
 @Composable
 fun ChatBotScreen(onBack: () -> Unit) {
@@ -89,6 +105,9 @@ fun ChatBotScreen(onBack: () -> Unit) {
     }
 
     val context = LocalContext.current
+    val languages = listOf("English" to "en", "हिंदी" to "hi", "ಕನ್ನಡ" to "kn")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedLanguage by remember { mutableStateOf(getCurrentLanguageFromPreferences(context)) }
 
     AppBackground {
         Column(
@@ -108,7 +127,39 @@ fun ChatBotScreen(onBack: () -> Unit) {
                         .clip(CircleShape)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Kisan Assistant", color = Color(0xFF4CAF50))
+                Text("Kisan Assistant", color = Color(0xFF4CAF50), fontSize = 22.sp)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Box {
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(
+                                painterResource(R.drawable.language),
+                                contentDescription = "Change Language",
+                                tint = Color(0xFF4CAF50)
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier.background(color = Color(0xFF4CAF50))
+                        ) {
+                            languages.forEach { (label, code) ->
+                                DropdownMenuItem(onClick = {
+                                    selectedLanguage = code
+                                    saveSelectedLanguage(context, code)
+                                    expanded = false
+                                }, text = {
+                                    Text(label, color = Color.White)
+                                })
+                            }
+                        }
+                    }
+                }
             }
 
             LazyColumn(
@@ -124,10 +175,13 @@ fun ChatBotScreen(onBack: () -> Unit) {
                         ) {
                             Text(
                                 text = message.message,
-                                color = Color(0xFF4CAF50),
+                                color = Color.White,
                                 modifier = Modifier
                                     .padding(8.dp)
-                                    .background(Color.White, shape = MaterialTheme.shapes.medium)
+                                    .background(
+                                        Color(0xFF4CAF50),
+                                        shape = MaterialTheme.shapes.medium
+                                    )
                                     .padding(12.dp)
                             )
                         }
@@ -139,10 +193,10 @@ fun ChatBotScreen(onBack: () -> Unit) {
                             Column {
                                 Text(
                                     text = message.message,
-                                    color = Color.Black,
+                                    color = Color.White,
                                     modifier = Modifier
                                         .padding(8.dp)
-                                        .background(Color(0xFFE8F5E9), RoundedCornerShape(12.dp))
+                                        .background(Color(0xFF4CAF50), RoundedCornerShape(12.dp))
                                         .padding(12.dp)
                                 )
                                 message.suggestions?.let { suggestions ->
@@ -153,7 +207,6 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                         suggestions.forEach { chip ->
                                             SuggestionChip(text = chip) {
                                                 when {
-                                                    // ✅ WhatsApp link — Open WhatsApp only
                                                     chip.contains("wa.me") || chip.contains("WhatsApp") -> {
                                                         val intent = Intent(
                                                             Intent.ACTION_VIEW,
@@ -176,7 +229,10 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                                     else -> {
                                                         chatMessages =
                                                             chatMessages + ChatMessage(chip, true)
-                                                        sendMessageToDialogflow(chip) { reply, suggestions ->
+                                                        sendMessageToDialogflow(
+                                                            context,
+                                                            chip
+                                                        ) { reply, suggestions ->
                                                             chatMessages =
                                                                 chatMessages + ChatMessage(
                                                                     reply ?: "No response",
@@ -201,8 +257,8 @@ fun ChatBotScreen(onBack: () -> Unit) {
                 value = userMessage,
                 onValueChange = { userMessage = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text("Ask something...", color = Color(0xFF4CAF50)) },
-                textStyle = TextStyle(color = Color(0xFF4CAF50)),
+                label = { Text("Ask something...", color = Color.White, fontSize = 18.sp) },
+                textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF4CAF50),
                     unfocusedBorderColor = Color(0xFF4CAF50),
@@ -217,7 +273,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
                     val text = userMessage.text
                     if (text.isNotBlank()) {
                         chatMessages = chatMessages + ChatMessage("$text", true)
-                        sendMessageToDialogflow(text) { reply, suggestions ->
+                        sendMessageToDialogflow(context, text) { reply, suggestions ->
                             chatMessages = chatMessages + ChatMessage(
                                 reply ?: "Sorry, no response.",
                                 false,
@@ -235,9 +291,13 @@ fun ChatBotScreen(onBack: () -> Unit) {
     }
 }
 
-fun sendMessageToDialogflow(userMessage: String, onResult: (String?, List<String>?) -> Unit) {
+fun sendMessageToDialogflow(
+    context: Context,
+    userMessage: String,
+    onResult: (String?, List<String>?) -> Unit
+) {
     val accessToken =
-        "ya29.c.c0ASRK0GYPfQzkq1sI0eVbVZlfHBfwJPf4au_F4DtvojCar46b7c7D3IxzUnPJgvr_94X4KT3IeR846iF9cLMpP4Qs-0MGsVUbvoXw--zLRKXVijDU6l-rfg2z9oMUUvTqPRuvrXiVNAA7AEISAG-djHt7uyEP2vZyEQTmNkAV1NMqEWrPCEbxdaktEwUuy6Vd8QcBqYglcoFjcIv8IfEPr_7QtPwiOpS-tHe-xDBi18IxTizibGk5s0Ie-RekdHPy7C-pFexJ9z3YFUgqVr6-fzHJlcnPIn0RigPrIVWvyf1d-vUcwiXEXPp-I7SI1JC0I8Zpnue56MJW66vqwbsFfawvy8LUh0c5wROk6PM8UsT5EL7QQG8CIHZDG385D0SorX-j-wkpbZ_dBix3Iq1tMn5vBRS1Uncsvebkh3UYsUSI3Irc2pyJI7U--tYkaYldOsXqecdx4Se-hd1JaQ4ioRa5QaIY6BugIUJi25VW8Yp-7iWwB-zsypwvRpm3Ov0sdYYSV7h4faFRZm9l1_6_Vxh8V23fcBl72aWks0vvOVamSWVujFQbYmxxM5Z3gvqOcy2WSfFjQvkJB9-5vBmXkzka_RRWej1ns1_Xa8OelfzyxbZ-t9km0BjUXWjyOBQYaM3pUIRzdYvqgyV_bfY6WOJb4fou5288bcMzUYWlbqUxsoYMy0sYqssO5Z7UB1Mf2QsV1M1_uZrzYiJUyg1Xq62hhdJQt_cwcjirdoW3iWQy-yJ9Ito5ukOF8rs2mIcY4kk4u-dOodh8mxa-B1BQrQrgjxJnwlcOMo1Z5o8dRq0q20FXemSqQ314lhaRWJ0x-UmaXq7Uyukg6tbcnykJ6oflOXUQmmQhRVcOvY5xsp5Jar9fztmrn6juBV6BalyzZ1qyMFQwpRM9Upcw36u2mSyaYp3uoy10Rd4gqkf84ez5YgJceifk_9RFYhB0rz_Znn-Q48qX-sQiXlg8l8h42m-uWnml0jJ4araQ696cmjXcrVFbgOi4QMc" // Replace with actual access token if needed
+        "ya29.c.c0ASRK0GZSUN4ap-rN5z17sJTpf6CR7YvcRrQ2Qr1AqXAN4pDxB0_-GLzPvqcyJ8S-lJwq_qr5nzQLw3IycC2OpM2o1uXOtt7IUmRon1KQMme4NlDAYu97bI6_XFvVXsXjEL35JaDQMiXZqC1kdg2fY7bQs_I6lo4SpvtUSV84PjJ4wWeMQ0ZaTztXaxyUrkvFjDZr9lDfKNJ8mpOTxeUkdB8TgJMA_d8ieunkqpHPIDxAGQCw1fSl9MNnoD4I7REgymbwN0fXs-wm5lz9XTzY9xMqiRTOQTSbeKuAnNgPd3nYZ7W5I1Onl4JOO460UtGOV8nhIc_Pfpx-o01ot3ROXtr8FDlZBUn52c8rN_gBULTFauvzfHlhKJ1OrwN387AcjojFxIquS5qMd4fSu76dgdezdSnx4Zv2cIRs1s6hi0SpgJ_vs0cqlue0lvQ7qMMg4jVVtojhk_ep4SSfyIse10grauZ5fd2kMJUndgFBWFjeqy3VMlUm67hJBIRYdYmB993kgi1iZfj_5cR-kt5926zozXrQd-YX6aZ_kV-d9Bl_pfIR92eVUZhd0o1w2tFFg-rgIMoBFx4imQuF6qvXUISQwca5-RwUbY90OwwmtWWOjO32FUk6mXM3MaqIq1-j9F7yZZraImYfmSOFfQYBntU0m-qZ6is0g6vnp78xl3uZ-8iqw60zOW5oO_pxcp1oqUh7aeolQy4Vrrt-XUdjX0jMXp8Zs_9aSwdzO_xm0bgiUUQU1ReBXyoqZqRrzfz9-1mclaIXZy9lg8JB4uMgmF8JO3oqxx2uW72cdZxzJ0-roF6utk4WOgwYB7jmUIfzSl8gnq9VogRvWmlaaapMYxnmxWJWzOo3Q1eMlBOXhtvUpVIyaOsF6Jy-p8avgxM7knqgIhF7Yz2Xq7RBlQq2Og0l8p4g6O9B4Q2aOsxyeoMf1bnSVqr-j1173ls49Bgu1sB9worrSdjguldjZvWvR66YxtMXzcwl8Y_MXURcfcJsY_2JjWb-6ZV" // Replace with actual access token if needed
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
@@ -247,12 +307,16 @@ fun sendMessageToDialogflow(userMessage: String, onResult: (String?, List<String
         }
     }
 
+    val languageCode = getCurrentLanguageFromPreferences(context)
+
+    Log.i("ChatBotScreen", "Using language code: $languageCode")
+
     val requestBody = buildJsonObject {
         putJsonObject("queryInput") {
             putJsonObject("text") {
                 put("text", userMessage)
             }
-            put("languageCode", "en") // Change dynamically if needed
+            put("languageCode", languageCode) // Change dynamically if needed
         }
     }
 
@@ -320,7 +384,7 @@ fun sendMessageToDialogflow(userMessage: String, onResult: (String?, List<String
 fun SuggestionChip(text: String, onClick: () -> Unit) {
     Surface(
         shape = RoundedCornerShape(50),
-        color = Color(0xFF81C784),
+        color = Color(0xFF4CAF50),
         modifier = Modifier
             .padding(end = 8.dp)
             .clickable { onClick() }
