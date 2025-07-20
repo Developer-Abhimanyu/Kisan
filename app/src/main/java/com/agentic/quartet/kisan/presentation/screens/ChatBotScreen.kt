@@ -1,11 +1,12 @@
 package com.agentic.quartet.kisan.presentation.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -151,15 +152,39 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                     ) {
                                         suggestions.forEach { chip ->
                                             SuggestionChip(text = chip) {
-                                                sendMessageToDialogflow(chip) { reply, suggestions ->
-                                                    chatMessages = chatMessages + ChatMessage(
-                                                        chip,
-                                                        true
-                                                    ) + ChatMessage(
-                                                        reply ?: "No response",
-                                                        false,
-                                                        suggestions
-                                                    )
+                                                when {
+                                                    // ✅ WhatsApp link — Open WhatsApp only
+                                                    chip.contains("wa.me") || chip.contains("WhatsApp") -> {
+                                                        val intent = Intent(
+                                                            Intent.ACTION_VIEW,
+                                                            Uri.parse("https://whatsapp.com/channel/0029VavDqAOFHWq4qE4pc13G")
+                                                        )
+                                                        context.startActivity(intent)
+                                                    }
+
+                                                    chip.contains("Helpline") -> {
+                                                        val digits = "9632672183"
+                                                        if (digits != null) {
+                                                            val dialIntent =
+                                                                Intent(Intent.ACTION_DIAL).apply {
+                                                                    data = Uri.parse("tel:$digits")
+                                                                }
+                                                            context.startActivity(dialIntent)
+                                                        }
+                                                    }
+
+                                                    else -> {
+                                                        chatMessages =
+                                                            chatMessages + ChatMessage(chip, true)
+                                                        sendMessageToDialogflow(chip) { reply, suggestions ->
+                                                            chatMessages =
+                                                                chatMessages + ChatMessage(
+                                                                    reply ?: "No response",
+                                                                    false,
+                                                                    suggestions
+                                                                )
+                                                        }
+                                                    }
                                                 }
                                             }
                                             Spacer(modifier = Modifier.height(6.dp)) // add spacing between chips
@@ -212,7 +237,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
 
 fun sendMessageToDialogflow(userMessage: String, onResult: (String?, List<String>?) -> Unit) {
     val accessToken =
-        "ya29.c.c0ASRK0GbOYSR_VdfrHYcMglh7LTMO8K9Z2JO-fdS-d8OKLDxdLNVwA38q4YvkGjk6RCtk1d07C2yn0_AIzWbapPiWBH2MO8jMVYdpE0xbdMwZbUpKewAyJerA-AAKtv_YrQEVi8-MAb22o9Gaan2WX4To7qNeNRCxt5bEbqLFp0MCN7j-RpSdfxgCnLfuKECYDZMoF8Wig_X8NMPck9n7tttl0IHld6iW3HXEiTFokcPn7s2JfdxZpfAFYYMRCcuv_MV2ZDhHiP8OsXKm_1OzCNlcsugirelHpccjOQHvRUVYG1QnXUxZSC6tum7dJBFuycYdn2nbUtJz8DA1TfxFpPmXm_-jl2T8hIkGCAuemvcXRUSMhWT2nl2xH385Kdyt1MUndybivwmvxob_3l_q5Qc07MfJWalp5o1bdBqFgxyQg4Fnm28evZlvcjOed2r4uF-1X1Q9tQVl7eejQ2nmh73bMnjiu7iMmcRSW9l3uFnQVVF--_Ve1ns1rRomhbt9tJketdullaMQzF5arck2lny48vVRpow9taXJlx48ew8Z34W3lSVrgzovOydZuB6g4J6drWgywYfd4Jryfra1Jni6hIFxcdURO94kFlb4gZxlaffXjho7_M__Q6WWWWMq918248r4427_1ih2cUXB2YY4676SBc2JmMJ5QSmO-p63Wthy06kYk29mshgu-Q_WmiR-U5iO8amFxqrMZ7J1eV7zSjBSWZmse5X-qoSuJ1QoZagV811WWUWVjn7Mbumg849k_UdQ4Jw-mmwbZ4lqj7m5I_hw3bsJ29Wg9OiUv9MFWjoOSbwhcMFJty7WYvq66ce2YrszwiWh81wQQzdw_h79Sc2i4fxrv5tshzjZ6IV886zspsSQhOtstpRyYrxJBgxukwlmaJgeW6yYUzSXUMS-QzyFRrBMqX2BRef5icgB357IWcmBsmYfM2lltz4ju3v8mgyBfvZOZwac7jWj3ko0gZc_pRouooUWQzB0O3iluuMRw6Scvfj" // Replace with actual access token if needed
+        "ya29.c.c0ASRK0GYPfQzkq1sI0eVbVZlfHBfwJPf4au_F4DtvojCar46b7c7D3IxzUnPJgvr_94X4KT3IeR846iF9cLMpP4Qs-0MGsVUbvoXw--zLRKXVijDU6l-rfg2z9oMUUvTqPRuvrXiVNAA7AEISAG-djHt7uyEP2vZyEQTmNkAV1NMqEWrPCEbxdaktEwUuy6Vd8QcBqYglcoFjcIv8IfEPr_7QtPwiOpS-tHe-xDBi18IxTizibGk5s0Ie-RekdHPy7C-pFexJ9z3YFUgqVr6-fzHJlcnPIn0RigPrIVWvyf1d-vUcwiXEXPp-I7SI1JC0I8Zpnue56MJW66vqwbsFfawvy8LUh0c5wROk6PM8UsT5EL7QQG8CIHZDG385D0SorX-j-wkpbZ_dBix3Iq1tMn5vBRS1Uncsvebkh3UYsUSI3Irc2pyJI7U--tYkaYldOsXqecdx4Se-hd1JaQ4ioRa5QaIY6BugIUJi25VW8Yp-7iWwB-zsypwvRpm3Ov0sdYYSV7h4faFRZm9l1_6_Vxh8V23fcBl72aWks0vvOVamSWVujFQbYmxxM5Z3gvqOcy2WSfFjQvkJB9-5vBmXkzka_RRWej1ns1_Xa8OelfzyxbZ-t9km0BjUXWjyOBQYaM3pUIRzdYvqgyV_bfY6WOJb4fou5288bcMzUYWlbqUxsoYMy0sYqssO5Z7UB1Mf2QsV1M1_uZrzYiJUyg1Xq62hhdJQt_cwcjirdoW3iWQy-yJ9Ito5ukOF8rs2mIcY4kk4u-dOodh8mxa-B1BQrQrgjxJnwlcOMo1Z5o8dRq0q20FXemSqQ314lhaRWJ0x-UmaXq7Uyukg6tbcnykJ6oflOXUQmmQhRVcOvY5xsp5Jar9fztmrn6juBV6BalyzZ1qyMFQwpRM9Upcw36u2mSyaYp3uoy10Rd4gqkf84ez5YgJceifk_9RFYhB0rz_Znn-Q48qX-sQiXlg8l8h42m-uWnml0jJ4araQ696cmjXcrVFbgOi4QMc" // Replace with actual access token if needed
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
