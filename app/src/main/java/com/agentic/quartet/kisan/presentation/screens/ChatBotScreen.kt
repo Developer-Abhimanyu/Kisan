@@ -145,15 +145,24 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                         .padding(12.dp)
                                 )
                                 message.suggestions?.let { suggestions ->
-                                    LazyRow(
+                                    Column(
                                         modifier = Modifier
                                             .padding(start = 8.dp, top = 4.dp, bottom = 4.dp)
-                                            .fillMaxWidth()
                                     ) {
-                                        items(suggestions) { chip ->
+                                        suggestions.forEach { chip ->
                                             SuggestionChip(text = chip) {
-                                                userMessage = TextFieldValue(chip)
+                                                sendMessageToDialogflow(chip) { reply, suggestions ->
+                                                    chatMessages = chatMessages + ChatMessage(
+                                                        chip,
+                                                        true
+                                                    ) + ChatMessage(
+                                                        reply ?: "No response",
+                                                        false,
+                                                        suggestions
+                                                    )
+                                                }
                                             }
+                                            Spacer(modifier = Modifier.height(6.dp)) // add spacing between chips
                                         }
                                     }
                                 }
@@ -203,7 +212,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
 
 fun sendMessageToDialogflow(userMessage: String, onResult: (String?, List<String>?) -> Unit) {
     val accessToken =
-        "ya29.c.c0ASRK0Ga7W91o79dnidbOF7ovK9mib5WOJSWLlfFAF6u5zIbI24G4BSrLGFtfLlDdYtOE-Hz2zPfvMxVUmX98Mh7SePMQU5uCgF23YRJuXjel-LKiXshOShUgL5KDCAk1YQV5WZByVhKdTaIWgvEAtb97VexbEyfNwOgoAX8u06FADLmHCp48G8XcJNaWVhg_42px5MwUi6r0Gx67sFlJ-TWrFZzgvoDP8jVbErgKdjDn2kdZhX4iNcJXWJpcbuokzKbT7GFTBV-0NtZyBBF99YV2n1Nz78K21lHO7q66FugtR-LwRa7gyOjX0qHKtUU_rjWbPhnmUYTV0eGvANfVIjzQlM22Mmz_pIvf-_jeBH5VaeYhSBXLuPzyN385DM4uWbM7zXOs_RMMV06WermMyZ7qt4OeYvhsz04sSvoRnZlvRQBVs8dkkd7c_okJ1wptbxbfkfWt4Mgj_oJF9o7n91_r2qOUJjF7gFiQUQ64jzoq66jjoyeJVw9vSapi_X7Uhr-3z8bqFdqpRRdmslnVsUX-B5tnJzdXmVrSm_0Biotdw13gy0Ys0qenUqu3jmOnjveq7rseem0hjewZhpfijSqgofeMmmuyjqZobX66SvSszX_1MjSMSy14f2XFM_vrZVxz2MVgh4s7iofRuZb3sv8F4R0jvJw-j2k7fIOcoFMRMJeSS7mZx5ZFy1rI8VQOYwVIJo9UdOvbI7riO8J1mOsB5qW66JpJbZMJykXj4-WBB0oMmuzgk7pW-bRYop8xZywJt46BemmaU9z6oBxoSZmSF7Q_sz2jgR_n2qkSJZ4txfW5t-gVd_vlluURu0lYSRjUUx4WYVV8se4dB91RqzqV_vyOZa5U05Xwb3oMIV9w7wkY-fmY6Wus0IU64OQ_BWcs6i1y4alx7suar7RS2OSYsOgZvfI0IIvB7aUJOZyaZqYgRMsu9QQOXg2XnJ9RfRIarpw6etFXVrelj35Bpz1isnR15wYd-8uzRop7rbdbYBJaaqBFg7O" // Replace with actual access token if needed
+        "ya29.c.c0ASRK0GbOYSR_VdfrHYcMglh7LTMO8K9Z2JO-fdS-d8OKLDxdLNVwA38q4YvkGjk6RCtk1d07C2yn0_AIzWbapPiWBH2MO8jMVYdpE0xbdMwZbUpKewAyJerA-AAKtv_YrQEVi8-MAb22o9Gaan2WX4To7qNeNRCxt5bEbqLFp0MCN7j-RpSdfxgCnLfuKECYDZMoF8Wig_X8NMPck9n7tttl0IHld6iW3HXEiTFokcPn7s2JfdxZpfAFYYMRCcuv_MV2ZDhHiP8OsXKm_1OzCNlcsugirelHpccjOQHvRUVYG1QnXUxZSC6tum7dJBFuycYdn2nbUtJz8DA1TfxFpPmXm_-jl2T8hIkGCAuemvcXRUSMhWT2nl2xH385Kdyt1MUndybivwmvxob_3l_q5Qc07MfJWalp5o1bdBqFgxyQg4Fnm28evZlvcjOed2r4uF-1X1Q9tQVl7eejQ2nmh73bMnjiu7iMmcRSW9l3uFnQVVF--_Ve1ns1rRomhbt9tJketdullaMQzF5arck2lny48vVRpow9taXJlx48ew8Z34W3lSVrgzovOydZuB6g4J6drWgywYfd4Jryfra1Jni6hIFxcdURO94kFlb4gZxlaffXjho7_M__Q6WWWWMq918248r4427_1ih2cUXB2YY4676SBc2JmMJ5QSmO-p63Wthy06kYk29mshgu-Q_WmiR-U5iO8amFxqrMZ7J1eV7zSjBSWZmse5X-qoSuJ1QoZagV811WWUWVjn7Mbumg849k_UdQ4Jw-mmwbZ4lqj7m5I_hw3bsJ29Wg9OiUv9MFWjoOSbwhcMFJty7WYvq66ce2YrszwiWh81wQQzdw_h79Sc2i4fxrv5tshzjZ6IV886zspsSQhOtstpRyYrxJBgxukwlmaJgeW6yYUzSXUMS-QzyFRrBMqX2BRef5icgB357IWcmBsmYfM2lltz4ju3v8mgyBfvZOZwac7jWj3ko0gZc_pRouooUWQzB0O3iluuMRw6Scvfj" // Replace with actual access token if needed
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
