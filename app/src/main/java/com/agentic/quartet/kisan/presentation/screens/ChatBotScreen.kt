@@ -3,7 +3,6 @@ package com.agentic.quartet.kisan.presentation.screens
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
+import com.agentic.quartet.kisan.utils.ProfileManager
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -108,6 +108,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
     val languages = listOf("English" to "en", "हिंदी" to "hi", "ಕನ್ನಡ" to "kn")
     var expanded by remember { mutableStateOf(false) }
     var selectedLanguage by remember { mutableStateOf(getCurrentLanguageFromPreferences(context)) }
+    val profile = remember { ProfileManager.loadProfile(context) }
 
     AppBackground {
         Column(
@@ -230,6 +231,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                                         chatMessages =
                                                             chatMessages + ChatMessage(chip, true)
                                                         sendMessageToDialogflow(
+                                                            city = profile.city,
                                                             context,
                                                             chip
                                                         ) { reply, suggestions ->
@@ -273,7 +275,11 @@ fun ChatBotScreen(onBack: () -> Unit) {
                     val text = userMessage.text
                     if (text.isNotBlank()) {
                         chatMessages = chatMessages + ChatMessage("$text", true)
-                        sendMessageToDialogflow(context, text) { reply, suggestions ->
+                        sendMessageToDialogflow(
+                            city = profile.city,
+                            context,
+                            text
+                        ) { reply, suggestions ->
                             chatMessages = chatMessages + ChatMessage(
                                 reply ?: "Sorry, no response.",
                                 false,
@@ -292,6 +298,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
 }
 
 fun sendMessageToDialogflow(
+    city: String,
     context: Context,
     userMessage: String,
     onResult: (String?, List<String>?) -> Unit
@@ -309,14 +316,17 @@ fun sendMessageToDialogflow(
 
     val languageCode = getCurrentLanguageFromPreferences(context)
 
-    Log.i("ChatBotScreen", "Using language code: $languageCode")
-
     val requestBody = buildJsonObject {
         putJsonObject("queryInput") {
             putJsonObject("text") {
                 put("text", userMessage)
             }
-            put("languageCode", languageCode) // Change dynamically if needed
+            put("languageCode", languageCode)
+        }
+        putJsonObject("queryParams") {
+            putJsonObject("parameters") {
+                put("location", city)
+            }
         }
     }
 
