@@ -77,7 +77,7 @@ data class TextContent(
 data class ChatMessage(
     val message: String,
     val isUser: Boolean,
-    val suggestions: List<String>? = null
+    val suggestions: List<Pair<String, String?>>? = null
 )
 
 fun saveSelectedLanguage(context: Context, code: String) {
@@ -205,41 +205,39 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                         modifier = Modifier
                                             .padding(start = 8.dp, top = 4.dp, bottom = 4.dp)
                                     ) {
-                                        suggestions.forEach { chip ->
-                                            SuggestionChip(text = chip) {
+                                        suggestions.forEach { (text, link) ->
+                                            SuggestionChip(text = text) {
                                                 when {
-                                                    chip.contains("wa.me") || chip.contains("WhatsApp") -> {
+                                                    link?.contains("https://whatsapp.com/channel") == true -> {
                                                         val intent = Intent(
                                                             Intent.ACTION_VIEW,
-                                                            Uri.parse("https://whatsapp.com/channel/0029VavDqAOFHWq4qE4pc13G")
+                                                            Uri.parse(link)
                                                         )
                                                         context.startActivity(intent)
                                                     }
 
-                                                    chip.contains("Helpline") -> {
-                                                        val digits = "1800-180-1551"
-                                                        if (digits != null) {
-                                                            val dialIntent =
-                                                                Intent(Intent.ACTION_DIAL).apply {
-                                                                    data = Uri.parse("tel:$digits")
-                                                                }
-                                                            context.startActivity(dialIntent)
-                                                        }
+                                                    link?.startsWith("tel:") == true -> {
+                                                        val dialIntent =
+                                                            Intent(Intent.ACTION_DIAL).apply {
+                                                                data = Uri.parse(link)
+                                                            }
+                                                        context.startActivity(dialIntent)
                                                     }
 
                                                     else -> {
                                                         chatMessages =
-                                                            chatMessages + ChatMessage(chip, true)
+                                                            chatMessages + ChatMessage(text, true)
                                                         sendMessageToDialogflow(
                                                             city = profile.city,
-                                                            context,
-                                                            chip
+                                                            context = context,
+                                                            userMessage = text
                                                         ) { reply, suggestions ->
                                                             chatMessages =
                                                                 chatMessages + ChatMessage(
-                                                                    reply ?: "No response",
-                                                                    false,
-                                                                    suggestions
+                                                                    message = reply
+                                                                        ?: "No response",
+                                                                    isUser = false,
+                                                                    suggestions = suggestions
                                                                 )
                                                         }
                                                     }
@@ -301,10 +299,10 @@ fun sendMessageToDialogflow(
     city: String,
     context: Context,
     userMessage: String,
-    onResult: (String?, List<String>?) -> Unit
+    onResult: (String?, List<Pair<String, String?>>?) -> Unit
 ) {
     val accessToken =
-        "ya29.c.c0ASRK0GZSUN4ap-rN5z17sJTpf6CR7YvcRrQ2Qr1AqXAN4pDxB0_-GLzPvqcyJ8S-lJwq_qr5nzQLw3IycC2OpM2o1uXOtt7IUmRon1KQMme4NlDAYu97bI6_XFvVXsXjEL35JaDQMiXZqC1kdg2fY7bQs_I6lo4SpvtUSV84PjJ4wWeMQ0ZaTztXaxyUrkvFjDZr9lDfKNJ8mpOTxeUkdB8TgJMA_d8ieunkqpHPIDxAGQCw1fSl9MNnoD4I7REgymbwN0fXs-wm5lz9XTzY9xMqiRTOQTSbeKuAnNgPd3nYZ7W5I1Onl4JOO460UtGOV8nhIc_Pfpx-o01ot3ROXtr8FDlZBUn52c8rN_gBULTFauvzfHlhKJ1OrwN387AcjojFxIquS5qMd4fSu76dgdezdSnx4Zv2cIRs1s6hi0SpgJ_vs0cqlue0lvQ7qMMg4jVVtojhk_ep4SSfyIse10grauZ5fd2kMJUndgFBWFjeqy3VMlUm67hJBIRYdYmB993kgi1iZfj_5cR-kt5926zozXrQd-YX6aZ_kV-d9Bl_pfIR92eVUZhd0o1w2tFFg-rgIMoBFx4imQuF6qvXUISQwca5-RwUbY90OwwmtWWOjO32FUk6mXM3MaqIq1-j9F7yZZraImYfmSOFfQYBntU0m-qZ6is0g6vnp78xl3uZ-8iqw60zOW5oO_pxcp1oqUh7aeolQy4Vrrt-XUdjX0jMXp8Zs_9aSwdzO_xm0bgiUUQU1ReBXyoqZqRrzfz9-1mclaIXZy9lg8JB4uMgmF8JO3oqxx2uW72cdZxzJ0-roF6utk4WOgwYB7jmUIfzSl8gnq9VogRvWmlaaapMYxnmxWJWzOo3Q1eMlBOXhtvUpVIyaOsF6Jy-p8avgxM7knqgIhF7Yz2Xq7RBlQq2Og0l8p4g6O9B4Q2aOsxyeoMf1bnSVqr-j1173ls49Bgu1sB9worrSdjguldjZvWvR66YxtMXzcwl8Y_MXURcfcJsY_2JjWb-6ZV" // Replace with actual access token if needed
+        "ya29.c.c0ASRK0GZvRMz9cD1BhAU8ecJi_p-txCxeH333rczh4nOCSWLqcKNbz000W1wLD64l2qsVl8JMfu4KVIlLHk5YUQ6zWMalMPbO5ZenQhr5e1E-wPwu98fvMS8T74t8UK22yUWLEKTiWEsmXBvmY8fuyQcnFd80DufUsnTAuiBf0QalAXJoVEFEUKlKXBs7TxuZ0SDbRhnyaOvt_7Z8stMwnqaItU-TlonhAedzUZs0rsN_NWD0Rk91rEoYJhCl_ms_LtltwUPntXr11sqxG5CHPFql2X3LTZyxjqMBSxzPdZWJ-YqJHFWtaZcGBQNmUOOvFLWmbDoy9PgTg4IYrFHTS2I3AGPrvlcVfJnHpIzBLbqJc9SOG6k0ghskH385K8dOil53j83ktZQR56YxXrUlXhZYpqdfdObWh8ha7uYyIBzJZtUsx0h5ZbgrvyOJzfwcvhcu79mIRv9bZOBtw-9cdY2yXyxWi1r8QMVciiss-m-yVFl-xeOU9hvaFgtUhB5QztU_xcxgno9fj_rIzawbF6V1mZh2Wa_wg2Jd8ocu8Yr3fx3upFbbxoup0sRbxmS_sXB15-wZw-R56eJur93mZjOFRy7SrqXxje2q1iigqF7l_dMrkjBuY9OfkYaOWj5SFXywqmtUjOwJX4IasWUQaYVb_QwgY_mu4WxstnvO2MyVlvi3ol_dRO3VUtb_9hXYRUrrgsyUn_eSuW5-q5SQ7qm8jJf0SSegi0lOk2j7uS_1FScMioJ8jwI2-9r2Rc206Jge45S3-xrqI3Ibd5li9mhV1MoigWaZUZ54p3nzomh8jJxsnt2nd5boQIWyaqVZYxqfaoQSfu-oy1cg3guXU_waRm2zM5xx34jcIZcyv3VXaXiUS2g0ldOe68BVXtsdsny34c0s-Ucb8XzugSUVRU4FFMOShboiq5scMl5gt-9l65hoiZ192ZX1y8yZUmy8zgxkBpkYVQsW5qivedOaJq-4JkIoOZfyWkZVddtan21FRX6I5r9VkMk" // Replace with actual access token if needed
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
@@ -357,7 +355,7 @@ fun sendMessageToDialogflow(
                 ?.contentOrNull
 
             // 2. Extract chip suggestions from payload.richContent
-            val suggestions = mutableListOf<String>()
+            val suggestions = mutableListOf<Pair<String, String?>>()
             val payloadResponse = queryResult?.get("responseMessages")
                 ?.jsonArray
                 ?.firstOrNull { it.jsonObject.containsKey("payload") }
@@ -374,8 +372,9 @@ fun sendMessageToDialogflow(
                         val options = inner.jsonObject["options"]?.jsonArray
                         options?.forEach { chip ->
                             val text = chip.jsonObject["text"]?.jsonPrimitive?.contentOrNull
+                            val link = chip.jsonObject["link"]?.jsonPrimitive?.contentOrNull
                             if (!text.isNullOrEmpty()) {
-                                suggestions.add(text)
+                                suggestions.add(Pair(text, link))
                             }
                         }
                     }
