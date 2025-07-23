@@ -80,6 +80,8 @@ dependencies {
     implementation("io.ktor:ktor-client-content-negotiation:3.2.2")
     implementation("io.ktor:ktor-serialization-gson:3.2.2")
 
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
+
     androidTestImplementation(libs.hilt.android.testing)
 
     kaptTest(libs.hilt.android.compiler)

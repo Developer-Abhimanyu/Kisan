@@ -49,6 +49,67 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.speech.tts.TextToSpeech
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import java.util.*
+
+@Composable
+fun rememberSpeechRecognizer(
+    onResult: (String) -> Unit
+): () -> Unit {
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val data = result.data
+        val matches = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+        matches?.firstOrNull()?.let { spokenText ->
+            onResult(spokenText)
+        }
+    }
+
+    return {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, getCurrentLanguageFromPreferences(context))
+            putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now")
+        }
+        launcher.launch(intent)
+    }
+}
+
+@Composable
+fun rememberTextToSpeech(): (String, String) -> Unit {
+    val context = LocalContext.current
+    val ttsRef = remember { mutableStateOf<TextToSpeech?>(null) }
+
+    // Create TTS safely
+    LaunchedEffect(Unit) {
+        val ttsInstance = TextToSpeech(context, null)
+        val langCode = getCurrentLanguageFromPreferences(context)
+        val locale = Locale(langCode)
+        ttsInstance.language = locale
+        ttsRef.value = ttsInstance
+    }
+
+    // Cleanup on dispose
+    DisposableEffect(Unit) {
+        onDispose {
+            ttsRef.value?.stop()
+            ttsRef.value?.shutdown()
+        }
+    }
+
+    // Return speakOut lambda
+    return { text: String, lang: String ->
+        val tts = ttsRef.value
+        tts?.language = Locale(lang)
+        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
+}
 
 @Serializable
 data class DialogflowResponse(
@@ -103,6 +164,12 @@ fun ChatBotScreen(onBack: () -> Unit) {
             )
         )
     }
+
+    val startListening = rememberSpeechRecognizer { spokenText ->
+        userMessage = TextFieldValue(spokenText)
+    }
+
+    val speakOut = rememberTextToSpeech()
 
     val context = LocalContext.current
     val languages = listOf("English" to "en", "हिंदी" to "hi", "ಕನ್ನಡ" to "kn")
@@ -225,20 +292,19 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                                     }
 
                                                     else -> {
-                                                        chatMessages =
-                                                            chatMessages + ChatMessage(text, true)
+                                                        chatMessages = chatMessages + ChatMessage(text, true)
                                                         sendMessageToDialogflow(
                                                             city = profile.city,
                                                             context = context,
                                                             userMessage = text
                                                         ) { reply, suggestions ->
-                                                            chatMessages =
-                                                                chatMessages + ChatMessage(
-                                                                    message = reply
-                                                                        ?: "No response",
-                                                                    isUser = false,
-                                                                    suggestions = suggestions
-                                                                )
+                                                            val botText = reply ?: "No response"
+                                                            chatMessages = chatMessages + ChatMessage(
+                                                                message = botText,
+                                                                isUser = false,
+                                                                suggestions = suggestions
+                                                            )
+                                                            speakOut(botText, selectedLanguage)
                                                         }
                                                     }
                                                 }
@@ -263,7 +329,16 @@ fun ChatBotScreen(onBack: () -> Unit) {
                     focusedBorderColor = Color(0xFF4CAF50),
                     unfocusedBorderColor = Color(0xFF4CAF50),
                     cursorColor = Color(0xFF4CAF50)
-                )
+                ),
+                trailingIcon = {
+                    IconButton(onClick = { startListening() }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_mic),
+                            contentDescription = "Mic",
+                            tint = Color.White
+                        )
+                    }
+                },
             )
 
             Spacer(modifier = Modifier.height(8.dp))
