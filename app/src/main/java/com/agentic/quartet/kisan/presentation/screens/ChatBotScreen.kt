@@ -2,6 +2,7 @@ package com.agentic.quartet.kisan.presentation.screens
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,10 +51,17 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import coil.compose.rememberAsyncImagePainter
+import java.io.File
 import java.util.*
 
 @Composable
@@ -73,7 +81,10 @@ fun rememberSpeechRecognizer(
 
     return {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, getCurrentLanguageFromPreferences(context))
             putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now")
         }
@@ -86,7 +97,6 @@ fun rememberTextToSpeech(): (String, String) -> Unit {
     val context = LocalContext.current
     val ttsRef = remember { mutableStateOf<TextToSpeech?>(null) }
 
-    // Create TTS safely
     LaunchedEffect(Unit) {
         val ttsInstance = TextToSpeech(context, null)
         val langCode = getCurrentLanguageFromPreferences(context)
@@ -95,7 +105,6 @@ fun rememberTextToSpeech(): (String, String) -> Unit {
         ttsRef.value = ttsInstance
     }
 
-    // Cleanup on dispose
     DisposableEffect(Unit) {
         onDispose {
             ttsRef.value?.stop()
@@ -103,7 +112,6 @@ fun rememberTextToSpeech(): (String, String) -> Unit {
         }
     }
 
-    // Return speakOut lambda
     return { text: String, lang: String ->
         val tts = ttsRef.value
         tts?.language = Locale(lang)
@@ -165,8 +173,46 @@ fun ChatBotScreen(onBack: () -> Unit) {
         )
     }
 
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val cxt = LocalContext.current
+
+    val photoFile = File(cxt.cacheDir, "captured_image.jpg")
+    val photoUri = FileProvider.getUriForFile(
+        cxt,
+        "${cxt.packageName}.provider",
+        photoFile
+    )
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            selectedImageUri = uri
+        }
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            selectedImageUri = photoUri
+        }
+    }
+
     val startListening = rememberSpeechRecognizer { spokenText ->
         userMessage = TextFieldValue(spokenText)
+    }
+
+    val cameraPermissionState = remember { mutableStateOf(false) }
+
+    val requestCameraPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        cameraPermissionState.value = isGranted
+        if (isGranted) {
+            cameraLauncher.launch(photoUri)
+        }
     }
 
     val speakOut = rememberTextToSpeech()
@@ -292,30 +338,51 @@ fun ChatBotScreen(onBack: () -> Unit) {
                                                     }
 
                                                     else -> {
-                                                        chatMessages = chatMessages + ChatMessage(text, true)
+                                                        chatMessages =
+                                                            chatMessages + ChatMessage(text, true)
                                                         sendMessageToDialogflow(
                                                             city = profile.city,
                                                             context = context,
                                                             userMessage = text
                                                         ) { reply, suggestions ->
                                                             val botText = reply ?: "No response"
-                                                            chatMessages = chatMessages + ChatMessage(
-                                                                message = botText,
-                                                                isUser = false,
-                                                                suggestions = suggestions
-                                                            )
+                                                            chatMessages =
+                                                                chatMessages + ChatMessage(
+                                                                    message = botText,
+                                                                    isUser = false,
+                                                                    suggestions = suggestions
+                                                                )
                                                             speakOut(botText, selectedLanguage)
                                                         }
                                                     }
                                                 }
                                             }
-                                            Spacer(modifier = Modifier.height(6.dp)) // add spacing between chips
+                                            Spacer(modifier = Modifier.height(6.dp))
                                         }
                                     }
                                 }
                             }
                         }
                     }
+                }
+            }
+
+            selectedImageUri?.let { uri ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = uri),
+                        contentDescription = "Selected Image",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text("Image selected", color = Color.White)
                 }
             }
 
@@ -343,28 +410,59 @@ fun ChatBotScreen(onBack: () -> Unit) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-                onClick = {
-                    val text = userMessage.text
-                    if (text.isNotBlank()) {
-                        chatMessages = chatMessages + ChatMessage("$text", true)
-                        sendMessageToDialogflow(
-                            city = profile.city,
-                            context,
-                            text
-                        ) { reply, suggestions ->
-                            chatMessages = chatMessages + ChatMessage(
-                                reply ?: "Sorry, no response.",
-                                false,
-                                suggestions
-                            )
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Button(
+                    onClick = {
+                        galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(stringResource(R.string.gallery), color = Color.White, fontSize = 16.sp)
+                }
+
+                Button(
+                    onClick = {
+                        if (ContextCompat.checkSelfPermission(
+                                context,
+                                android.Manifest.permission.CAMERA
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            cameraLauncher.launch(photoUri)
+                        } else {
+                            requestCameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
                         }
-                        userMessage = TextFieldValue("")
-                    }
-                },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text("Send", fontSize = 18.sp)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(stringResource(R.string.use_camera), color = Color.White, fontSize = 16.sp)
+                }
+
+                Button(
+                    onClick = {
+                        val text = userMessage.text
+                        if (text.isNotBlank()) {
+                            chatMessages = chatMessages + ChatMessage(text, true)
+                            sendMessageToDialogflow(
+                                city = profile.city,
+                                context = context,
+                                userMessage = text
+                            ) { reply, suggestions ->
+                                val botText = reply ?: "Sorry, no response."
+                                chatMessages = chatMessages + ChatMessage(
+                                    message = botText,
+                                    isUser = false,
+                                    suggestions = suggestions
+                                )
+                                speakOut(botText, selectedLanguage)
+                            }
+                            userMessage = TextFieldValue("")
+                        }
+                    },
+                ) {
+                    Text("Send", fontSize = 16.sp)
+                }
             }
         }
     }

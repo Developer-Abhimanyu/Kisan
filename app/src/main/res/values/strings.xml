@@ -34,7 +34,7 @@
     <string name="healthy_crop">Healthy crop! No visible disease detected.</string>
     <string name="crop_disease_detection">Crop Disease Detection</string>
     <string name="gallery">Gallery</string>
-    <string name="use_camera">Use Camera</string>
+    <string name="use_camera">Camera</string>
     <string name="analyzing_image">Analyzing image...</string>
     <string name="diagnosis_result">Diagnosis Result</string>
     <string name="tip_for_disease">Tip: Use high-quality, well-lit images of affected leaves for better detection.</string>
