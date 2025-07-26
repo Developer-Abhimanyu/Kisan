@@ -56,6 +56,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
@@ -162,6 +163,7 @@ fun getCurrentLanguageFromPreferences(context: Context): String {
 @Composable
 fun ChatBotScreen(onBack: () -> Unit) {
     var userMessage by remember { mutableStateOf(TextFieldValue("")) }
+    val listState = rememberLazyListState()
     var chatMessages by remember {
         mutableStateOf(
             listOf(
@@ -277,6 +279,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
             }
 
             LazyColumn(
+                state = listState,
                 modifier = Modifier
                     .weight(1f)
                     .padding(8.dp)
@@ -365,6 +368,10 @@ fun ChatBotScreen(onBack: () -> Unit) {
                         }
                     }
                 }
+            }
+
+            LaunchedEffect(chatMessages.size) {
+                listState.animateScrollToItem(chatMessages.size - 1)
             }
 
             selectedImageUri?.let { uri ->
