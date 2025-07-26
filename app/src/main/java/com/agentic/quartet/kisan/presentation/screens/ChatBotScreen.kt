@@ -234,6 +234,10 @@ fun ChatBotScreen(onBack: () -> Unit) {
     var selectedLanguage by remember { mutableStateOf(getCurrentLanguageFromPreferences(context)) }
     val profile = remember { ProfileManager.loadProfile(context) }
 
+    LaunchedEffect(Unit) {
+        speakOut("Welcome to Kisan AI Chatbot 👨‍🌾", selectedLanguage)
+    }
+
     AppBackground {
         Column(
             modifier = Modifier
@@ -491,7 +495,7 @@ fun sendMessageToDialogflow(
     onResult: (String?, List<Pair<String, String?>>?) -> Unit
 ) {
     val accessToken =
-        "ya29.c.c0ASRK0GaBIiFzc6VgGjW_4objgjFo6_rO9wpN6-8-VaFOXKpZPBOtRaeGpuw-XeWLhdud1qIdasn_WXlNgvepaKWbPuJBvRdbbj-h8-jHJPxVrI709ALGlT3xhQQDfWOPSFHsGEKgGLzT4pCXmakLdIeJsHO8zHVtoqQzyONWMlyNX1CwLk1_rfHD6u_pOWoRAdEdhJp_gJq5fF9b15y6KWGcQn8qwf9yoz-JLSFDS9tlUPnaVajAXWDMdyiBxsIoNvZGOpNSrtiTstdYTj_iFxvk4l7q4fzdxvJC55O3996x3Q7rAENerj-kr0p_lmzKKoLsZ23UdKr2HQeHGGqefbceW9xRGHpjnWORDYFvWMk7ce2_Ci7IqikqE385AwYzqcX5nMl3o3c4iRgV2olSZ0McsprVyJR5vb1S71lBlpFMl-oks1h48fs6J4FUoo6nFea9FvhugibJn41plsbQ_VnQuXaZydU0gZ1F7gmiBXYf5cMxQsa9SXcd9ffYR-e1_1nJ631v9Q11kYM4dM-r8x56juyVnumqQxtVI7a_VJklQuBQg28xYZZ2e9mXwUl0qpj0kUyVrFW9gmYoBOnsoURei31mqznWXrbgn10M1VuuUFe01pM4zvat144Fhdkr1td8eyoQRnXiZF9-JcWzrdWOSXjJ5bxdXevt0__O5zpQo-I_eZBJ2-YZ950zrWSBulUVukrrUzurXOuOfnwsBgxW4OJ-OkrB8yrdgsRzVZmjX3hl53WMoUlZXO_dS6vOjjRr_46_ccjMhfUiVSWizItx5gJokQyZay3RY7VrR2vsO69vodBXvogi7xdIc69ayxFYRv3fWMlMqyhB7mB5s1ZkU9BQeww8WkrMU4svX2k_855aUof1VvuW3872SO7088Fqmf94rVu-oUSo9Ov3O6ykio7jUBVU4szZUXdkF9hFlhU-99oQeQvZ46qbF7z5Ba8y0fkvOi-uB5IW_QqW_rR6XgjB7WqnZcs_BoaFn0J4BRpe5bybXo5" // Replace with actual access token if needed
+        "ya29.c.c0ASRK0Gahz1wEp6I0A5WzENx6HAgMHKTHcLNfW4nFNUGTD1vv9eFEUhemeq2Bps-2-ninlH0cHwfd-uFEVo6OzSB3es8G0k4IMm81fzChaTgljTCbvlFVfqMTA79WGCwgwi1d4KZoKKtms-U26OHYlqL9N6N5WKQSzhGpi8b_Qmx9HPg-PD9oOUXgqmBhB1SxDzTcgC_HfO0mL3ZRPYZmLglpN0JxtAqij8rszD3q49RhGRlh00LrSargWrEw1AdTcCXi2EspGtS8UXWcjK0zjkEeWKyeVwRKrxgD0clMIl693l1Mhi_DJzcGqdhtCywOxwki_tW23n6RZDxzcrR8jvE0j3ZOrCCHcRVwxWPXSrkTeLvCk-eBVgNiL385PQlo3bziuw_dnYMMZOUY020jqWj5718bxcl029wy1lISyyMJzQ2dcsMU_Y980QpS6QRneq5yOFOu50witJk4bjOx-asZoiSe9X-q-iV7ebhFUFcwz7Y6Qi2WovmUnBY5nOZ96Jltpbf6jtznJ0hMgzJeIjUZQoo7O62tc7SiVFXnZSic018ams19ZFaxfY47iS6437Um5zuWIiIXYXW9JpwIV66Odjsadzb5uod7oIzet6e01fu3eXSBO3X9phF8uhh_79hos8RSQ859Zhu_d80pr0tWZQ8drwI4-Ysq6lQwe5MWhxV4ho9tVp78ORw8pj7u5eqy1zje4zXzar94IUWIkkflBJtzfguQbttmdQjWz6xrZnokehftXdoM2eM1Si72I1xXIYiRu84hp7gMh4vI7bzfW68Myfyckqnm_nU_iYp5F1a_23sIw6pRgcynOB2FSZ4euBa3j5ZBfXsx5yUeJUoWjmB5X7esvfuWg3Y4ZnvSBcxtJXhdh4tueWj7akl4SoWl9l76opqQe58vz52nadX4R3F-vFg5BiykIcmq6_eJBX8gfoRBeelQ6ZkqXj3Xx9xv_dOeQao16la1uiJ_YRFybBMnfy_1M0dSu2OZvtlqczV2fOV1pq8"
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
