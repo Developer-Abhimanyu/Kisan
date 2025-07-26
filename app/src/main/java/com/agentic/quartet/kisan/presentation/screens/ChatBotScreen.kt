@@ -3,6 +3,8 @@ package com.agentic.quartet.kisan.presentation.screens
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,6 +39,7 @@ import com.agentic.quartet.kisan.R
 import com.agentic.quartet.kisan.presentation.AppBackground
 import com.agentic.quartet.kisan.utils.ProfileManager
 import io.ktor.client.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
@@ -52,6 +55,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,8 +65,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import coil.compose.rememberAsyncImagePainter
+import io.ktor.client.plugins.HttpTimeout
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
+import android.util.Base64
+import com.google.api.Logging
+import io.ktor.client.call.body
+import kotlinx.coroutines.withContext
+
+
+@Serializable
+data class ImageUploadRequest(
+    @SerialName("image_base64")
+    val imageBase64: String
+)
+
+@Serializable
+data class ImageUrlResponse(
+    @SerialName("image_url")
+    val imageUrl: String
+)
 
 @Composable
 fun rememberSpeechRecognizer(
@@ -243,18 +266,32 @@ fun ChatBotScreen(onBack: () -> Unit) {
         }
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
     ) { success ->
         if (success) {
             selectedImageUri = photoUri
+
             val base64 = uriToBase64(cxt, photoUri)
             base64?.let {
                 chatMessages = chatMessages + ChatMessage("📷 Image sent", isUser = true)
+
+                // Launch coroutine to call suspend function
+                coroutineScope.launch {
+                    val imageUrl = uploadImageAndGetUrl(cxt, Base64.decode(it, Base64.DEFAULT))
+                    Log.i("ABHI", "ChatBotScreen: $imageUrl")
+
+                    if (imageUrl != null) {
+                        chatMessages = chatMessages + ChatMessage("🖼️ [Image hosted here]($imageUrl)", isUser = false)
+                    } else {
+                        chatMessages = chatMessages + ChatMessage("❌ Failed to upload image", isUser = false)
+                    }
+                }
             }
         }
     }
-
     val context = LocalContext.current
 
     val cameraPermissionState = remember { mutableStateOf(false) }
@@ -553,7 +590,7 @@ fun sendMessageToDialogflow(
     onResult: (String?, List<Pair<String, String?>>?) -> Unit
 ) {
     val accessToken =
-        "ya29.c.c0ASRK0GaktiOWRuIVKDU-XJXQ0i-3rSmgNt0mNAuALWHNeYNUjM_b7ecicfpcwkLDWIH83Mw0URzYp_0UBzIX4Nk7FvMCbvKSfQVaVbVvuBo5WFZ5aOwcxbbzKei6-imgjXX-G9a-tTu6mbFvg30oUiMymzbT9LwawETIQJon0aYGZJZ9xqZG3w3r8noI3IaEpZsPMjSglrbW9btIMDz5fWkCTsaV7FxPAmoH8OU5P2ZP6mU7ViRwW59W5ZWx3HLu7WmB3hg2t8pQlOolc_qVCMtZkNdahacFU78SMfNFPfeWW1xqZx9vm1eYWqU1STX_ipA5eUwNEH55nLf_0gTEkLiGHXFLAN6dYW_vanrL5zNyIHxWiF8xTwMT384PJ2kJp5U-SSrUxihtmWBq5djr_e3sQjaoykz-k4b6spZFqdeMBi9FW8p4ot_q9Fwn8tBy8jfI4ycnmasRaikSfXgaIfomdRdj1d6mItk5ptk626fzhW_XRlo3brlZwo0X3hBSo4dVah8zo0SUSV5pnjFVYgq-0z6j5xb16pxSV9ro4pRr1tldM-74tUJW4BoVe_65gX-eigttjn4Fpj5Zohfpwgx7triirQ4Oha0g9ZlbZ6rvZJphiSzZYr3hfeXW1eSdU8VOFp4ishaksc3w4lqwOrfOv39mgk5ak0a7ZZ11Oh7VI0Qwa4tvUzpt3iFIr9igZy37rtqO4qh1mpbsa39zyM_q5X4sMRIoIXzJk9nYQQMU3p2zQRS0dniJIJM_neQ_J3Qz4ve18W2Z3uISqQmZRvfidbRV1BiIpQnIycsYaSkIogU_u8zqQWlVR7X7M4pyzfY64s6wV6iVgnwv3Yu3cY6kW5JWauXVha3gB1bXQ4Q7rrfXUYzv1oSjUqMlcXxdi2quYdk5d4cruZ8SRSfhix5hxgnryieR638ylXj9S8x06R78WbmoRYcb5Vq0YQYy68fF-n5s61QVa7czQxOp4yhfhlrxBj9u3xw2rJd64ajsxrqtznbdc0J"
+        "ya29.c.c0ASRK0GZzTYwh4EhyJQ14zofQMNfF3GFWCM2fiFknFDV3dgWJumP3TWuSNWPShvtS5tLRkFOkosKOdHkNsthvS2rJyenJ6ina81nDnECCrzUojGMEqd4egxBAkm2eQKtG0VrXJgeozRCQE0hu3QOtpRTRh11kW137x0lBpT72092QWNB0u3Rc3QMG1ObH4GQRg1OyBZH27ehuLUN-RqSpbrNhoZfss3-haEPQlMU-WdONGeXu12XGpOC9VMGPsSWlBf3IdDxFheXkKRVxUu8YDNJ9fWmneaBsKuc8ZfSUALsG0MVvFnuQQkTolKo2nsc72LikjfF1XBM8odDACgpXa5J9diRub5tKxiCE11cLCbn7cS9N5XaliUA1H385Kmw4wBVFV1xWtRe1JsMsW2rfqovQmg_1tx8uz0pdWcBzqzJ6xiywb_vwBqap-JrybUQro7l04WpytSUuihauvjU2d5cX4WOfvywFId_6-BBU_kh5gU1cbatZFrX2USZZb0ixuh8_dQYo2hU9ymaMM-kz8zozxw4W2Jt2BcVrnJmy0dBmekJ5Y3kaXQBMeZBvtwiVyi5Qm9ahjj6n94Rq5WweJR1j3y4w83Vt3skw7QnqRBgXS2yYIyyddzv2gdze02hIXIY29ab3ZU4WXXaFJzg2F3ri6Mt6WByW1j2WfyUQt1FtWe0IerQOnWqe4p2hXajr4iZVsXMgpjYO_bgdo5O611r9X8q8c0kI_R8oSidl9_UiUXaq3xFvkufxMZQ_Jkj_a2MIZlrlzqqOvVp5UsvdfwUtn9b4mzWvkfd7gvOgktttb7quMw6Zgwzl-qfs-Ipl_gFcBg-588egtOFU6BvURjkgWXtx-hx_viiWY-Q6eF2jM1RVpaZf51aFZcRyzQcIa_9FjsoQbQfVW76iZs633MUokUBWzY-IatZJbUU0mxdOg68-Y5onfofgkjgsF-RjtbXZ9lyZzpSp4kJrtM4VOZlqrYmdjqJQU4FgY4xUOmqkZ9XRnjvbhdg"
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
@@ -658,6 +695,57 @@ fun SuggestionChip(text: String, onClick: () -> Unit) {
     }
 }
 
+suspend fun uploadImageAndGetUrl(
+    context: Context,
+    imageBytes: ByteArray,
+    token: String? = null // Optional bearer/auth token
+): String? {
+    return withContext(Dispatchers.IO) {
+        val client = HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json(Json {
+                    ignoreUnknownKeys = true
+                })
+            }
+            install(Logging) {
+                level = LogLevel.BODY
+            }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60_000
+            }
+        }
+
+        try {
+            val base64Image = resizeAndConvertToBase64(imageBytes)
+
+            val response: HttpResponse = client.post("https://get-image-url-735213026120.us-central1.run.app") {
+                contentType(ContentType.Application.Json)
+                setBody(ImageUploadRequest(base64Image))
+
+                // 🔐 Add token if provided
+                token?.let {
+                    headers {
+                        append(HttpHeaders.Authorization, "Bearer $it")
+                    }
+                }
+            }
+
+            if (response.status.isSuccess()) {
+                val result: ImageUrlResponse = response.body()
+                result.imageUrl
+            } else {
+                println("uploadImageAndGetUrl: HTTP Error ${response.status}")
+                null
+            }
+        } catch (e: Exception) {
+            println("uploadImageAndGetUrl: Error (Ask Gemini)\n$e")
+            null
+        } finally {
+            client.close()
+        }
+    }
+}
+
 fun uriToBase64(context: Context, uri: Uri): String? {
     return try {
         val inputStream = context.contentResolver.openInputStream(uri)
@@ -673,3 +761,60 @@ fun uriToBase64(context: Context, uri: Uri): String? {
         null
     }
 }
+
+fun resizeImage(context: Context, uri: Uri, maxWidth: Int, maxHeight: Int): Bitmap {
+    val inputStream = context.contentResolver.openInputStream(uri)
+    val original = BitmapFactory.decodeStream(inputStream)
+    return Bitmap.createScaledBitmap(original, maxWidth, maxHeight, true)
+}
+
+fun resizeAndEncodeImage(imageBytes: ByteArray, maxWidth: Int = 800, maxHeight: Int = 800): String {
+    val originalBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+    val (newWidth, newHeight) = calculateResizedDimensions(originalBitmap.width, originalBitmap.height, maxWidth, maxHeight)
+    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, true)
+
+    val outputStream = ByteArrayOutputStream()
+    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream) // Reduce quality to 80%
+    val resizedBytes = outputStream.toByteArray()
+
+    return Base64.encodeToString(resizedBytes, Base64.NO_WRAP)
+}
+
+fun calculateResizedDimensions(origWidth: Int, origHeight: Int, maxWidth: Int, maxHeight: Int): Pair<Int, Int> {
+    val aspectRatio = origWidth.toFloat() / origHeight
+    return if (origWidth > origHeight) {
+        val width = maxWidth
+        val height = (width / aspectRatio).toInt()
+        width to height
+    } else {
+        val height = maxHeight
+        val width = (height * aspectRatio).toInt()
+        width to height
+    }
+}
+
+
+fun resizeAndConvertToBase64(imageBytes: ByteArray, maxWidth: Int = 800, maxHeight: Int = 800): String {
+    val originalBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+    val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height
+    val targetWidth: Int
+    val targetHeight: Int
+
+    if (originalBitmap.width > originalBitmap.height) {
+        targetWidth = maxWidth
+        targetHeight = (maxWidth / aspectRatio).toInt()
+    } else {
+        targetHeight = maxHeight
+        targetWidth = (maxHeight * aspectRatio).toInt()
+    }
+
+    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, targetWidth, targetHeight, true)
+    val outputStream = ByteArrayOutputStream()
+    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
+    val resizedBytes = outputStream.toByteArray()
+
+    return Base64.encodeToString(resizedBytes, Base64.NO_WRAP)
+}
+
