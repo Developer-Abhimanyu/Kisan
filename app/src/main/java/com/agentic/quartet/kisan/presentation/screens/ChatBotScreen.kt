@@ -55,7 +55,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -70,7 +69,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.*
 import android.util.Base64
-import com.google.api.Logging
 import io.ktor.client.call.body
 import kotlinx.coroutines.withContext
 
@@ -188,12 +186,6 @@ fun rememberTextToSpeech(): Triple<(String, String) -> Unit, Boolean, () -> Unit
 }
 
 @Serializable
-data class DialogflowResponse(
-    @SerialName("queryResult")
-    val queryResult: QueryResult? = null
-)
-
-@Serializable
 data class QueryResult(
     @SerialName("responseMessages")
     val responseMessages: List<ResponseMessage>? = null
@@ -253,20 +245,36 @@ fun ChatBotScreen(onBack: () -> Unit) {
         photoFile
     )
 
+    val coroutineScope = rememberCoroutineScope()
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         if (uri != null) {
             selectedImageUri = uri
             val base64 = uriToBase64(cxt, uri)
-            base64?.let {
-                chatMessages = chatMessages + ChatMessage("📷 Image sent", isUser = true)
+            selectedImageUri = photoUri
 
+            base64?.let {
+                chatMessages = chatMessages + ChatMessage("Image sent", isUser = true)
+
+                // Launch coroutine to call suspend function
+                coroutineScope.launch {
+                    val imageUrl = uploadImageAndGetUrl(cxt, Base64.decode(it, Base64.DEFAULT))
+
+                    if (imageUrl != null) {
+                        chatMessages = chatMessages + ChatMessage(
+                            "[Image hosted here]($imageUrl)",
+                            isUser = false
+                        )
+                    } else {
+                        chatMessages =
+                            chatMessages + ChatMessage("Failed to upload image", isUser = false)
+                    }
+                }
             }
         }
     }
-
-    val coroutineScope = rememberCoroutineScope()
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
@@ -276,17 +284,20 @@ fun ChatBotScreen(onBack: () -> Unit) {
 
             val base64 = uriToBase64(cxt, photoUri)
             base64?.let {
-                chatMessages = chatMessages + ChatMessage("📷 Image sent", isUser = true)
+                chatMessages = chatMessages + ChatMessage("Image sent", isUser = true)
 
                 // Launch coroutine to call suspend function
                 coroutineScope.launch {
                     val imageUrl = uploadImageAndGetUrl(cxt, Base64.decode(it, Base64.DEFAULT))
-                    Log.i("ABHI", "ChatBotScreen: $imageUrl")
 
                     if (imageUrl != null) {
-                        chatMessages = chatMessages + ChatMessage("🖼️ [Image hosted here]($imageUrl)", isUser = false)
+                        chatMessages = chatMessages + ChatMessage(
+                            "[Image hosted here]($imageUrl)",
+                            isUser = false
+                        )
                     } else {
-                        chatMessages = chatMessages + ChatMessage("❌ Failed to upload image", isUser = false)
+                        chatMessages =
+                            chatMessages + ChatMessage("Failed to upload image", isUser = false)
                     }
                 }
             }
@@ -612,6 +623,7 @@ fun sendMessageToDialogflow(
         putJsonObject("queryParams") {
             putJsonObject("parameters") {
                 put("location", city)
+                put("image_url", city)
             }
         }
     }
@@ -698,7 +710,7 @@ fun SuggestionChip(text: String, onClick: () -> Unit) {
 suspend fun uploadImageAndGetUrl(
     context: Context,
     imageBytes: ByteArray,
-    token: String? = null // Optional bearer/auth token
+    token: String? = null
 ): String? {
     return withContext(Dispatchers.IO) {
         val client = HttpClient(CIO) {
@@ -718,17 +730,17 @@ suspend fun uploadImageAndGetUrl(
         try {
             val base64Image = resizeAndConvertToBase64(imageBytes)
 
-            val response: HttpResponse = client.post("https://get-image-url-735213026120.us-central1.run.app") {
-                contentType(ContentType.Application.Json)
-                setBody(ImageUploadRequest(base64Image))
+            val response: HttpResponse =
+                client.post("https://get-image-url-735213026120.us-central1.run.app") {
+                    contentType(ContentType.Application.Json)
+                    setBody(ImageUploadRequest(base64Image))
 
-                // 🔐 Add token if provided
-                token?.let {
-                    headers {
-                        append(HttpHeaders.Authorization, "Bearer $it")
+                    token?.let {
+                        headers {
+                            append(HttpHeaders.Authorization, "Bearer $it")
+                        }
                     }
                 }
-            }
 
             if (response.status.isSuccess()) {
                 val result: ImageUrlResponse = response.body()
@@ -749,53 +761,24 @@ suspend fun uploadImageAndGetUrl(
 fun uriToBase64(context: Context, uri: Uri): String? {
     return try {
         val inputStream = context.contentResolver.openInputStream(uri)
-        val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+        val bitmap = BitmapFactory.decodeStream(inputStream)
         inputStream?.close()
 
-        val outputStream = java.io.ByteArrayOutputStream()
+        val outputStream = ByteArrayOutputStream()
         bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, outputStream)
         val byteArray = outputStream.toByteArray()
-        android.util.Base64.encodeToString(byteArray, android.util.Base64.NO_WRAP)
+        Base64.encodeToString(byteArray, Base64.NO_WRAP)
     } catch (e: Exception) {
         e.printStackTrace()
         null
     }
 }
 
-fun resizeImage(context: Context, uri: Uri, maxWidth: Int, maxHeight: Int): Bitmap {
-    val inputStream = context.contentResolver.openInputStream(uri)
-    val original = BitmapFactory.decodeStream(inputStream)
-    return Bitmap.createScaledBitmap(original, maxWidth, maxHeight, true)
-}
-
-fun resizeAndEncodeImage(imageBytes: ByteArray, maxWidth: Int = 800, maxHeight: Int = 800): String {
-    val originalBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-
-    val (newWidth, newHeight) = calculateResizedDimensions(originalBitmap.width, originalBitmap.height, maxWidth, maxHeight)
-    val resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, newWidth, newHeight, true)
-
-    val outputStream = ByteArrayOutputStream()
-    resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream) // Reduce quality to 80%
-    val resizedBytes = outputStream.toByteArray()
-
-    return Base64.encodeToString(resizedBytes, Base64.NO_WRAP)
-}
-
-fun calculateResizedDimensions(origWidth: Int, origHeight: Int, maxWidth: Int, maxHeight: Int): Pair<Int, Int> {
-    val aspectRatio = origWidth.toFloat() / origHeight
-    return if (origWidth > origHeight) {
-        val width = maxWidth
-        val height = (width / aspectRatio).toInt()
-        width to height
-    } else {
-        val height = maxHeight
-        val width = (height * aspectRatio).toInt()
-        width to height
-    }
-}
-
-
-fun resizeAndConvertToBase64(imageBytes: ByteArray, maxWidth: Int = 800, maxHeight: Int = 800): String {
+fun resizeAndConvertToBase64(
+    imageBytes: ByteArray,
+    maxWidth: Int = 800,
+    maxHeight: Int = 800
+): String {
     val originalBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
 
     val aspectRatio = originalBitmap.width.toFloat() / originalBitmap.height

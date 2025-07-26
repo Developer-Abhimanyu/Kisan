@@ -64,7 +64,7 @@ fun AppNavGraph(
         val startDestination = if (isSignedIn) {
             Screen.HomeScreen.route
         } else {
-            Screen.ChatBot.route
+            Screen.HomeScreen.route
         }
 
         NavHost(navController = navController, startDestination = startDestination) {
