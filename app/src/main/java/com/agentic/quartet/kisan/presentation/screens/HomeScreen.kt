@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -90,8 +92,14 @@ fun HomeScreen(
             condition = cond
             iconUrl = "https://openweathermap.org/img/wn/${icon}@4x.png"
             suggestion = when {
-                cond.contains("rain", true) -> "It may rain today. Consider drainage or harvesting early."
-                t.toFloatOrNull()?.let { it > 35 } == true -> "It's hot. Irrigate your crops in the evening."
+                cond.contains(
+                    "rain",
+                    true
+                ) -> "It may rain today. Consider drainage or harvesting early."
+
+                t.toFloatOrNull()
+                    ?.let { it > 35 } == true -> "It's hot. Irrigate your crops in the evening."
+
                 else -> "Today is a good day to apply pesticides."
             }
             geminiAdvice = buildString {
@@ -101,10 +109,12 @@ fun HomeScreen(
                         appendLine("It may rain today. Ensure proper drainage in your field.")
                         appendLine("Avoid pesticide spraying to prevent wash-off.")
                     }
+
                     t.toFloatOrNull()?.let { it > 35 } == true -> {
                         appendLine("The temperature is quite high. Irrigation should be done in the evening.")
                         appendLine("Mulching can help retain soil moisture.")
                     }
+
                     else -> {
                         appendLine("Conditions are ideal for routine farming tasks.")
                         appendLine("You may apply fertilizers or pesticides today.")
@@ -114,10 +124,13 @@ fun HomeScreen(
         }
     }
 
+    val scrollState = rememberScrollState()
+
     AppBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(scrollState)
                 .padding(16.dp)
         ) {
             Box(
@@ -156,7 +169,8 @@ fun HomeScreen(
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .height(400.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -216,7 +230,8 @@ fun HomeScreen(
             Box(
                 modifier = Modifier
                     .size(80.dp)
-                    .padding(12.dp).align(Alignment.End),
+                    .padding(12.dp)
+                    .align(Alignment.End),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 FloatingActionButton(
