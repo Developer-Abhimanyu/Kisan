@@ -22,14 +22,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HomeFeatureButton(title: String, iconRes: Int, onClick: () -> Unit) {
+fun HomeFeatureButton(title: String, iconRes: Int, onClick: () -> Unit, containerColor: Color = Color.LightGray) {
     ElevatedButton(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.elevatedButtonColors(containerColor = Color.White),
+        colors = ButtonDefaults.elevatedButtonColors(containerColor = containerColor),
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .height(120.dp)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(

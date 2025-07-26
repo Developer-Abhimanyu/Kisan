@@ -1,5 +1,7 @@
 package com.agentic.quartet.kisan.presentation.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -22,7 +24,6 @@ import com.agentic.quartet.kisan.presentation.screens.OnboardingScreen
 import com.agentic.quartet.kisan.presentation.screens.SignInScreen
 import com.agentic.quartet.kisan.presentation.screens.SignUpScreen
 import com.agentic.quartet.kisan.presentation.screens.SoilDetectorScreen
-import com.agentic.quartet.kisan.presentation.screens.VoiceAgentScreen
 import com.agentic.quartet.kisan.utils.UserPreferences
 
 sealed class Screen(val route: String) {
@@ -41,10 +42,10 @@ sealed class Screen(val route: String) {
     object FertilizerGuide : Screen("fertilizer_guide")
     object IrrigationTips : Screen("irrigation_tips")
     object SoilDetector : Screen("soil_detector")
-    object VoiceAgent : Screen("voice_agent")
     object ChatBot : Screen("chat_bot")
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
@@ -111,9 +112,6 @@ fun AppNavGraph(
                     onNavigateToGovtSchemes = {
                         navController.navigate(Screen.GovtSchemeNavigator.route)
                     },
-                    onVoiceAgentClick = {
-                        navController.navigate(Screen.VoiceAgent.route)
-                    },
                     onSoilDetectorClick = {
                         navController.navigate(Screen.SoilDetector.route)
                     },
@@ -172,10 +170,6 @@ fun AppNavGraph(
 
             composable(Screen.FertilizerGuide.route) {
                 FertilizerGuideScreen(onBack = { navController.popBackStack() })
-            }
-
-            composable(Screen.VoiceAgent.route) {
-                VoiceAgentScreen(onBack = { navController.popBackStack() })
             }
 
             composable(Screen.ChatBot.route) {

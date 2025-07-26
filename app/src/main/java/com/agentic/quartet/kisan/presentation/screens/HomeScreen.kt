@@ -55,7 +55,6 @@ fun HomeScreen(
     onNavigateToDiseaseDetection: () -> Unit,
     onNavigateToMarketPrices: () -> Unit,
     onNavigateToGovtSchemes: () -> Unit,
-    onVoiceAgentClick: () -> Unit,
     onSoilDetectorClick: () -> Unit,
     onCropCalendarClick: () -> Unit,
     onIrrigationTipsClick: () -> Unit,
@@ -165,61 +164,53 @@ fun HomeScreen(
                     HomeFeatureButton(
                         stringResource(R.string.disease_detection),
                         R.drawable.ic_disease_detection,
-                        onNavigateToDiseaseDetection
+                        onNavigateToDiseaseDetection,
+                        containerColor = Color.White
                     )
                 }
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.market_prices),
                         R.drawable.ic_chart,
-                        onNavigateToMarketPrices
+                        onNavigateToMarketPrices,
+                        containerColor = Color.White
                     )
                 }
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.govt_schemes),
                         R.drawable.ic_gov,
-                        onNavigateToGovtSchemes
-                    )
-                }
-                item {
-                    HomeFeatureButton(
-                        stringResource(R.string.voice_agent),
-                        R.drawable.ic_mic,
-                        onVoiceAgentClick
+                        onNavigateToGovtSchemes,
+                        containerColor = Color.White
                     )
                 }
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.soil_scanner),
-                        R.drawable.ic_soil_scanner
-                    ) {
-                        onSoilDetectorClick()
-                    }
+                        R.drawable.ic_soil_scanner,
+                        onSoilDetectorClick
+                    )
                 }
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.crop_calendar),
-                        R.drawable.ic_calendar_final
-                    ) {
-                        onCropCalendarClick()
-                    }
+                        R.drawable.ic_calendar_final,
+                        onCropCalendarClick
+                    )
                 }
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.irrigation_tips),
-                        R.drawable.irrigation_tips_final
-                    ) {
-                        onIrrigationTipsClick()
-                    }
+                        R.drawable.irrigation_tips_final,
+                        onIrrigationTipsClick
+                    )
                 }
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.fertilizer_guide),
-                        R.drawable.fertilizer_guide_final
-                    ) {
-                        onFertilizerGuideClick()
-                    }
+                        R.drawable.fertilizer_guide_final,
+                        onFertilizerGuideClick
+                    )
                 }
             }
             Box(
