@@ -1,16 +1,15 @@
-# 🌾 Project Kisan — AI-Powered Personal Farming Assistant
+Project Kisan — AI-Powered Personal Farming Assistant
 
 **Google Agentic AI Day 2025 Project**
 
 Project Kisan is an Android app that empowers small-scale farmers by combining AI, voice-first interaction, and real-time market intelligence.
 
----
 
 ## ✅ Key Features:
-- 🎙️ **Voice-Based Commodity Queries (Speech-to-Text)**
-- 📈 **Real-Time Market Price Analysis (Ktor API + Clean Architecture)**
-- 🌿 **Farming-Inspired Modern UI (Jetpack Compose)**
-- 🔥 **Firebase Analytics Integrated (Ready for Authentication & Crashlytics)**
+- **Voice-Based Commodity Queries (Speech-to-Text)**
+- **Real-Time Market Price Analysis (Ktor API + Clean Architecture)**
+- **Farming-Inspired Modern UI (Jetpack Compose)**
+- **Firebase Analytics Integrated (Ready for Authentication & Crashlytics)**
 
 ---
 
@@ -23,7 +22,6 @@ Project Kisan is an Android app that empowers small-scale farmers by combining A
 | Voice Input | Android SpeechRecognizer API        |
 | Backend     | Firebase (Analytics, Auth Ready)    |
 
----
 
 ## ✅ App Flow:
 1. App launches directly to **Market Price Screen**.
@@ -31,13 +29,7 @@ Project Kisan is an Android app that empowers small-scale farmers by combining A
 3. App transcribes speech → Auto-fills TextField.
 4. User taps **Fetch Market Price** → API fetches price via Ktor.
 5. Price displayed with beautiful farming-themed UI.
-
----
-
-## ✅ Screenshots:
-*(Add screenshots here after testing.)*
-
----
+   
 
 ## ✅ Future Scope:
 - Vertex AI Speech-to-Text for advanced voice input.
