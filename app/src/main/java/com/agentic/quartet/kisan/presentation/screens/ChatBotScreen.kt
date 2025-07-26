@@ -94,7 +94,7 @@ fun rememberSpeechRecognizer(
 }
 
 @Composable
-fun rememberTextToSpeech(): (String, String) -> Unit {
+fun rememberTextToSpeech(): Triple<(String, String) -> Unit, Boolean, () -> Unit> {
     val context = LocalContext.current
     var tts: TextToSpeech? by remember { mutableStateOf(null) }
     var isInitialized by remember { mutableStateOf(false) }
@@ -104,7 +104,6 @@ fun rememberTextToSpeech(): (String, String) -> Unit {
             if (status == TextToSpeech.SUCCESS) {
                 isInitialized = true
             } else {
-                Log.e("TTS", "Initialization failed with status $status")
             }
         }
         tts = ttsEngine
@@ -115,22 +114,35 @@ fun rememberTextToSpeech(): (String, String) -> Unit {
         }
     }
 
-    return remember {
+    val speak: (String, String) -> Unit = remember {
         { text: String, languageCode: String ->
             if (isInitialized && tts != null) {
-                val result = tts!!.setLanguage(Locale(languageCode))
-                if (result != TextToSpeech.LANG_MISSING_DATA &&
-                    result != TextToSpeech.LANG_NOT_SUPPORTED
-                ) {
+                val locale = when (languageCode) {
+                    "hi" -> Locale("hi", "IN")
+                    "kn" -> Locale("kn", "IN")
+                    "en" -> Locale("en", "US")
+                    else -> Locale.getDefault()
+                }
+
+                val result = tts!!.setLanguage(locale)
+                if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
                     tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
                 } else {
-                    Log.e("TTS", "Language $languageCode not supported or missing data.")
                 }
             } else {
-                Log.e("TTS", "TextToSpeech not initialized yet.")
             }
+            Unit
         }
     }
+
+    val stop: () -> Unit = remember {
+        {
+            tts?.stop()
+            Unit
+        }
+    }
+
+    return Triple(speak, isInitialized, stop)
 }
 
 @Serializable
@@ -239,7 +251,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
         }
     }
 
-    val speakOut = rememberTextToSpeech()
+    val (speakOut, isTtsInitialized, stopTts) = rememberTextToSpeech()
 
     val context = LocalContext.current
     val languages = listOf("English" to "en", "हिंदी" to "hi", "ಕನ್ನಡ" to "kn")
@@ -247,7 +259,11 @@ fun ChatBotScreen(onBack: () -> Unit) {
     var selectedLanguage by remember { mutableStateOf(getCurrentLanguageFromPreferences(context)) }
     val profile = remember { ProfileManager.loadProfile(context) }
 
-    speakOut("Welcome to Kisan AI Chatbot 👨‍🌾", selectedLanguage)
+    Locale("hi", "IN")
+    Locale("kn", "IN")
+    Locale("en", "US")
+
+    speakOut("Welcome to Kisan AI Chatbot", selectedLanguage)
 
     AppBackground {
         Column(
