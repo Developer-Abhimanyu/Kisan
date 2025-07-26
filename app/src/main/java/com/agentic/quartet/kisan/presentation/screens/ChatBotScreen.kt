@@ -52,7 +52,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -67,16 +66,36 @@ import java.util.*
 
 @Composable
 fun rememberSpeechRecognizer(
-    onResult: (String) -> Unit
+    context: Context,
+    city: String,
+    selectedLanguage: String,
+    speakOut: (String, String) -> Unit,
+    onNewMessages: (List<ChatMessage>) -> Unit
 ): () -> Unit {
-    val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val data = result.data
         val matches = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-        matches?.firstOrNull()?.let { spokenText ->
-            onResult(spokenText)
+        val spokenText = matches?.firstOrNull()
+
+        if (!spokenText.isNullOrBlank()) {
+            // 1. Add user message
+            val userChat = ChatMessage(spokenText, true)
+
+            // 2. Immediately send to Dialogflow
+            sendMessageToDialogflow(
+                city = city,
+                context = context,
+                userMessage = spokenText
+            ) { reply, suggestions ->
+                val botReply = reply ?: "Sorry, no response."
+                val botChat = ChatMessage(botReply, false, suggestions)
+                // 3. Callback to add both messages to UI
+                onNewMessages(listOf(userChat, botChat))
+                // 4. Speak out the reply
+                speakOut(botReply, selectedLanguage)
+            }
         }
     }
 
@@ -86,7 +105,7 @@ fun rememberSpeechRecognizer(
                 RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
             )
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, getCurrentLanguageFromPreferences(context))
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, selectedLanguage)
             putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now")
         }
         launcher.launch(intent)
@@ -236,9 +255,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
         }
     }
 
-    val startListening = rememberSpeechRecognizer { spokenText ->
-        userMessage = TextFieldValue(spokenText)
-    }
+    val context = LocalContext.current
 
     val cameraPermissionState = remember { mutableStateOf(false) }
 
@@ -253,17 +270,31 @@ fun ChatBotScreen(onBack: () -> Unit) {
 
     val (speakOut, isTtsInitialized, stopTts) = rememberTextToSpeech()
 
-    val context = LocalContext.current
     val languages = listOf("English" to "en", "हिंदी" to "hi", "ಕನ್ನಡ" to "kn")
     var expanded by remember { mutableStateOf(false) }
     var selectedLanguage by remember { mutableStateOf(getCurrentLanguageFromPreferences(context)) }
     val profile = remember { ProfileManager.loadProfile(context) }
 
+    // check with shruthi if we need another end point for speak anything?
+    val startListening = rememberSpeechRecognizer(
+        context = context,
+        city = "Bengaluru",
+        selectedLanguage = selectedLanguage,
+        speakOut = speakOut
+    ) { newMessages ->
+        chatMessages = chatMessages + newMessages
+    }
+
+    LaunchedEffect(Unit) {
+        startListening()
+    }
+
     Locale("hi", "IN")
     Locale("kn", "IN")
     Locale("en", "US")
 
-    speakOut("Welcome to Kisan AI Chatbot", selectedLanguage)
+    //commenting this as it was reading as soon as I enter this screen so our reader gets confused
+    //speakOut("Welcome to Kisan AI Chatbot", selectedLanguage)
 
     AppBackground {
         Column(
@@ -522,7 +553,7 @@ fun sendMessageToDialogflow(
     onResult: (String?, List<Pair<String, String?>>?) -> Unit
 ) {
     val accessToken =
-        "ya29.c.c0ASRK0Gahz1wEp6I0A5WzENx6HAgMHKTHcLNfW4nFNUGTD1vv9eFEUhemeq2Bps-2-ninlH0cHwfd-uFEVo6OzSB3es8G0k4IMm81fzChaTgljTCbvlFVfqMTA79WGCwgwi1d4KZoKKtms-U26OHYlqL9N6N5WKQSzhGpi8b_Qmx9HPg-PD9oOUXgqmBhB1SxDzTcgC_HfO0mL3ZRPYZmLglpN0JxtAqij8rszD3q49RhGRlh00LrSargWrEw1AdTcCXi2EspGtS8UXWcjK0zjkEeWKyeVwRKrxgD0clMIl693l1Mhi_DJzcGqdhtCywOxwki_tW23n6RZDxzcrR8jvE0j3ZOrCCHcRVwxWPXSrkTeLvCk-eBVgNiL385PQlo3bziuw_dnYMMZOUY020jqWj5718bxcl029wy1lISyyMJzQ2dcsMU_Y980QpS6QRneq5yOFOu50witJk4bjOx-asZoiSe9X-q-iV7ebhFUFcwz7Y6Qi2WovmUnBY5nOZ96Jltpbf6jtznJ0hMgzJeIjUZQoo7O62tc7SiVFXnZSic018ams19ZFaxfY47iS6437Um5zuWIiIXYXW9JpwIV66Odjsadzb5uod7oIzet6e01fu3eXSBO3X9phF8uhh_79hos8RSQ859Zhu_d80pr0tWZQ8drwI4-Ysq6lQwe5MWhxV4ho9tVp78ORw8pj7u5eqy1zje4zXzar94IUWIkkflBJtzfguQbttmdQjWz6xrZnokehftXdoM2eM1Si72I1xXIYiRu84hp7gMh4vI7bzfW68Myfyckqnm_nU_iYp5F1a_23sIw6pRgcynOB2FSZ4euBa3j5ZBfXsx5yUeJUoWjmB5X7esvfuWg3Y4ZnvSBcxtJXhdh4tueWj7akl4SoWl9l76opqQe58vz52nadX4R3F-vFg5BiykIcmq6_eJBX8gfoRBeelQ6ZkqXj3Xx9xv_dOeQao16la1uiJ_YRFybBMnfy_1M0dSu2OZvtlqczV2fOV1pq8"
+        "ya29.c.c0ASRK0GaktiOWRuIVKDU-XJXQ0i-3rSmgNt0mNAuALWHNeYNUjM_b7ecicfpcwkLDWIH83Mw0URzYp_0UBzIX4Nk7FvMCbvKSfQVaVbVvuBo5WFZ5aOwcxbbzKei6-imgjXX-G9a-tTu6mbFvg30oUiMymzbT9LwawETIQJon0aYGZJZ9xqZG3w3r8noI3IaEpZsPMjSglrbW9btIMDz5fWkCTsaV7FxPAmoH8OU5P2ZP6mU7ViRwW59W5ZWx3HLu7WmB3hg2t8pQlOolc_qVCMtZkNdahacFU78SMfNFPfeWW1xqZx9vm1eYWqU1STX_ipA5eUwNEH55nLf_0gTEkLiGHXFLAN6dYW_vanrL5zNyIHxWiF8xTwMT384PJ2kJp5U-SSrUxihtmWBq5djr_e3sQjaoykz-k4b6spZFqdeMBi9FW8p4ot_q9Fwn8tBy8jfI4ycnmasRaikSfXgaIfomdRdj1d6mItk5ptk626fzhW_XRlo3brlZwo0X3hBSo4dVah8zo0SUSV5pnjFVYgq-0z6j5xb16pxSV9ro4pRr1tldM-74tUJW4BoVe_65gX-eigttjn4Fpj5Zohfpwgx7triirQ4Oha0g9ZlbZ6rvZJphiSzZYr3hfeXW1eSdU8VOFp4ishaksc3w4lqwOrfOv39mgk5ak0a7ZZ11Oh7VI0Qwa4tvUzpt3iFIr9igZy37rtqO4qh1mpbsa39zyM_q5X4sMRIoIXzJk9nYQQMU3p2zQRS0dniJIJM_neQ_J3Qz4ve18W2Z3uISqQmZRvfidbRV1BiIpQnIycsYaSkIogU_u8zqQWlVR7X7M4pyzfY64s6wV6iVgnwv3Yu3cY6kW5JWauXVha3gB1bXQ4Q7rrfXUYzv1oSjUqMlcXxdi2quYdk5d4cruZ8SRSfhix5hxgnryieR638ylXj9S8x06R78WbmoRYcb5Vq0YQYy68fF-n5s61QVa7czQxOp4yhfhlrxBj9u3xw2rJd64ajsxrqtznbdc0J"
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
@@ -612,7 +643,7 @@ fun sendMessageToDialogflow(
 @Composable
 fun SuggestionChip(text: String, onClick: () -> Unit) {
     Surface(
-        shape = RoundedCornerShape(50),
+        shape = RoundedCornerShape(12),
         color = Color(0xFF4CAF50),
         modifier = Modifier
             .padding(end = 8.dp)
@@ -622,7 +653,7 @@ fun SuggestionChip(text: String, onClick: () -> Unit) {
             text = text,
             color = Color.White,
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            fontSize = 14.sp
+            fontSize = 12.sp
         )
     }
 }
