@@ -191,6 +191,11 @@ fun ChatBotScreen(onBack: () -> Unit) {
     ) { uri ->
         if (uri != null) {
             selectedImageUri = uri
+            val base64 = uriToBase64(cxt, uri)
+            base64?.let {
+                chatMessages = chatMessages + ChatMessage("📷 Image sent", isUser = true)
+
+            }
         }
     }
 
@@ -199,6 +204,10 @@ fun ChatBotScreen(onBack: () -> Unit) {
     ) { success ->
         if (success) {
             selectedImageUri = photoUri
+            val base64 = uriToBase64(cxt, photoUri)
+            base64?.let {
+                chatMessages = chatMessages + ChatMessage("📷 Image sent", isUser = true)
+            }
         }
     }
 
@@ -584,5 +593,21 @@ fun SuggestionChip(text: String, onClick: () -> Unit) {
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             fontSize = 14.sp
         )
+    }
+}
+
+fun uriToBase64(context: Context, uri: Uri): String? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+
+        val outputStream = java.io.ByteArrayOutputStream()
+        bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 100, outputStream)
+        val byteArray = outputStream.toByteArray()
+        android.util.Base64.encodeToString(byteArray, android.util.Base64.NO_WRAP)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
