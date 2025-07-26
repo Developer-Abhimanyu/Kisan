@@ -96,27 +96,40 @@ fun rememberSpeechRecognizer(
 @Composable
 fun rememberTextToSpeech(): (String, String) -> Unit {
     val context = LocalContext.current
-    val ttsRef = remember { mutableStateOf<TextToSpeech?>(null) }
-
-    LaunchedEffect(Unit) {
-        val ttsInstance = TextToSpeech(context, null)
-        val langCode = getCurrentLanguageFromPreferences(context)
-        val locale = Locale(langCode)
-        ttsInstance.language = locale
-        ttsRef.value = ttsInstance
-    }
+    var tts: TextToSpeech? by remember { mutableStateOf(null) }
+    var isInitialized by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
+        val ttsEngine = TextToSpeech(context) { status ->
+            if (status == TextToSpeech.SUCCESS) {
+                isInitialized = true
+            } else {
+                Log.e("TTS", "Initialization failed with status $status")
+            }
+        }
+        tts = ttsEngine
+
         onDispose {
-            ttsRef.value?.stop()
-            ttsRef.value?.shutdown()
+            ttsEngine.stop()
+            ttsEngine.shutdown()
         }
     }
 
-    return { text: String, lang: String ->
-        val tts = ttsRef.value
-        tts?.language = Locale(lang)
-        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+    return remember {
+        { text: String, languageCode: String ->
+            if (isInitialized && tts != null) {
+                val result = tts!!.setLanguage(Locale(languageCode))
+                if (result != TextToSpeech.LANG_MISSING_DATA &&
+                    result != TextToSpeech.LANG_NOT_SUPPORTED
+                ) {
+                    tts!!.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+                } else {
+                    Log.e("TTS", "Language $languageCode not supported or missing data.")
+                }
+            } else {
+                Log.e("TTS", "TextToSpeech not initialized yet.")
+            }
+        }
     }
 }
 
@@ -234,9 +247,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
     var selectedLanguage by remember { mutableStateOf(getCurrentLanguageFromPreferences(context)) }
     val profile = remember { ProfileManager.loadProfile(context) }
 
-    LaunchedEffect(Unit) {
-        speakOut("Welcome to Kisan AI Chatbot 👨‍🌾", selectedLanguage)
-    }
+    speakOut("Welcome to Kisan AI Chatbot 👨‍🌾", selectedLanguage)
 
     AppBackground {
         Column(
