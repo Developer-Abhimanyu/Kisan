@@ -63,7 +63,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import coil.compose.rememberAsyncImagePainter
 import io.ktor.client.plugins.HttpTimeout
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -224,14 +223,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
     var userMessage by remember { mutableStateOf(TextFieldValue("")) }
     val listState = rememberLazyListState()
     var chatMessages by remember {
-        mutableStateOf(
-            listOf(
-                ChatMessage(
-                    "Welcome to Kisan AI Chatbot 👨‍🌾",
-                    false
-                )
-            )
-        )
+        mutableStateOf(emptyList<ChatMessage>())
     }
 
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -247,6 +239,13 @@ fun ChatBotScreen(onBack: () -> Unit) {
 
     val coroutineScope = rememberCoroutineScope()
 
+    val (speakOut, isTtsInitialized, stopTts) = rememberTextToSpeech()
+
+    val languages = listOf("English" to "en", "हिंदी" to "hi", "ಕನ್ನಡ" to "kn")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedLanguage by remember { mutableStateOf(getCurrentLanguageFromPreferences(cxt)) }
+    val profile = remember { ProfileManager.loadProfile(cxt) }
+
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -256,17 +255,27 @@ fun ChatBotScreen(onBack: () -> Unit) {
             selectedImageUri = photoUri
 
             base64?.let {
-                chatMessages = chatMessages + ChatMessage("Image sent", isUser = true)
+                //chatMessages = chatMessages + ChatMessage("Image sent", isUser = true)
 
                 // Launch coroutine to call suspend function
                 coroutineScope.launch {
                     val imageUrl = uploadImageAndGetUrl(cxt, Base64.decode(it, Base64.DEFAULT))
 
                     if (imageUrl != null) {
-                        chatMessages = chatMessages + ChatMessage(
-                            "[Image hosted here]($imageUrl)",
-                            isUser = false
-                        )
+                        chatMessages = chatMessages + ChatMessage("Image sent", isUser = true)
+                        sendMessageToDialogflow(
+                            city = "Bengaluru",
+                            context = cxt,
+                            userMessage = "Image sent"
+                        ) { reply, suggestions ->
+                            val botText = reply ?: "Sorry, no response."
+                            chatMessages = chatMessages + ChatMessage(
+                                message = botText,
+                                isUser = false,
+                                suggestions = suggestions
+                            )
+                            speakOut(botText, selectedLanguage)
+                        }
                     } else {
                         chatMessages =
                             chatMessages + ChatMessage("Failed to upload image", isUser = false)
@@ -284,17 +293,26 @@ fun ChatBotScreen(onBack: () -> Unit) {
 
             val base64 = uriToBase64(cxt, photoUri)
             base64?.let {
-                chatMessages = chatMessages + ChatMessage("Image sent", isUser = true)
 
                 // Launch coroutine to call suspend function
                 coroutineScope.launch {
                     val imageUrl = uploadImageAndGetUrl(cxt, Base64.decode(it, Base64.DEFAULT))
 
                     if (imageUrl != null) {
-                        chatMessages = chatMessages + ChatMessage(
-                            "[Image hosted here]($imageUrl)",
-                            isUser = false
-                        )
+                        chatMessages = chatMessages + ChatMessage("Image sent", isUser = true)
+                        sendMessageToDialogflow(
+                            city = "Bengaluru",
+                            context = cxt,
+                            userMessage = "Image sent"
+                        ) { reply, suggestions ->
+                            val botText = reply ?: "Sorry, no response."
+                            chatMessages = chatMessages + ChatMessage(
+                                message = botText,
+                                isUser = false,
+                                suggestions = suggestions
+                            )
+                            speakOut(botText, selectedLanguage)
+                        }
                     } else {
                         chatMessages =
                             chatMessages + ChatMessage("Failed to upload image", isUser = false)
@@ -316,13 +334,6 @@ fun ChatBotScreen(onBack: () -> Unit) {
         }
     }
 
-    val (speakOut, isTtsInitialized, stopTts) = rememberTextToSpeech()
-
-    val languages = listOf("English" to "en", "हिंदी" to "hi", "ಕನ್ನಡ" to "kn")
-    var expanded by remember { mutableStateOf(false) }
-    var selectedLanguage by remember { mutableStateOf(getCurrentLanguageFromPreferences(context)) }
-    val profile = remember { ProfileManager.loadProfile(context) }
-
     // check with shruthi if we need another end point for speak anything?
     val startListening = rememberSpeechRecognizer(
         context = context,
@@ -331,10 +342,6 @@ fun ChatBotScreen(onBack: () -> Unit) {
         speakOut = speakOut
     ) { newMessages ->
         chatMessages = chatMessages + newMessages
-    }
-
-    LaunchedEffect(Unit) {
-        startListening()
     }
 
     Locale("hi", "IN")
@@ -490,7 +497,9 @@ fun ChatBotScreen(onBack: () -> Unit) {
             }
 
             LaunchedEffect(chatMessages.size) {
-                listState.animateScrollToItem(chatMessages.size - 1)
+                if (chatMessages.isNotEmpty()) {
+                    listState.animateScrollToItem(chatMessages.lastIndex)
+                }
             }
 
             selectedImageUri?.let { uri ->
@@ -500,7 +509,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
                         .padding(bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
+                    /*Image(
                         painter = rememberAsyncImagePainter(model = uri),
                         contentDescription = "Selected Image",
                         modifier = Modifier
@@ -508,7 +517,7 @@ fun ChatBotScreen(onBack: () -> Unit) {
                             .clip(RoundedCornerShape(12.dp))
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Text("Image selected", color = Color.White)
+                    Text("Image selected", color = Color.White)*/
                 }
             }
 
@@ -601,7 +610,7 @@ fun sendMessageToDialogflow(
     onResult: (String?, List<Pair<String, String?>>?) -> Unit
 ) {
     val accessToken =
-        "ya29.c.c0ASRK0GZzTYwh4EhyJQ14zofQMNfF3GFWCM2fiFknFDV3dgWJumP3TWuSNWPShvtS5tLRkFOkosKOdHkNsthvS2rJyenJ6ina81nDnECCrzUojGMEqd4egxBAkm2eQKtG0VrXJgeozRCQE0hu3QOtpRTRh11kW137x0lBpT72092QWNB0u3Rc3QMG1ObH4GQRg1OyBZH27ehuLUN-RqSpbrNhoZfss3-haEPQlMU-WdONGeXu12XGpOC9VMGPsSWlBf3IdDxFheXkKRVxUu8YDNJ9fWmneaBsKuc8ZfSUALsG0MVvFnuQQkTolKo2nsc72LikjfF1XBM8odDACgpXa5J9diRub5tKxiCE11cLCbn7cS9N5XaliUA1H385Kmw4wBVFV1xWtRe1JsMsW2rfqovQmg_1tx8uz0pdWcBzqzJ6xiywb_vwBqap-JrybUQro7l04WpytSUuihauvjU2d5cX4WOfvywFId_6-BBU_kh5gU1cbatZFrX2USZZb0ixuh8_dQYo2hU9ymaMM-kz8zozxw4W2Jt2BcVrnJmy0dBmekJ5Y3kaXQBMeZBvtwiVyi5Qm9ahjj6n94Rq5WweJR1j3y4w83Vt3skw7QnqRBgXS2yYIyyddzv2gdze02hIXIY29ab3ZU4WXXaFJzg2F3ri6Mt6WByW1j2WfyUQt1FtWe0IerQOnWqe4p2hXajr4iZVsXMgpjYO_bgdo5O611r9X8q8c0kI_R8oSidl9_UiUXaq3xFvkufxMZQ_Jkj_a2MIZlrlzqqOvVp5UsvdfwUtn9b4mzWvkfd7gvOgktttb7quMw6Zgwzl-qfs-Ipl_gFcBg-588egtOFU6BvURjkgWXtx-hx_viiWY-Q6eF2jM1RVpaZf51aFZcRyzQcIa_9FjsoQbQfVW76iZs633MUokUBWzY-IatZJbUU0mxdOg68-Y5onfofgkjgsF-RjtbXZ9lyZzpSp4kJrtM4VOZlqrYmdjqJQU4FgY4xUOmqkZ9XRnjvbhdg"
+        "ya29.c.c0ASRK0GYWLRdMJQ6gM7mNWQvJsQNTZFyPE9cMoXXtvWoJxPzvS-hDx7we1groP_cy2Fzk1EGyjXj2yEqzYXPvTuyXbBJQcpQH7r5OMz9EUtSi_QeMqPMq8ycqcVzAgkBgkF77lvvlSZbYDtyS_UuFrhX3iyYErR4-hjGReuv7QjiWZ_X4MYPBj0ihFHIGkCHOgPKMmJSh018k7WFjB84Fk8MB-DecVsClMvEjT55g7tEeknAYN80NFcsDg5u6F4P5Lhwu6R0lOMqKVyvsLe70INSgAvhGka8Z3ygc_5swu6ZeoW1KLsp2iJ2ttl6T3luDki5vAwsAlcL14CR577WlwrvYMcYB16BJnxd7muZB3Hf_c3nT7e8iHeCJE385KrVrd0197h1UyV5uQurvcx2_25m5sQsaadoZttRyVmd0QVU8kankXyv2jaWR07e2quj96IYQMov0y0lni75UaMJpgxYWROdR0qtzuQIqFWsYsqiwSm8VrbOnalBI3yqy5wYd4aaagQmJQn8lwz_Q6gmfuecji_QabW_2o5cxRvFk8zQyg-8h2snFFSXjubs8JaX4yn678od2s4oW8zphw15S3lkmuUypU9OOzzyuFMwOj-YMZfRcl7XeBRmyJbxpj2MMuW2BMQa1i-oIFOrJY3dcRelxFUFp0UMju1vc3yOtI8jQfdUtIfY9qX8XhFIWs3j-_Xcu5olutbzobc43XyW3qx3SVu60U-XUu6I__57Sk2-khIpmJmY5ioBjeffkppy8m13dU3kg-qllpm2k-vM9I98672ogU6wYo5m95lh3muxhtqfagsnYcgqFjrub-4Xe8uhwjk8yy3zg9zk9gcxJQBwdYwh8Vl53ifymJQjtB8xvq8Ufif6Qa80nSvli-y6Wy-gJrY3YUklQSMX95pyfzZW5Ox9rM2pyRBzzhsd0e7kjf7sIccYSfFdO0Mkbaxcmnr5bpiwv3wb92jF9bcS-kZ2Uq5Q4dthr9UxFSSgY9m_3ZwsRfaW09WO"
     val sessionUrl =
         "https://global-dialogflow.googleapis.com/v3/projects/forward-alchemy-465709-k7/locations/global/agents/696d1ed8-adef-46da-bbf9-9d7e1d16bdb5/sessions/test-session-001:detectIntent"
 
@@ -623,7 +632,6 @@ fun sendMessageToDialogflow(
         putJsonObject("queryParams") {
             putJsonObject("parameters") {
                 put("location", city)
-                put("image_url", city)
             }
         }
     }

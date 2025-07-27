@@ -103,7 +103,7 @@ fun HomeScreen(
                 else -> "Today is a good day to apply pesticides."
             }
             geminiAdvice = buildString {
-                appendLine("Current weather in ${profile.city} is $cond with $t°C and $h% humidity.")
+                appendLine("Current weather in Bengaluru is $cond with $t°C and $h% humidity.")
                 when {
                     cond.contains("rain", true) -> {
                         appendLine("It may rain today. Ensure proper drainage in your field.")
@@ -170,26 +170,10 @@ fun HomeScreen(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
-                    .height(400.dp),
+                    .height(280.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                item {
-                    HomeFeatureButton(
-                        stringResource(R.string.disease_detection),
-                        R.drawable.ic_disease_detection,
-                        onNavigateToDiseaseDetection,
-                        containerColor = Color.White
-                    )
-                }
-                item {
-                    HomeFeatureButton(
-                        stringResource(R.string.market_prices),
-                        R.drawable.ic_chart,
-                        onNavigateToMarketPrices,
-                        containerColor = Color.White
-                    )
-                }
                 item {
                     HomeFeatureButton(
                         stringResource(R.string.govt_schemes),
@@ -210,20 +194,6 @@ fun HomeScreen(
                         stringResource(R.string.crop_calendar),
                         R.drawable.ic_calendar_final,
                         onCropCalendarClick
-                    )
-                }
-                item {
-                    HomeFeatureButton(
-                        stringResource(R.string.irrigation_tips),
-                        R.drawable.irrigation_tips_final,
-                        onIrrigationTipsClick
-                    )
-                }
-                item {
-                    HomeFeatureButton(
-                        stringResource(R.string.fertilizer_guide),
-                        R.drawable.fertilizer_guide_final,
-                        onFertilizerGuideClick
                     )
                 }
             }
